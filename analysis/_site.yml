@@ -1,7 +1,7 @@
-name: Temperature_x_Diet_D.melanogaster
+name: Zajitschek_et_al_FunctionalEcology_2023
 output_dir: ../docs
 navbar:
-  title: Temperature_x_Diet_D.melanogaster
+  title: Zajitschek_et_al_FunctionalEcology_2023
   left:
   - text: Overview
     href: index.html
@@ -14,7 +14,7 @@ navbar:
   right:
   - icon: fa-github
     text: Source code
-    href: https://github.com/zajitschek/Temperature_x_Diet_D.melanogaster
+    href: https://github.com/zajitschek/Zajitschek_et_al_FunctionalEcology_2023
 output:
   workflowr::wflow_html:
     toc: yes
