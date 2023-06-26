@@ -1,0 +1,295 @@
+---
+title: "Fecundity analyses"
+author: "Zajitschek et al."
+date: "2023-06-01"
+output: 
+  workflowr::wflow_html:
+   code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+## Load libraries
+```{r load-libraries, message=FALSE, warning=FALSE, results="hide"}
+library(readr)      # read data
+library(dplyr)      # data structure
+library(reshape2)   # data structure
+library(rcompanion) # mean and median (+- bootstrapped CI)
+library(ggplot2)    # plot
+library(sjPlot)     # model plots & diagnostics
+library(ggeffects)  # plot
+library(car)        # anova-style results table for glm
+library(bbmle)      # IC tab
+library(robustbase) # robust glm
+library(splines)    # spline functions
+library(MuMIn)      # model selection
+library(lmtest)     # for F1 model formulation
+library(sandwich)   # for F1 model formulation
+library(multcomp)   # for F1 multiple comparisons
+
+```
+
+## Load fecundity data (parental generation F0, and F1 offspring)
+```{r import-fecundity, message=FALSE}
+# F0 fecundity 
+fec.F0 <- read_csv("./data/fecF0.csv")
+colnames(fec.F0)[1] <- "generation"
+fec.F0$diet_num <- as.numeric(as.character(fec.F0$diet))
+fec.F0$diet <- as.factor(fec.F0$diet)
+fec.F0$vial_id <- as.factor(fec.F0$vial_id)
+fec.F0$rep <- as.factor(fec.F0$rep)
+
+# F1 fecundity 
+fec.F1 <- read_csv("./data/fecF1.csv")
+colnames(fec.F1)[1] <- "generation"
+fec.F1$par_diet <- as.factor(fec.F1$par_diet)  #'par_diet' stands for 'parental diet'
+fec.F1$vial_id <- as.factor(fec.F1$vial_id)
+fec.F1$rep <- as.factor(fec.F1$rep)
+```
+## 1) F0  FECUNDITY
+
+## Explore F0 fecundity data
+```{r explore-fecundity, message=FALSE, warning=FALSE}
+#plot(fec.F0$eggs) # ok: no off-values/outliers
+#max(fec.F0$eggs)  # max. eggs = 141
+
+print(paste0("5 measurement ages [days]: ", list(unique(fec.F0$age))))
+ # 5 measurement ages: 5, 12, 19, 26, 33 days old
+
+#Summary statistics and dataset for further analyses, containing sums of counted eggs per vial
+fec.F0.a <- fec.F0 %>% 
+  group_by(temperature, diet_num, vial_id) %>% 
+  summarise(., vial_sum = sum(eggs), n_ages = n_distinct(age)) 
+fec.F0.a %>% group_by(temperature, diet_num) %>%
+  summarise(., mean_sum_fec = mean(vial_sum), se = sd(vial_sum)/sqrt(10), sd = sd(vial_sum), 
+   median = median(vial_sum), n_vials = n_distinct(vial_id))
+```
+
+## Calculate mean fecundity (across vials) with bootstrapped CI
+```{r mean-fecundity}
+boot.fec.F0 <- groupwiseMean(vial_sum ~ temperature*diet_num, data = fec.F0.a, boot = T, bca = T)  #5000 bootstrap replicates for CI
+boot.fec.F0
+```
+
+## Plot F0 mean fecundity (not in manuscript)
+```{r plot-F0-mean-fecundity}
+mycols <- colors()[c(30, 62, 119, 504, 554)]
+
+fec.F0.plot <- ggplot(data= boot.fec.F0, aes(x= as.factor(diet_num), y= Boot.mean, fill= as.factor(temperature))) +  
+	#scale_fill_grey(start=0.8, end=0.3, name = "Temperature") +
+	scale_fill_manual(values= mycols, name = "Temperature") +
+     	geom_bar(position=position_dodge(), stat = "identity", colour="black") + 	
+	geom_errorbar(aes(ymin= Bca.lower, ymax= Bca.upper), width=.4, , colour="black", position=position_dodge(0.9)) +
+	ylab("Fecundity (mean # of eggs)")  + 
+	xlab("Diet")  + 
+	ggtitle("F0 Fecundity\n(vial means over first 5 weeks \U00B1 95% CI)") + 
+	theme_bw(base_size = 18)+
+	theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(), panel.border = element_blank(), 
+	axis.line.x = element_line(), axis.line.y = element_line()) 
+fec.F0.plot 
+```
+
+## F0 FECUNDITY ANALYSES
+
+### Model specification, results (Table S8), and comparison
+
+```{r fecundity-totalsum-analysis}
+fec.F0.glm.num.1 <- glm(vial_sum ~ bs(temperature)*diet_num +
+                          bs(temperature)*I(diet_num^2), data= fec.F0.a) 
+#plot(fec.F0.glm.num.1) #problematic QQ-plot for upper quantiles
+
+#Square-root transformed response 
+#Refit above with new response variable 'vial_sum2'
+fec.F0.a$vial_sum2 <- (fec.F0.a$vial_sum)^(1/2)
+
+fec.F0.glm.num.2 <- glm(vial_sum2 ~ bs(temperature)*diet_num +
+                          bs(temperature)*I(diet_num^2), data= fec.F0.a) 
+#plot(fec.F0.glm.num.2) #better QQ-plot
+
+
+#Robust GLM
+fec.F0.glm.4 <- glmrob(vial_sum2 ~ bs(temperature)*diet_num +
+                          bs(temperature)*I(diet_num^2), family = gaussian(), data = fec.F0.a)
+summary(fec.F0.glm.4)
+
+#Remove highest interaction term from initial model
+fec.F0.glm.4b <- update(fec.F0.glm.4, . ~ . - bs(temperature):I(diet_num^2))
+
+#Compare models
+anova(fec.F0.glm.4b, fec.F0.glm.4, test = "Wald")
+
+```
+
+### Plot Figure 2: F0 female fecundity
+
+```{r Figure-2}
+
+predrob.4 <- ggpredict(fec.F0.glm.4, c("temperature", "diet_num")) 
+predFecF0_plot <- ggplot(predrob.4, aes(x, predicted))  +
+  geom_point(data = fec.F0.a, aes(x = temperature, y = vial_sum2, shape  = factor(diet_num), colour = factor(diet_num), stroke=NA, alpha = 0.1), size = 3, position= position_jitterdodge(dodge.width = 0.8, jitter.width = 0.1), inherit.aes = F) + 
+    geom_line(aes(linetype= group, color= group), linewidth = 1.5) +
+    geom_ribbon(aes(ymin=conf.low, ymax=conf.high, fill=group), alpha=0.15) +
+    scale_color_manual(name  ="Diet", values=c("#F8766D", "#619CFF", "#00BA38"), labels=c("restricted", "standard", "rich")) +
+  scale_fill_manual(name  ="Diet", values=c("#F8766D", "#619CFF", "#00BA38"), labels=c("restricted", "standard", "rich"))  +
+  scale_shape_discrete(name  ="Diet", labels=c("restricted", "standard", "rich")) +
+    scale_linetype_manual(name  ="Diet", values = c("solid", "dashed", "dotted"), labels=c("restricted", "standard", "rich")) +
+  scale_x_continuous(breaks=c(21, 23, 25, 27, 29)) + 
+  labs(title = "", color = "Diet", y = "Total fecundity\n(square-root, weeks 1 to 5)", x = "Temperature [degree Celsius]") + theme_classic(base_size = 23) + 
+ guides(alpha = "none")
+
+predFecF0_plot
+```
+
+
+## 2) F1 FECUNDITY
+
+### Explore F1 fecundity data
+
+```{r explore-F1-fecundity, message=FALSE, warning=FALSE}
+#plot(fec.F1$eggs) # ok: no off-values/outliers
+#max(fec.F1$eggs)  # max. eggs = 217
+
+print(paste0("5 measurement ages [days]: ", list(unique(fec.F1$age))))
+ # 5 measurement ages: 4, 11, 18, 25, 32 days old
+
+fec.F1.a <- fec.F1 %>% 
+  group_by(par_temp, par_diet, par_eff, vial_id) %>% 
+  summarise(., vial_sum = sum(eggs), n_ages = n_distinct(age)) 
+fec.F1.a %>% group_by(par_temp, par_diet, par_eff) %>%
+  summarise(., mean_sum_fec = mean(vial_sum), se = sd(vial_sum)/sqrt(length(vial_sum)), 
+  sd = sd(vial_sum), median = median(vial_sum), n_vials = n_distinct(vial_id))
+```
+
+### Calculate F1 mean fecundity (across vials) with bootstrapped CI
+
+```{r F1-mean-fecundity}
+F1.fec.CI <- groupwiseMean(vial_sum ~ par_temp*par_diet*par_eff, data = fec.F1.a, boot = F, bca = F)  
+F1.fec.CI$Trad.lower[F1.fec.CI$Trad.lower < 0] <- 0  #set negative lower CI range values to zero
+```
+
+### Plot F1 mean fecundity (not in manuscript)
+
+```{r plot-F1-mean-fecundity}
+mycols <- colors()[c(30, 62, 119, 504, 554)]
+
+fec.F1.plot <- ggplot(data= F1.fec.CI, aes(x= as.factor(par_diet), y= Mean, fill= as.factor(par_temp))) +  
+	#scale_fill_grey(start=0.8, end=0.3, name = "Temperature") +
+	scale_fill_manual(values= mycols, name = "Parental\ntemperature") +
+     	geom_bar(position=position_dodge(), stat = "identity", colour="black") + 	
+	geom_errorbar(aes(ymin= Trad.lower, ymax= Trad.upper), width=.4, , colour="black", position=position_dodge(0.9)) + 
+	ylab("Fecundity (mean # of eggs)")  + 
+	xlab("Parental diet")  + 
+	ggtitle("F1 Fecundity\n(vial means over first 5 weeks \U00B1 95% CI)") + 
+	theme_bw(base_size = 18)+
+	theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(), panel.border = element_blank(), 
+	axis.line.x = element_line(), axis.line.y = element_line()) +
+  facet_grid(vars(par_eff), vars(par_temp))
+
+fec.F1.plot 
+```
+
+## F1 FECUNDITY ANALYSES
+
+### Additional data preparation
+
+```{r F1-fecundity-totalsum-analysis-prepglm}
+fec.F1.a$par_diet_num <- as.numeric(as.character(fec.F1.a$par_diet))
+fec.F1.a$vial_sum2 <- (fec.F1.a$vial_sum)^(1/2)
+```
+
+### Robust estimation of effects on F1 fecundity (Table S9)
+
+```{r F1-r F1-fecundity-totalsum-analysis-glmrob, eval=FALSE, include=FALSE}
+#Robust glms
+fec.F1.glm0 <- glmrob(vial_sum ~ par_eff*bs(par_temp)*par_diet_num +
+               par_eff*bs(par_temp)*I(par_diet_num^2), family = gaussian(), data = fec.F1.a) #fec.F1.glm0 doesn't converge
+
+# We use square-root of fecundity as the response variable to get the model to converge
+fec.F1.glm <- glmrob(vial_sum2 ~ par_eff*bs(par_temp)*par_diet_num +
+              par_eff*bs(par_temp)*I(par_diet_num^2), family = gaussian(), data = fec.F1.a)
+summary(fec.F1.glm) 
+
+```
+
+```{r F1-fecundity-totalsum-analysis-aov}
+
+#All independent variables as factor to make the model less complex; separate for each level of par_eff
+fec.F1.a$par_temp_fac <- as.factor(fec.F1.a$par_temp)
+
+# Maternal effects with robust covariance matrix 
+fec.F1.a.mat <- subset(fec.F1.a, par_eff=="mat")
+
+fec.F1.glm.rev1c.mat <- aov(vial_sum ~ par_temp_fac*par_diet, data = fec.F1.a.mat)
+fec.F1.glm.rev1c.mat.coef <- coeftest(fec.F1.glm.rev1c.mat, vcov = vcovHC)
+
+fec.F1.glm.rev1c.mat2 <- aov(vial_sum ~ par_temp_fac+par_diet, data = fec.F1.a.mat)
+
+# Model comparison
+waldtest(fec.F1.glm.rev1c.mat, fec.F1.glm.rev1c.mat2, vcov = vcovHC, test = "F")
+
+Tukey. <- contrMat(table(fec.F1.a.mat$par_temp_fac), "Tukey")
+K1. <- cbind(Tukey., matrix(0, nrow = nrow(Tukey.), ncol = ncol(Tukey.)), matrix(0, nrow = nrow(Tukey.), ncol = ncol(Tukey.)))
+
+rownames(K1.) <- paste(levels(fec.F1.a$par_diet)[1], rownames(K1.), sep = ":")
+
+K2. <- cbind(matrix(0, nrow = nrow(Tukey.), ncol = ncol(Tukey.)), Tukey., matrix(0, nrow = nrow(Tukey.), ncol = ncol(Tukey.)))
+rownames(K2.) <- paste(levels(fec.F1.a$par_diet)[2], rownames(K2.), sep = ":")
+
+K3. <- cbind(matrix(0, nrow = nrow(Tukey.), ncol = ncol(Tukey.)), matrix(0, nrow = nrow(Tukey.), ncol = ncol(Tukey.)),Tukey.)
+rownames(K3.) <- paste(levels(fec.F1.a$par_diet)[3], rownames(K3.), sep = ":")
+K. <- rbind(K1., K2., K3.)
+colnames(K.) <- c(colnames(Tukey.), colnames(Tukey.), colnames(Tukey.))
+
+#todo: summary(glht(fec.F1.glm.rev1c.mat, linfct = K. %*% X., vcov = sandwich::vcovHC(fec.F1.glm.rev1c.mat)), test = adjusted("BH"))  
+ 
+
+# Paternal effects with robust covariance matrix 
+fec.F1.a.pat <- subset(fec.F1.a, par_eff=="pat")
+
+fec.F1.glm.rev1c.pat <- aov(vial_sum ~ par_temp_fac*par_diet, data = fec.F1.a.pat)
+coeftest(fec.F1.glm.rev1c.pat, vcov = sandwich::vcovHC)
+
+fec.F1.glm.rev1c.pat2 <- aov(vial_sum ~ par_temp_fac+par_diet, data = fec.F1.a.pat)
+
+# Model comparison
+waldtest(fec.F1.glm.rev1c.pat, fec.F1.glm.rev1c.pat2, vcov = vcovHC, test = "F")
+
+Tukey <- contrMat(table(fec.F1.a.pat$par_temp_fac), "Tukey")
+K1 <- cbind(Tukey, matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)), matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)))
+
+rownames(K1) <- paste(levels(fec.F1.a$par_diet)[1], rownames(K1), sep = ":")
+
+K2 <- cbind(matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)), Tukey, matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)))
+rownames(K2) <- paste(levels(fec.F1.a$par_diet)[2], rownames(K2), sep = ":")
+
+K3 <- cbind(matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)), matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)),Tukey)
+rownames(K3) <- paste(levels(fec.F1.a$par_diet)[3], rownames(K3), sep = ":")
+K <- rbind(K1, K2, K3)
+colnames(K) <- c(colnames(Tukey), colnames(Tukey), colnames(Tukey))
+ 
+#todo: summary(glht(fec.F1.glm.rev1c.pat, linfct = K %*% X, vcov = sandwich::vcovHC(fec.F1.glm.rev1c.pat)), test = adjusted("BH")) 
+
+```
+
+### Plot Figures 3 and 4
+
+```{r F1-fecundity-model-predictions-plot-rev}
+
+#Maternal
+
+predrob.F1.mat <- ggpredict(fec.F1.glm.rev1c.mat, c("par_temp_fac", "par_diet"), vcov.fun = "vcovHC", vcov.type = "HC")
+
+predFecF1.mat <- plot(predrob.F1.mat, rawdata = T, facet = T, connect.lines = T, ci.style = "errorbar", line.size = 1.5, dot.size = 5)  
+
+predFecF1_plot.mat <- predFecF1.mat  + 
+  labs(title = "Maternal diet", y = "Total fecundity\n(weeks 1 to 5)", x = "Temperature [degree Celsius]", color = "Parental\ndiet") + theme_classic(base_size = 23) 
+predFecF1_plot.mat
+
+#Paternal
+
+predrob.F1.pat <- ggpredict(fec.F1.glm.rev1c.pat, c("par_temp_fac", "par_diet"), vcov.fun = "vcovHC", vcov.type = "HC")
+plot(predrob.F1.pat, rawdata = T, facet = T, connect.lines = T, ci.style = "errorbar", line.size = 1.5, dot.size = 5)-> predFecF1.pat
+predFecF1_plot.pat <- predFecF1.pat + 
+  labs(title = "Paternal diet", y = "Total fecundity\n(weeks 1 to 5)", x = "Temperature [degree Celsius]", color = "Parental\ndiet") + theme_classic(base_size = 23)
+predFecF1_plot.pat
+```

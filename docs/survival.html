@@ -1,0 +1,2776 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Zajitschek et al." />
+
+<meta name="date" content="2023-06-01" />
+
+<title>Survival analyses</title>
+
+<script src="site_libs/header-attrs-2.22/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.0/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.0/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Temperature_x_Diet_D.melanogaster</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Overview</a>
+</li>
+<li>
+  <a href="survival.html">Survival</a>
+</li>
+<li>
+  <a href="fecundity.html">Female fecundity</a>
+</li>
+<li>
+  <a href="matingbehaviour.html">Male mating behaviour</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/zajitschek/Temperature_x_Diet_D.melanogaster">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Survival analyses</h1>
+<h4 class="author">Zajitschek et al.</h4>
+<h4 class="date">2023-06-01</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2023-06-26
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong>
+<code>Temperature_x_Diet_D.melanogaster/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20200903code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20200903)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20200903code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20200903)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzajitschekTemperaturexDietDmelanogastertree5a9dafbd215f0ecb94b8a604cb68142e689920aftargetblank5a9dafba">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/zajitschek/Temperature_x_Diet_D.melanogaster/tree/5a9dafbd215f0ecb94b8a604cb68142e689920af" target="_blank">5a9dafb</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomzajitschekTemperaturexDietDmelanogastertree5a9dafbd215f0ecb94b8a604cb68142e689920aftargetblank5a9dafba"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/zajitschek/Temperature_x_Diet_D.melanogaster/tree/5a9dafbd215f0ecb94b8a604cb68142e689920af" target="_blank">5a9dafb</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  FecF1_compound.pdf
+    Untracked:  FecF1_compound.png
+    Untracked:  Sig_effects_on_male_mating_behaviour_F2_plots_w_means.pdf
+    Untracked:  appraise.latF1mat.gamm1.png
+    Untracked:  appraise.latF1mat.gamm1log.png
+    Untracked:  data/fecF0.csv
+    Untracked:  data/fecF1.csv
+    Untracked:  data/malebehavF0.csv
+    Untracked:  data/malebehavF1.csv
+    Untracked:  data/malebehavF2.csv
+    Untracked:  data/malebehavF3.csv
+    Untracked:  data/survivalF1.csv
+    Untracked:  fec.F1.plot.pdf
+    Untracked:  latency_F0_mat_predicted.pdf
+    Untracked:  male_latency_F2_mat_predicted.pdf
+    Untracked:  male_latency_F2_pat_predicted.pdf
+    Untracked:  male_mating_behaviour_F0_plots.pdf
+    Untracked:  male_mating_behaviour_F0_plots.png
+    Untracked:  plotF0_fecundity.pdf
+    Untracked:  plotF0_fecundity.png
+    Untracked:  plotF0_fecundity_rev.pdf
+    Untracked:  plotF0_latency.pdf
+    Untracked:  plotF0_latency.png
+    Untracked:  plotF0_latencyTemponly.pdf
+    Untracked:  plotF0_latencyTemponly.png
+    Untracked:  plotF0_latency_rev.pdf
+    Untracked:  plotF1_fecundity.pdf
+    Untracked:  plotF1_fecundity.png
+    Untracked:  plotF1_fecundity_mat.pdf
+    Untracked:  plotF1_fecundity_mat_rev.pdf
+    Untracked:  plotF1_fecundity_mat_rev_afterINK.pdf
+    Untracked:  plotF1_fecundity_pat.pdf
+    Untracked:  plotF1_fecundity_pat_rev.pdf
+    Untracked:  plotF1_fecundity_pat_rev_aftterINK.pdf
+    Untracked:  plotF1_latency.pdf
+    Untracked:  plotF1_latency.png
+    Untracked:  plotF1pat_duration.pdf
+    Untracked:  plotF1pat_duration.png
+    Untracked:  plotF1pat_duration_rev.pdf
+    Untracked:  plotF2_mat+pat_latency+dur.png
+    Untracked:  plotF2_mat_latency.pdf
+    Untracked:  plotF2_mat_latency.png
+    Untracked:  plotF2_mat_latency_rev.pdf
+    Untracked:  plotF2_pat_dur.pdf
+    Untracked:  plotF2_pat_dur.png
+    Untracked:  plotF2_pat_dur_rev.pdf
+    Untracked:  survivalcurves.pdf
+    Untracked:  survivalcurves.png
+    Untracked:  survivalcurves8-6-21.pdf
+    Untracked:  survivalcurves8-6-21.png
+    Untracked:  survivalcurves_rev20-3-2023.jpg
+    Untracked:  survivalcurves_rev20-3-2023.pdf
+    Untracked:  survivalcurves_rev20-3-2023.svg
+    Untracked:  survivalcurves_rev20-3-2023_afterINK.pdf
+
+Unstaged changes:
+    Modified:   _workflowr.yml
+    Modified:   analysis/fecundity.Rmd
+    Modified:   analysis/matingbehaviour.Rmd
+    Modified:   analysis/survival.Rmd
+    Modified:   data/survival.csv
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/survival.Rmd</code>) and HTML
+(<code>docs/survival.html</code>) files. If you’ve configured a remote
+Git repository (see <code>?wflow_git_remote</code>), click on the
+hyperlinks in the table below to view the files as they were in that
+past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zajitschek/Temperature_x_Diet_D.melanogaster/5a9dafbd215f0ecb94b8a604cb68142e689920af/docs/survival.html" target="_blank">5a9dafb</a>
+</td>
+<td>
+zajitschek
+</td>
+<td>
+2023-06-25
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zajitschek/Temperature_x_Diet_D.melanogaster/blob/b9f595acd293b05819001b6507fd691556c50b1c/analysis/survival.Rmd" target="_blank">b9f595a</a>
+</td>
+<td>
+zajitschek
+</td>
+<td>
+2023-06-25
+</td>
+<td>
+25-6-2023
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zajitschek/Temperature_x_Diet_D.melanogaster/e99ccd9cf63a500201bb59a2d51428bf7808f080/docs/survival.html" target="_blank">e99ccd9</a>
+</td>
+<td>
+zajitschek
+</td>
+<td>
+2020-09-03
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zajitschek/Temperature_x_Diet_D.melanogaster/f85e01c9303d00df29ab593b745d65399b4c0442/docs/survival.html" target="_blank">f85e01c</a>
+</td>
+<td>
+zajitschek
+</td>
+<td>
+2020-09-03
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zajitschek/Temperature_x_Diet_D.melanogaster/blob/57bbb26b03fe391961145bb352eb70080bd9b904/analysis/survival.Rmd" target="_blank">57bbb26</a>
+</td>
+<td>
+zajitschek
+</td>
+<td>
+2020-09-03
+</td>
+<td>
+Analyze survival
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="load-libraries-and-helper-function" class="section level2">
+<h2>Load libraries and helper function</h2>
+<pre class="r"><code>library(readr)      # read data
+library(dplyr)      # data structure
+library(reshape2)   # data structure
+library(tidyverse)  # data structure
+library(rcompanion) # mean and median (+- bootstrapped CI)
+library(survival)   # survival analysis
+library(coxme)      # mixed-effects Cox proportional hazard model
+library(lme4)       # generalized linear mixed-effects model
+library(mgcv)       # generalized additive models for Cox regression
+library(MuMIn)      # AIC results table
+library(ggplot2)    # plot
+library(survminer)  # plot
+library(sjPlot)     # plot
+library(kableExtra) # table formatting
+library(splines)    # spline functions
+
+kable.table &lt;- function(df) {
+  kable(df, &quot;html&quot;) %&gt;%
+  kable_styling() %&gt;%
+  scroll_box(width = &quot;100%&quot;, height = &quot;300px&quot;, box_css = &quot;border: 0px;&quot;)
+}</code></pre>
+</div>
+<div id="load-survival-data-f0-and-f1" class="section level2">
+<h2>Load survival data (F0 and F1)</h2>
+<pre class="r"><code>#F0 survival data
+survival &lt;- read_csv(&quot;./data/survival.csv&quot;)
+survival$diet &lt;- as.factor(survival$diet)
+survival$vial_id &lt;- as.factor(survival$vial_id)
+survival$rep &lt;- as.factor(survival$rep)
+
+#F1 survival data
+survivalF1 &lt;- read_csv(&quot;./data/survivalF1.csv&quot;)
+survivalF1$par_diet &lt;- as.factor(survivalF1$par_diet)
+survivalF1$vial_id &lt;- as.factor(survivalF1$vial_id)
+survivalF1$rep &lt;- as.factor(survivalF1$rep)</code></pre>
+</div>
+<div id="f0-survival" class="section level2">
+<h2>F0 SURVIVAL</h2>
+<div id="calculate-f0-mean-lifespan-with-bootstrapped-ci"
+class="section level3">
+<h3>Calculate F0 mean lifespan with bootstrapped CI</h3>
+<pre class="r"><code># plot(survival$lifespan) # ok: no off-values/outliers
+# max(survival$lifespan)  # max. lifespan = 152 days
+
+# Bootstrap replicates for CI
+boot.ls &lt;- groupwiseMean(lifespan ~ sex*temperature*diet, data = survival, boot = T, bca = T) 
+medians.F1 &lt;- survival %&gt;% group_by(temperature, diet, sex) %&gt;%
+  summarise(., mean = mean(lifespan), se = sd(lifespan)/sqrt(length(lifespan)), sd = sd(lifespan), 
+   median = median(lifespan), n_vials = n_distinct(vial_id), n_inds = n()) %&gt;%
+  dplyr::select(sex, median, n_vials, n_inds)
+
+boot.ls2 &lt;- left_join(boot.ls, medians.F1) %&gt;%
+  dplyr::select(- c(n, Mean, Conf.level:Trad.upper))
+
+kable.table(boot.ls2)</code></pre>
+<div
+style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; overflow-x: scroll; width:100%; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+sex
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+temperature
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+diet
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Boot.mean
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Bca.lower
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Bca.upper
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+median
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+n_vials
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+n_inds
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:left;">
+0.4
+</td>
+<td style="text-align:right;">
+53.3
+</td>
+<td style="text-align:right;">
+46.7
+</td>
+<td style="text-align:right;">
+60.9
+</td>
+<td style="text-align:right;">
+36.5
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+119.0
+</td>
+<td style="text-align:right;">
+114.0
+</td>
+<td style="text-align:right;">
+123.0
+</td>
+<td style="text-align:right;">
+126.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:right;">
+122.0
+</td>
+<td style="text-align:right;">
+117.0
+</td>
+<td style="text-align:right;">
+126.0
+</td>
+<td style="text-align:right;">
+126.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+23
+</td>
+<td style="text-align:left;">
+0.4
+</td>
+<td style="text-align:right;">
+51.5
+</td>
+<td style="text-align:right;">
+47.5
+</td>
+<td style="text-align:right;">
+55.6
+</td>
+<td style="text-align:right;">
+52.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+23
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+69.1
+</td>
+<td style="text-align:right;">
+66.6
+</td>
+<td style="text-align:right;">
+70.9
+</td>
+<td style="text-align:right;">
+71.5
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+23
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:right;">
+70.1
+</td>
+<td style="text-align:right;">
+68.1
+</td>
+<td style="text-align:right;">
+71.8
+</td>
+<td style="text-align:right;">
+73.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:left;">
+0.4
+</td>
+<td style="text-align:right;">
+52.4
+</td>
+<td style="text-align:right;">
+49.8
+</td>
+<td style="text-align:right;">
+54.6
+</td>
+<td style="text-align:right;">
+54.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+56.4
+</td>
+<td style="text-align:right;">
+54.0
+</td>
+<td style="text-align:right;">
+58.7
+</td>
+<td style="text-align:right;">
+56.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:right;">
+53.9
+</td>
+<td style="text-align:right;">
+51.9
+</td>
+<td style="text-align:right;">
+55.5
+</td>
+<td style="text-align:right;">
+56.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+27
+</td>
+<td style="text-align:left;">
+0.4
+</td>
+<td style="text-align:right;">
+45.1
+</td>
+<td style="text-align:right;">
+43.0
+</td>
+<td style="text-align:right;">
+46.8
+</td>
+<td style="text-align:right;">
+49.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+27
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+40.4
+</td>
+<td style="text-align:right;">
+38.7
+</td>
+<td style="text-align:right;">
+41.8
+</td>
+<td style="text-align:right;">
+40.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+27
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:right;">
+40.3
+</td>
+<td style="text-align:right;">
+38.7
+</td>
+<td style="text-align:right;">
+41.6
+</td>
+<td style="text-align:right;">
+42.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+29
+</td>
+<td style="text-align:left;">
+0.4
+</td>
+<td style="text-align:right;">
+38.6
+</td>
+<td style="text-align:right;">
+36.4
+</td>
+<td style="text-align:right;">
+40.4
+</td>
+<td style="text-align:right;">
+40.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+29
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+37.7
+</td>
+<td style="text-align:right;">
+35.8
+</td>
+<td style="text-align:right;">
+39.3
+</td>
+<td style="text-align:right;">
+40.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+29
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:right;">
+34.0
+</td>
+<td style="text-align:right;">
+32.2
+</td>
+<td style="text-align:right;">
+35.7
+</td>
+<td style="text-align:right;">
+35.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:left;">
+0.4
+</td>
+<td style="text-align:right;">
+77.7
+</td>
+<td style="text-align:right;">
+73.0
+</td>
+<td style="text-align:right;">
+82.2
+</td>
+<td style="text-align:right;">
+75.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+73.6
+</td>
+<td style="text-align:right;">
+69.7
+</td>
+<td style="text-align:right;">
+77.3
+</td>
+<td style="text-align:right;">
+68.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:right;">
+77.6
+</td>
+<td style="text-align:right;">
+74.0
+</td>
+<td style="text-align:right;">
+81.5
+</td>
+<td style="text-align:right;">
+76.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+23
+</td>
+<td style="text-align:left;">
+0.4
+</td>
+<td style="text-align:right;">
+48.1
+</td>
+<td style="text-align:right;">
+45.8
+</td>
+<td style="text-align:right;">
+50.3
+</td>
+<td style="text-align:right;">
+47.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+23
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+49.5
+</td>
+<td style="text-align:right;">
+47.3
+</td>
+<td style="text-align:right;">
+51.8
+</td>
+<td style="text-align:right;">
+49.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+23
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:right;">
+45.8
+</td>
+<td style="text-align:right;">
+43.8
+</td>
+<td style="text-align:right;">
+47.8
+</td>
+<td style="text-align:right;">
+45.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:left;">
+0.4
+</td>
+<td style="text-align:right;">
+39.3
+</td>
+<td style="text-align:right;">
+37.8
+</td>
+<td style="text-align:right;">
+40.9
+</td>
+<td style="text-align:right;">
+40.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+37.3
+</td>
+<td style="text-align:right;">
+35.8
+</td>
+<td style="text-align:right;">
+38.7
+</td>
+<td style="text-align:right;">
+38.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:right;">
+34.1
+</td>
+<td style="text-align:right;">
+32.7
+</td>
+<td style="text-align:right;">
+35.7
+</td>
+<td style="text-align:right;">
+33.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+27
+</td>
+<td style="text-align:left;">
+0.4
+</td>
+<td style="text-align:right;">
+34.3
+</td>
+<td style="text-align:right;">
+32.8
+</td>
+<td style="text-align:right;">
+35.7
+</td>
+<td style="text-align:right;">
+35.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+27
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+29.5
+</td>
+<td style="text-align:right;">
+27.9
+</td>
+<td style="text-align:right;">
+30.9
+</td>
+<td style="text-align:right;">
+29.5
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+27
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:right;">
+26.1
+</td>
+<td style="text-align:right;">
+25.1
+</td>
+<td style="text-align:right;">
+27.4
+</td>
+<td style="text-align:right;">
+26.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+29
+</td>
+<td style="text-align:left;">
+0.4
+</td>
+<td style="text-align:right;">
+21.3
+</td>
+<td style="text-align:right;">
+19.7
+</td>
+<td style="text-align:right;">
+23.0
+</td>
+<td style="text-align:right;">
+24.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+29
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+19.3
+</td>
+<td style="text-align:right;">
+18.1
+</td>
+<td style="text-align:right;">
+20.8
+</td>
+<td style="text-align:right;">
+19.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+29
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:right;">
+20.5
+</td>
+<td style="text-align:right;">
+19.1
+</td>
+<td style="text-align:right;">
+21.8
+</td>
+<td style="text-align:right;">
+24.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div
+id="plot-f0-mean-lifespan-for-males-and-females-mean---95-ci-with-diet-a-b-or-temperature-c-d-on-x-axis-not-in-manuscript"
+class="section level3">
+<h3>Plot F0 mean lifespan for males and females (mean +- 95% CI) with
+diet (a, b) or temperature (c, d) on x-axis (not in manuscript)</h3>
+<pre class="r"><code>mycols &lt;- colors()[c(30, 62, 119, 504, 554)]
+
+# 1) Diet on x-, lifespan on y-axis
+
+plot.meanlifespan.m &lt;- ggplot(data= subset(boot.ls, sex== &quot;male&quot;), aes(x= as.factor(diet), y= Boot.mean, fill= as.factor(temperature))) +  
+    scale_fill_manual(values= mycols, name = &quot;Temperature&quot;) +
+        geom_bar(position=position_dodge(), stat = &quot;identity&quot;, colour=&quot;black&quot;) + 
+    geom_errorbar(aes(ymin= Bca.lower, ymax= Bca.upper), width=.4, colour=&quot;black&quot;,
+    position=position_dodge(0.9)) +
+  expand_limits(y = 120) +
+    ylab(&quot;Lifespan (days)&quot;)  + 
+    xlab(&quot;Diet&quot;)  + 
+    ggtitle(&quot;Male lifespan&quot;) + 
+    theme_bw(base_size = 18)+
+    theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
+    panel.border = element_blank(),  legend.position = &quot;none&quot;,
+    axis.line.x = element_line(), axis.line.y = element_line()) 
+
+plot.meanlifespan.f &lt;- ggplot(data= subset(boot.ls, sex== &quot;female&quot;), aes(x= as.factor(diet), y= Boot.mean, fill= as.factor(temperature))) +  
+    scale_fill_manual(values= mycols, name = &quot;Temp&quot;) +
+        geom_bar(position=position_dodge(), stat = &quot;identity&quot;, colour=&quot;black&quot;) + 
+    #geom_point(size = 3.5, position=position_dodge(0.1)) +     
+    geom_errorbar(aes(ymin= Bca.lower, ymax= Bca.upper), width=.4, colour=&quot;black&quot;,
+    position=position_dodge(0.9)) +
+  expand_limits(y = 120) +
+    ylab(&quot;Lifespan (days)&quot;)  + 
+    xlab(&quot;Diet&quot;)  + 
+    ggtitle(&quot;Female lifespan&quot;) + 
+    theme_bw(base_size = 18)+
+    theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
+    panel.border = element_blank(), legend.position = c(.89, .9), legend.text = element_text(size = 10), legend.title = element_text(size = 10), legend.key.size = unit(0.6, &quot;lines&quot;), 
+    axis.line.x = element_line(), axis.line.y = element_line()) 
+
+ggarrange(plot.meanlifespan.m, plot.meanlifespan.f,
+  labels = c(&quot;a&quot;, &quot;b&quot;),
+  ncol = 2, nrow = 1)</code></pre>
+<p><img src="figure/survival.Rmd/plot-F0-mean-lifespan-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># 2) Temperature on x-, lifespan on y-axis
+
+plot.meanlifespan2.m &lt;- ggplot(data= subset(boot.ls, sex== &quot;male&quot;), aes(x= as.factor(temperature), y= Boot.mean, fill= as.factor(diet))) +  
+    scale_fill_manual(values= mycols, name = &quot;Diet&quot;) +
+        geom_bar(position=position_dodge(), stat = &quot;identity&quot;, colour=&quot;black&quot;) + 
+    geom_errorbar(aes(ymin= Bca.lower, ymax= Bca.upper), width=.4, colour=&quot;black&quot;,
+    position=position_dodge(0.9)) +
+  expand_limits(y = 120) +
+    ylab(&quot;Lifespan (days)&quot;)  + 
+    xlab(&quot;Temperature&quot;)  + 
+    ggtitle(&quot;Male lifespan&quot;) + 
+    theme_bw(base_size = 18)+
+    theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
+    panel.border = element_blank(),  legend.position = &quot;none&quot;,
+    axis.line.x = element_line(), axis.line.y = element_line()) 
+
+plot.meanlifespan2.f &lt;- ggplot(data= subset(boot.ls, sex== &quot;female&quot;), aes(x= as.factor(temperature), y= Boot.mean, fill= as.factor(diet))) +  
+    scale_fill_manual(values= mycols, name = &quot;Diet&quot;) +
+        geom_bar(position=position_dodge(), stat = &quot;identity&quot;, colour=&quot;black&quot;) + 
+    geom_errorbar(aes(ymin= Bca.lower, ymax= Bca.upper), width=.4, colour=&quot;black&quot;,
+    position=position_dodge(0.9)) +
+  expand_limits(y = 120) +
+    ylab(&quot;Lifespan (days)&quot;)  + 
+    xlab(&quot;Temperature&quot;)  + 
+    ggtitle(&quot;Female lifespan&quot;) + 
+    theme_bw(base_size = 18)+
+    theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
+    panel.border = element_blank(), legend.position = c(.8, .8), legend.text = element_text(size = 10), legend.title = element_text(size = 10), legend.key.size = unit(0.6, &quot;lines&quot;),
+    axis.line.x = element_line(), axis.line.y = element_line()) 
+
+ggarrange(plot.meanlifespan2.m, plot.meanlifespan2.f,
+  labels = c(&quot;c&quot;, &quot;d&quot;),
+  ncol = 2, nrow = 1)</code></pre>
+<p><img src="figure/survival.Rmd/plot-F0-mean-lifespan-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div
+id="plot-figure-1-survival-curves-separate-plots-per-temperature-and-sex"
+class="section level3">
+<h3>Plot Figure 1: Survival curves (separate plots per temperature and
+sex)</h3>
+<pre class="r"><code>survival$groups &lt;- interaction(survival$sex, survival$temperature, survival$diet)
+
+surv.m21 &lt;- survfit(Surv(lifespan, status) ~ groups, conf.type = &quot;plain&quot;, data = subset(survival, sex == &quot;male&quot; &amp; temperature == &quot;21&quot;))
+surv.m23 &lt;- survfit(Surv(lifespan, status) ~ groups, conf.type = &quot;plain&quot;, data = subset(survival, sex == &quot;male&quot; &amp; temperature == &quot;23&quot;))
+surv.m25 &lt;- survfit(Surv(lifespan, status) ~ groups, conf.type = &quot;plain&quot;, data = subset(survival, sex == &quot;male&quot; &amp; temperature == &quot;25&quot;))
+surv.m27 &lt;- survfit(Surv(lifespan, status) ~ groups, conf.type = &quot;plain&quot;, data = subset(survival, sex == &quot;male&quot; &amp; temperature == &quot;27&quot;))
+surv.m29 &lt;- survfit(Surv(lifespan, status) ~ groups, conf.type = &quot;plain&quot;, data = subset(survival, sex == &quot;male&quot; &amp; temperature == &quot;29&quot;))
+surv.f21 &lt;- survfit(Surv(lifespan, status) ~ groups, conf.type = &quot;plain&quot;, data = subset(survival, sex == &quot;female&quot; &amp; temperature == &quot;21&quot;))
+surv.f23 &lt;- survfit(Surv(lifespan, status) ~ groups, conf.type = &quot;plain&quot;, data = subset(survival, sex == &quot;female&quot; &amp; temperature == &quot;23&quot;))
+surv.f25 &lt;- survfit(Surv(lifespan, status) ~ groups, conf.type = &quot;plain&quot;, data = subset(survival, sex == &quot;female&quot; &amp; temperature == &quot;25&quot;))
+surv.f27 &lt;- survfit(Surv(lifespan, status) ~ groups, conf.type = &quot;plain&quot;, data = subset(survival, sex == &quot;female&quot; &amp; temperature == &quot;27&quot;))
+surv.f29 &lt;- survfit(Surv(lifespan, status) ~ groups, conf.type = &quot;plain&quot;, data = subset(survival, sex == &quot;female&quot; &amp; temperature == &quot;29&quot;))
+
+# Set upper lifespan limit for all survival plots
+xmax &lt;- 154 # max(survival$lifespan) + 2  
+
+ggsurvplot(surv.m21, title = &quot;(a) Males at 21 degree Celsius&quot;, 
+  xlim = c(0, xmax), xlab = &quot;Age (days)&quot;, break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = &quot;right&quot;, 
+  legend.title = &quot;&quot;, data = subset(survival, sex==&quot;male&quot; &amp; temperature == &quot;21&quot;),
+  legend.labs = c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;))
+
+ggsurvplot(surv.m23, title = &quot;(c) males at 23 degree Celsius&quot;, 
+  xlim = c(0, xmax), xlab = &quot;Age (days)&quot;, break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = &quot;right&quot;, 
+  legend.title = &quot;&quot;, data = subset(survival, sex==&quot;male&quot; &amp; temperature == &quot;23&quot;),
+  legend.labs = c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;))
+
+ggsurvplot(surv.m25, title = &quot;(e) males at 25 degree Celsius&quot;, 
+  xlim = c(0, xmax), xlab = &quot;Age (days)&quot;, break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = &quot;right&quot;, 
+  legend.title = &quot;&quot;, data = subset(survival, sex==&quot;male&quot; &amp; temperature == &quot;25&quot;),
+  legend.labs = c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;))
+
+ggsurvplot(surv.m27, title = &quot;(g) males at 27 degree Celsius&quot;,
+  xlim = c(0, xmax), xlab = &quot;Age (days)&quot;, break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = &quot;right&quot;, 
+  legend.title = &quot;&quot;, data = subset(survival, sex==&quot;male&quot; &amp; temperature == &quot;27&quot;),
+  legend.labs = c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;))
+
+ggsurvplot(surv.m29, title = &quot;(i) males at 29 degree Celsius&quot;,
+  xlim = c(0, xmax), xlab = &quot;Age (days)&quot;, break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = &quot;right&quot;, 
+  legend.title = &quot;&quot;, data = subset(survival, sex==&quot;male&quot; &amp; temperature == &quot;29&quot;),
+  legend.labs = c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;))
+
+ggsurvplot(surv.f21, title = &quot;(b) females at 21 degree Celsius&quot;,
+  xlim = c(0, xmax), xlab = &quot;Age (days)&quot;, break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = &quot;right&quot;, 
+  legend.title = &quot;&quot;, legend.labs = c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;),
+  data = subset(survival, sex==&quot;female&quot; &amp; temperature == &quot;21&quot;))
+
+ggsurvplot(surv.f23, title = &quot;(d) females at 23 degree Celsius&quot;,
+  xlim = c(0, xmax), xlab = &quot;Age (days)&quot;, break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = &quot;right&quot;, 
+  legend.title = &quot;&quot;, legend.labs = c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;),
+  data = subset(survival, sex==&quot;female&quot; &amp; temperature == &quot;23&quot;))
+
+ggsurvplot(surv.f25, title = &quot;(f) females at 25 degree Celsius&quot;, 
+  xlim = c(0, xmax), xlab = &quot;Age (days)&quot;, break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = &quot;right&quot;, 
+  legend.title = &quot;&quot;, legend.labs = c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;),
+  data = subset(survival, sex==&quot;female&quot; &amp; temperature == &quot;25&quot;))
+
+ggsurvplot(surv.f27, title = &quot;(h) females at 27 degree Celsius&quot;, 
+  xlim = c(0, xmax), xlab = &quot;Age (days)&quot;, break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = &quot;right&quot;, 
+  legend.title = &quot;&quot;, legend.labs = c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;),
+  data = subset(survival, sex==&quot;female&quot; &amp; temperature == &quot;27&quot;))
+
+ggsurvplot(surv.f29, title = &quot;(j) females at 29 degree Celsius&quot;, 
+  xlim = c(0, xmax), xlab = &quot;Age (days)&quot;, break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = &quot;right&quot;, 
+  legend.title = &quot;&quot;, legend.labs = c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;),
+  data = subset(survival, sex==&quot;female&quot; &amp; temperature == &quot;29&quot;))</code></pre>
+<p><img src="figure/survival.Rmd/F0-survival-curves-fig-1.png" width="70%" style="display: block; margin: auto;" /><img src="figure/survival.Rmd/F0-survival-curves-fig-2.png" width="70%" style="display: block; margin: auto;" /><img src="figure/survival.Rmd/F0-survival-curves-fig-3.png" width="70%" style="display: block; margin: auto;" /><img src="figure/survival.Rmd/F0-survival-curves-fig-4.png" width="70%" style="display: block; margin: auto;" /><img src="figure/survival.Rmd/F0-survival-curves-fig-5.png" width="70%" style="display: block; margin: auto;" /><img src="figure/survival.Rmd/F0-survival-curves-fig-6.png" width="70%" style="display: block; margin: auto;" /><img src="figure/survival.Rmd/F0-survival-curves-fig-7.png" width="70%" style="display: block; margin: auto;" /><img src="figure/survival.Rmd/F0-survival-curves-fig-8.png" width="70%" style="display: block; margin: auto;" /><img src="figure/survival.Rmd/F0-survival-curves-fig-9.png" width="70%" style="display: block; margin: auto;" /><img src="figure/survival.Rmd/F0-survival-curves-fig-10.png" width="70%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="f0-survival-analyses" class="section level2">
+<h2>F0 Survival analyses</h2>
+<div id="data-preparation-f0-survival" class="section level3">
+<h3>Data preparation F0 survival</h3>
+<pre class="r"><code># Create grouping variables
+survival$combined &lt;- interaction(survival$sex, survival$diet, survival$temperature)
+survival$specificvial &lt;- interaction(survival$combined, survival$rep)
+
+# Create subsets for each temperature
+survival.21 &lt;- subset(survival, temperature == &quot;21&quot;)
+survival.23 &lt;- subset(survival, temperature == &quot;23&quot;)
+survival.25 &lt;- subset(survival, temperature == &quot;25&quot;)
+survival.27 &lt;- subset(survival, temperature == &quot;27&quot;)
+survival.29 &lt;- subset(survival, temperature == &quot;29&quot;)</code></pre>
+</div>
+</div>
+<div id="sex-specific-mixed-cox-proportional-hazards-model-f0"
+class="section level2">
+<h2>Sex-specific mixed Cox Proportional Hazards model F0</h2>
+<div id="f0-females-cox-ph-proportionality-assumption-test"
+class="section level3">
+<h3>1) F0 females, Cox PH: proportionality assumption test</h3>
+<pre class="r"><code># Model specification
+cox.female &lt;- coxme(Surv(lifespan, status) ~ diet*temperature + (1|specificvial), 
+  data= subset(survival, sex == &quot;female&quot;))
+
+#Cox proportionality assumption test: all effects p &lt; 0.001 =&gt; violated
+cox.zph(coxph(Surv(lifespan, status) ~ diet*temperature, data= subset(survival, sex == &quot;female&quot;)))</code></pre>
+<pre><code>                 chisq df      p
+diet               209  2 &lt;2e-16
+temperature        460  1 &lt;2e-16
+diet:temperature   247  2 &lt;2e-16
+GLOBAL             677  5 &lt;2e-16</code></pre>
+</div>
+</div>
+<div
+id="discrete-time-survival-models-since-proportionality-assumption-is-violated"
+class="section level2">
+<h2>Discrete time survival models, since proportionality assumption is
+violated</h2>
+<div
+id="data-preparation-and-model-specifications-for-males-and-females-inspect-code-for-model-specifications-used-in-model-selection-tables-below"
+class="section level3">
+<h3>Data preparation and model specifications for males and females
+(inspect code for model specifications used in model selection tables
+below)</h3>
+<pre class="r"><code># Convert into long data format
+survival$indspec &lt;- with(survival, interaction(vial_id, ind))
+
+survival_long &lt;- survival %&gt;% group_by(indspec) %&gt;% 
+  complete(lifespan = seq(1, max(lifespan)-1), nesting(vial_id, temperature, diet, sex, rep, ind, combined, specificvial), fill = list(status = 0)) 
+
+survival_long$temp_fac &lt;- as.factor(survival_long$temperature)
+
+# Females
+glmer_surv_fem_F0_1 &lt;- glmer(status ~ diet * ns(temperature)  + (1|specificvial),family = binomial, data = subset(survival_long, sex == &quot;female&quot;), nAGQ = 0)
+
+glmer_surv_fem_F0_2 &lt;- glmer(status ~ diet + ns(temperature)  + (1|specificvial),family = &quot;binomial&quot;, data = subset(survival_long, sex == &quot;female&quot;), nAGQ = 0)
+
+glmer_surv_fem_F0_3 &lt;- glmer(status ~ ns(temperature)  + (1|specificvial),family = &quot;binomial&quot;, data = subset(survival_long, sex == &quot;female&quot;), nAGQ = 0)
+
+glmer_surv_fem_F0_4 &lt;- glmer(status ~ diet  + (1|specificvial),family = &quot;binomial&quot;, data = subset(survival_long, sex == &quot;female&quot;), nAGQ = 0)
+
+glmer_surv_fem_F0_5 &lt;- glmer(status ~ 1  + (1|specificvial),family = &quot;binomial&quot;, data = subset(survival_long, sex == &quot;female&quot;), nAGQ = 0)
+
+
+# Males 
+glmer_surv_mal_F0_1 &lt;- glmer(status ~ diet * ns(temperature)  + (1|specificvial),family = &quot;binomial&quot;, data = subset(survival_long, sex == &quot;male&quot;), nAGQ = 0)
+
+glmer_surv_mal_F0_2 &lt;- glmer(status ~ diet + ns(temperature)  + (1|specificvial),family = &quot;binomial&quot;, data = subset(survival_long, sex == &quot;male&quot;), nAGQ = 0)
+
+glmer_surv_mal_F0_3 &lt;- glmer(status ~ ns(temperature)  + (1|specificvial),family = &quot;binomial&quot;, data = subset(survival_long, sex == &quot;male&quot;), nAGQ = 0)
+
+glmer_surv_mal_F0_4 &lt;- glmer(status ~ diet  + (1|specificvial),family = &quot;binomial&quot;, data = subset(survival_long, sex == &quot;male&quot;), nAGQ = 0)
+
+glmer_surv_mal_F0_5 &lt;- glmer(status ~ 1 + (1|specificvial), family = &quot;binomial&quot;, data = subset(survival_long, sex == &quot;male&quot;), nAGQ = 0)</code></pre>
+</div>
+<div id="compare-models-for-females-using-aic-table-s4"
+class="section level3">
+<h3>Compare models for females, using AIC (Table S4)</h3>
+<pre class="r"><code>model.sel(glmer_surv_fem_F0_1, glmer_surv_fem_F0_2 ,glmer_surv_fem_F0_3, glmer_surv_fem_F0_4, glmer_surv_fem_F0_5, rank = AIC)</code></pre>
+<pre><code>Model selection table 
+                     (Int) dit ns(tmp) dit:ns(tmp) df    logLik     AIC  delta
+glmer_surv_fem_F0_1 -4.007   +  0.3958           +  7 -7489.566 14993.1   0.00
+glmer_surv_fem_F0_2 -4.341   +  1.1750              5 -7506.142 15022.3  29.15
+glmer_surv_fem_F0_3 -4.486      1.2160              3 -7511.680 15029.4  36.23
+glmer_surv_fem_F0_4 -3.845   +                      4 -7579.294 15166.6 173.45
+glmer_surv_fem_F0_5 -4.002                          2 -7584.942 15173.9 180.75
+                    weight
+glmer_surv_fem_F0_1      1
+glmer_surv_fem_F0_2      0
+glmer_surv_fem_F0_3      0
+glmer_surv_fem_F0_4      0
+glmer_surv_fem_F0_5      0
+Models ranked by AIC(x) 
+Random terms (all models): 
+  1 | specificvial</code></pre>
+</div>
+<div id="compare-models-for-males-using-aic-table-s4"
+class="section level3">
+<h3>Compare models for males, using AIC (Table S4)</h3>
+<pre class="r"><code>model.sel(glmer_surv_mal_F0_1, glmer_surv_mal_F0_2 ,glmer_surv_mal_F0_3, glmer_surv_mal_F0_4, glmer_surv_mal_F0_5, rank = AIC)</code></pre>
+<pre><code>Model selection table 
+                     (Int) dit ns(tmp) dit:ns(tmp) df    logLik     AIC  delta
+glmer_surv_mal_F0_3 -4.258       1.598              3 -6948.044 13902.1   0.00
+glmer_surv_mal_F0_2 -4.317   +   1.601              5 -6946.642 13903.3   1.20
+glmer_surv_mal_F0_1 -4.275   +   1.497           +  7 -6946.322 13906.6   4.56
+glmer_surv_mal_F0_5 -3.632                          2 -7066.850 14137.7 235.61
+glmer_surv_mal_F0_4 -3.687   +                      4 -7066.288 14140.6 238.49
+                    weight
+glmer_surv_mal_F0_3  0.605
+glmer_surv_mal_F0_2  0.333
+glmer_surv_mal_F0_1  0.062
+glmer_surv_mal_F0_5  0.000
+glmer_surv_mal_F0_4  0.000
+Models ranked by AIC(x) 
+Random terms (all models): 
+  1 | specificvial</code></pre>
+</div>
+</div>
+<div id="logrank-tests-f0-survival-females-table-s5"
+class="section level2">
+<h2>Logrank tests F0 survival: Females (Table S5)</h2>
+<div id="f0-females-diet-effect-at-21-degree-celsius"
+class="section level3">
+<h3>1) F0 females: Diet effect at 21 degree Celsius</h3>
+<pre class="r"><code>f21 &lt;- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.21, sex == &quot;female&quot;))
+print(f21, digits = 3)</code></pre>
+<pre><code>
+    Pairwise comparisons using Log-Rank test 
+
+data:  subset(survival.21, sex == &quot;female&quot;) and diet 
+
+    0.4    1    
+1   &lt;2e-16 -    
+1.5 &lt;2e-16 0.123
+
+P value adjustment method: BH </code></pre>
+</div>
+<div id="f0-females-diet-effect-at-23-degree-celsius"
+class="section level3">
+<h3>2) F0 females: Diet effect at 23 degree Celsius</h3>
+<pre class="r"><code>f23 &lt;- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.23, sex == &quot;female&quot;))
+print(f23, digits = 3)</code></pre>
+<pre><code>
+    Pairwise comparisons using Log-Rank test 
+
+data:  subset(survival.23, sex == &quot;female&quot;) and diet 
+
+    0.4      1       
+1   0.000312 -       
+1.5 8.12e-05 0.485782
+
+P value adjustment method: BH </code></pre>
+</div>
+<div id="f0-females-diet-effect-at-25-degree-celsius"
+class="section level3">
+<h3>3) F0 females: Diet effect at 25 degree Celsius</h3>
+<pre class="r"><code>f25 &lt;- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.25, sex == &quot;female&quot;))
+print(f25, digits = 3)</code></pre>
+<pre><code>
+    Pairwise comparisons using Log-Rank test 
+
+data:  subset(survival.25, sex == &quot;female&quot;) and diet 
+
+    0.4    1     
+1   0.0185 -     
+1.5 0.7187 0.0185
+
+P value adjustment method: BH </code></pre>
+</div>
+<div id="f0-females-diet-effect-at-27-degree-celsius"
+class="section level3">
+<h3>4) F0 females: Diet effect at 27 degree Celsius</h3>
+<pre class="r"><code>f27 &lt;- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.27, sex == &quot;female&quot;))
+print(f27, digits = 3)</code></pre>
+<pre><code>
+    Pairwise comparisons using Log-Rank test 
+
+data:  subset(survival.27, sex == &quot;female&quot;) and diet 
+
+    0.4      1    
+1   1.21e-07 -    
+1.5 2.21e-10 0.514
+
+P value adjustment method: BH </code></pre>
+</div>
+<div id="f0-females-diet-effect-at-29-degree-celsius"
+class="section level3">
+<h3>5) F0 females: Diet effect at 29 degree Celsius</h3>
+<pre class="r"><code>f29 &lt;- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.29, sex == &quot;female&quot;))
+print(f29, digits = 3)</code></pre>
+<pre><code>
+    Pairwise comparisons using Log-Rank test 
+
+data:  subset(survival.29, sex == &quot;female&quot;) and diet 
+
+    0.4      1     
+1   0.0156   -     
+1.5 1.61e-05 0.0074
+
+P value adjustment method: BH </code></pre>
+</div>
+</div>
+<div id="logrank-tests-f0-survival-males-table-s5"
+class="section level2">
+<h2>Logrank tests F0 survival: Males (Table S5)</h2>
+<div id="f0-males-diet-effect-at-21-degree-celsius"
+class="section level3">
+<h3>1) F0 males: Diet effect at 21 degree Celsius</h3>
+<pre class="r"><code>m21 &lt;- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.21, sex == &quot;male&quot;))
+print(m21, digits = 3)</code></pre>
+<pre><code>
+    Pairwise comparisons using Log-Rank test 
+
+data:  subset(survival.21, sex == &quot;male&quot;) and diet 
+
+    0.4   1    
+1   0.248 -    
+1.5 0.428 0.352
+
+P value adjustment method: BH </code></pre>
+</div>
+<div id="f0-males-diet-effect-at-23-degree-celsius"
+class="section level3">
+<h3>2) F0 males: Diet effect at 23 degree Celsius</h3>
+<pre class="r"><code>m23 &lt;- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.23, sex == &quot;male&quot;))
+print(m23, digits = 3)</code></pre>
+<pre><code>
+    Pairwise comparisons using Log-Rank test 
+
+data:  subset(survival.23, sex == &quot;male&quot;) and diet 
+
+    0.4    1     
+1   0.3993 -     
+1.5 0.0727 0.0239
+
+P value adjustment method: BH </code></pre>
+</div>
+<div id="f0-males-diet-effect-at-25-degree-celsius"
+class="section level3">
+<h3>3) F0 males: Diet effect at 25 degree Celsius</h3>
+<pre class="r"><code>m25 &lt;- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.25, sex == &quot;male&quot;))
+print(m25, digits = 3)</code></pre>
+<pre><code>
+    Pairwise comparisons using Log-Rank test 
+
+data:  subset(survival.25, sex == &quot;male&quot;) and diet 
+
+    0.4      1     
+1   0.0367   -     
+1.5 2.17e-05 0.0178
+
+P value adjustment method: BH </code></pre>
+</div>
+<div id="f0-males-diet-effect-at-27-degree-celsius"
+class="section level3">
+<h3>4) F0 males: Diet effect at 27 degree Celsius</h3>
+<pre class="r"><code>m27 &lt;- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.27, sex == &quot;male&quot;))
+print(m27, digits = 3)</code></pre>
+<pre><code>
+    Pairwise comparisons using Log-Rank test 
+
+data:  subset(survival.27, sex == &quot;male&quot;) and diet 
+
+    0.4      1       
+1   1.28e-05 -       
+1.5 8.19e-14 6.44e-05
+
+P value adjustment method: BH </code></pre>
+</div>
+<div id="f0-males-diet-effect-at-29-degree-celsius"
+class="section level3">
+<h3>5) F0 males: Diet effect at 29 degree Celsius</h3>
+<pre class="r"><code>m29 &lt;- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.29, sex == &quot;male&quot;))
+print(m29, digits = 3)</code></pre>
+<pre><code>
+    Pairwise comparisons using Log-Rank test 
+
+data:  subset(survival.29, sex == &quot;male&quot;) and diet 
+
+    0.4    1     
+1   0.0607 -     
+1.5 0.2118 0.1460
+
+P value adjustment method: BH </code></pre>
+</div>
+</div>
+<div id="f1-survival" class="section level2">
+<h2>F1 SURVIVAL</h2>
+<div id="explore-f1-survival-data" class="section level3">
+<h3>Explore F1 survival data</h3>
+<pre class="r"><code># plot(survivalF1$lifespan) # ok: no off-values/outliers
+# max(survivalF1$lifespan)  # max. lifespan = 100 days
+
+survivalF1 %&gt;% group_by(par_temp, par_diet, sex) %&gt;%
+  summarise(., mean = mean(lifespan), se = sd(lifespan)/sqrt(length(lifespan)), sd = sd(lifespan), 
+   median = median(lifespan), n_vials = n_distinct(vial_id), n_inds = n())</code></pre>
+<pre><code># A tibble: 30 × 9
+# Groups:   par_temp, par_diet [15]
+   par_temp par_diet sex    mean    se    sd median n_vials n_inds
+      &lt;dbl&gt; &lt;fct&gt;    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;int&gt;  &lt;int&gt;
+ 1       21 0.4      f      76.5  1.93 14.9      79       4     60
+ 2       21 0.4      m      59.8  1.74 13.5      61       4     60
+ 3       21 1        f      81.1  1.15  8.93     82       4     60
+ 4       21 1        m      58.2  1.71 13.2      59       4     60
+ 5       21 1.5      f      81    1.02  7.88     80       4     60
+ 6       21 1.5      m      57.4  1.96 15.2      59       4     60
+ 7       23 0.4      f      76.4  2.33 18.0      80       4     60
+ 8       23 0.4      m      57.5  1.72 13.3      57       4     60
+ 9       23 1        f      78.6  1.84 14.2      82       4     60
+10       23 1        m      56.4  1.93 14.9      57       4     60
+# ℹ 20 more rows</code></pre>
+</div>
+<div id="calculate-f1-mean-lifespan-with-bootstrapped-ci"
+class="section level3">
+<h3>Calculate F1 mean lifespan with bootstrapped CI</h3>
+<pre class="r"><code>bootF1.ls &lt;- groupwiseMean(lifespan ~ par_temp*par_diet*sex, data = survivalF1, boot = T, bca = T)  #5000 bootstrap replicates for CI
+bootF1.ls</code></pre>
+<pre><code>   par_temp par_diet sex  n Mean Boot.mean Conf.level Trad.lower Trad.upper
+1        21      0.4   f 60 76.5      76.5       0.95       72.6       80.4
+2        21      0.4   m 60 59.8      59.8       0.95       56.3       63.3
+3        21        1   f 60 81.1      81.1       0.95       78.8       83.4
+4        21        1   m 60 58.2      58.2       0.95       54.8       61.6
+5        21      1.5   f 60 81.0      81.0       0.95       79.0       83.0
+6        21      1.5   m 60 57.4      57.4       0.95       53.5       61.3
+7        23      0.4   f 60 76.4      76.5       0.95       71.7       81.1
+8        23      0.4   m 60 57.5      57.5       0.95       54.1       61.0
+9        23        1   f 60 78.6      78.6       0.95       75.0       82.3
+10       23        1   m 60 56.4      56.4       0.95       52.5       60.2
+11       23      1.5   f 60 77.8      77.8       0.95       75.0       80.6
+12       23      1.5   m 60 60.9      60.9       0.95       57.1       64.7
+13       25      0.4   f 60 81.1      81.1       0.95       79.4       82.7
+14       25      0.4   m 60 58.6      58.6       0.95       55.6       61.6
+15       25        1   f 60 80.5      80.5       0.95       78.1       82.9
+16       25        1   m 60 55.7      55.7       0.95       51.9       59.5
+17       25      1.5   f 60 80.0      80.1       0.95       77.1       83.0
+18       25      1.5   m 60 55.6      55.6       0.95       52.2       58.9
+19       27      0.4   f 60 77.0      77.0       0.95       74.0       79.9
+20       27      0.4   m 60 57.8      57.8       0.95       55.1       60.6
+21       27        1   f 60 77.0      77.0       0.95       75.0       79.0
+22       27        1   m 60 59.3      59.3       0.95       55.8       62.9
+23       27      1.5   f 60 78.8      78.9       0.95       75.3       82.4
+24       27      1.5   m 60 59.2      59.2       0.95       56.5       61.8
+25       29      0.4   f 60 77.3      77.3       0.95       75.4       79.3
+26       29      0.4   m 60 57.3      57.3       0.95       53.3       61.4
+27       29        1   f 60 80.1      80.1       0.95       77.0       83.2
+28       29        1   m 60 58.0      57.9       0.95       54.3       61.6
+29       29      1.5   f 60 81.0      81.0       0.95       78.8       83.3
+30       29      1.5   m 60 56.3      56.3       0.95       53.0       59.6
+   Bca.lower Bca.upper
+1       71.5      79.4
+2       56.5      63.1
+3       78.7      83.2
+4       54.5      61.2
+5       78.9      82.9
+6       53.1      61.0
+7       70.8      80.1
+8       53.8      60.6
+9       73.7      81.5
+10      52.4      59.8
+11      74.4      80.1
+12      56.9      64.3
+13      79.4      82.6
+14      55.6      61.4
+15      77.8      82.4
+16      51.5      59.0
+17      76.7      82.7
+18      52.1      58.6
+19      72.1      79.0
+20      55.2      60.6
+21      74.8      78.7
+22      55.7      62.6
+23      74.9      81.7
+24      56.4      61.6
+25      75.5      79.2
+26      53.0      60.8
+27      75.5      82.2
+28      54.4      61.2
+29      78.5      83.0
+30      52.8      59.2</code></pre>
+</div>
+<div id="plot-f1-mean-lifespan-for-males-and-females-not-in-manuscript"
+class="section level3">
+<h3>Plot F1 mean lifespan for males and females (not in manuscript)</h3>
+<pre class="r"><code>mycols &lt;- colors()[c(30, 62, 119, 504, 554)]
+
+plotF1.meanlifespan.m &lt;- ggplot(data= subset(bootF1.ls, sex== &quot;m&quot;), aes(x= as.factor(par_diet), y= Boot.mean, fill= as.factor(par_temp))) +  
+    #scale_fill_grey(start=0.8, end=0.3, name = &quot;Temperature&quot;) +
+    scale_fill_manual(values= mycols, name = &quot;Parental\ntemperature&quot;) +
+        geom_bar(position=position_dodge(), stat = &quot;identity&quot;, colour=&quot;black&quot;) + 
+    #geom_point(size = 3.5, position=position_dodge(0.1)) +     
+    geom_errorbar(aes(ymin= Bca.lower, ymax= Bca.upper), width=.4, colour=&quot;black&quot;,
+    position=position_dodge(0.9)) +
+  expand_limits(y = 82) +
+    ylab(&quot;Lifespan (days)&quot;)  + 
+    xlab(&quot;Parental diet&quot;)  + 
+    ggtitle(&quot;Male lifespan (mean \U00B1 95% CI)&quot;) + 
+    theme_bw(base_size = 18)+
+    theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
+    panel.border = element_blank(), 
+    axis.line.x = element_line(), axis.line.y = element_line()) 
+
+plotF1.meanlifespan.f &lt;- ggplot(data= subset(bootF1.ls, sex== &quot;f&quot;), aes(x= as.factor(par_diet), y= Boot.mean, fill= as.factor(par_temp))) +  
+    #scale_fill_grey(start=0.8, end=0.3, name = &quot;Temperature&quot;) +
+    scale_fill_manual(values= mycols, name = &quot;Parental\ntemperature&quot;) +
+        geom_bar(position=position_dodge(), stat = &quot;identity&quot;, colour=&quot;black&quot;) + 
+    #geom_point(size = 3.5, position=position_dodge(0.1)) +     
+    geom_errorbar(aes(ymin= Bca.lower, ymax= Bca.upper), width=.4, colour=&quot;black&quot;,
+    position=position_dodge(0.9)) +
+  expand_limits(y = 82) +
+    ylab(&quot;Lifespan (days)&quot;)  + 
+    xlab(&quot;Parental diet&quot;)  + 
+    ggtitle(&quot;Female lifespan (mean \U00B1 95% CI)&quot;) + 
+    theme_bw(base_size = 18)+
+    theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
+    panel.border = element_blank(), 
+    axis.line.x = element_line(), axis.line.y = element_line()) 
+
+plotF1.meanlifespan.m</code></pre>
+<p><img src="figure/survival.Rmd/plot-F1-mean-lifespan-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plotF1.meanlifespan.f</code></pre>
+<p><img src="figure/survival.Rmd/plot-F1-mean-lifespan-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="f1-survival-analyses" class="section level2">
+<h2>F1 Survival analyses</h2>
+<div id="data-preparation-f1-survival" class="section level3">
+<h3>Data preparation F1 survival</h3>
+<pre class="r"><code># Create grouping variables
+survivalF1$combined &lt;- interaction(survivalF1$sex, survivalF1$par_diet, survivalF1$par_temp)
+survivalF1$specificvial &lt;- interaction(survivalF1$combined, survivalF1$rep)</code></pre>
+</div>
+</div>
+<div id="sex-specific-mixed-cox-proportional-hazards-models-f1"
+class="section level2">
+<h2>Sex-specific mixed Cox Proportional Hazards models F1</h2>
+<div
+id="f1-females-cox-ph-model-summary-table-s6-and-proportionality-assumption-test"
+class="section level3">
+<h3>1) F1 females, Cox PH: Model summary (Table S6) and proportionality
+assumption test</h3>
+<pre class="r"><code># Model specification: par_eff represents either maternal or paternal effects
+coxF1.f1 &lt;- coxme(Surv(lifespan, status) ~ par_eff*par_temp*par_diet + (1|specificvial), data = subset(survivalF1, sex == &quot;f&quot;))
+
+# Model summary (custom function extracts 3 digit z- and p-value)
+extract_coxme_table &lt;- function (mod){
+        beta &lt;- mod$coefficients #$fixed is not needed
+        nvar &lt;- length(beta)
+        nfrail &lt;- nrow(mod$var) - nvar
+        se &lt;- sqrt(diag(mod$var)[nfrail + 1:nvar])
+        z&lt;- round(beta/se, 3)
+        p&lt;- signif(1 - pchisq((beta/se)^2, 1), 3)
+        table=data.frame(cbind(z,p))
+        return(table)
+    }
+#extract_coxme_table(coxF1.f1)
+summary(coxF1.f1, digits = 3)</code></pre>
+<pre><code>Cox mixed-effects model fit by maximum likelihood
+  Data: subset(survivalF1, sex == &quot;f&quot;)
+  events, n = 900, 900
+  Iterations= 24 123 
+                    NULL Integrated    Fitted
+Log-likelihood -5226.476  -5208.595 -5192.722
+
+                  Chisq   df        p  AIC   BIC
+Integrated loglik  35.8 12.0 3.54e-04 11.8 -45.9
+ Penalized loglik  67.5 22.1 1.72e-06 23.3 -82.8
+
+Model:  Surv(lifespan, status) ~ par_eff * par_temp * par_diet + (1 |      specificvial) 
+Fixed coefficients
+                                    coef exp(coef) se(coef)     z    p
+par_effpat                       0.36091     1.435   1.0561  0.34 0.73
+par_temp                         0.05224     1.054   0.0342  1.53 0.13
+par_diet1                       -0.81279     0.444   1.2200 -0.67 0.51
+par_diet1.5                      1.09591     2.992   1.2206  0.90 0.37
+par_effpat:par_temp             -0.02540     0.975   0.0420 -0.61 0.55
+par_effpat:par_diet1             0.73790     2.092   1.4747  0.50 0.62
+par_effpat:par_diet1.5           0.11981     1.127   1.4800  0.08 0.94
+par_temp:par_diet1               0.01836     1.019   0.0484  0.38 0.70
+par_temp:par_diet1.5            -0.05926     0.942   0.0485 -1.22 0.22
+par_effpat:par_temp:par_diet1   -0.01648     0.984   0.0586 -0.28 0.78
+par_effpat:par_temp:par_diet1.5  0.00242     1.002   0.0588  0.04 0.97
+
+Random effects
+ Group        Variable  Std Dev Variance
+ specificvial Intercept 0.1716  0.0294  </code></pre>
+<pre class="r"><code>f1.zph &lt;- coxph(Surv(lifespan, status) ~ par_eff*par_temp*par_diet, data = survivalF1)
+cox.zph(coxph(Surv(lifespan, status) ~ par_eff*par_temp*par_diet, data = survivalF1))</code></pre>
+<pre><code>                             chisq df     p
+par_eff                   3.78e-05  1 0.995
+par_temp                  2.34e+00  1 0.126
+par_diet                  6.71e+00  2 0.035
+par_eff:par_temp          3.16e-03  1 0.955
+par_eff:par_diet          1.86e+00  2 0.395
+par_temp:par_diet         5.78e+00  2 0.056
+par_eff:par_temp:par_diet 2.08e+00  2 0.354
+GLOBAL                    1.73e+01 11 0.099</code></pre>
+</div>
+<div
+id="female-f1-survival-with-model-simplification-model-selection-table-for-model-specifications-see-code"
+class="section level3">
+<h3>Female F1 survival with model simplification: model selection table
+(for model specifications, see code)</h3>
+<pre class="r"><code># coxF1.f1 without 3-way interaction par_eff:par_temp:par_diet
+coxF1.f2 &lt;- coxme(Surv(lifespan, status) ~ par_eff*par_temp*par_diet - par_eff:par_temp:par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == &quot;f&quot;))
+
+# Model summary (custom function extracts 3 digit z- and p-value)
+extract_coxme_table &lt;- function (mod){
+        beta &lt;- mod$coefficients #$fixed is not needed
+        nvar &lt;- length(beta)
+        nfrail &lt;- nrow(mod$var) - nvar
+        se &lt;- sqrt(diag(mod$var)[nfrail + 1:nvar])
+        z&lt;- round(beta/se, 3)
+        p&lt;- signif(1 - pchisq((beta/se)^2, 1), 3)
+        table=data.frame(cbind(z,p))
+        return(table)
+    }
+#extract_coxme_table(coxF1.f2)
+#summary(coxF1.f2, digits = 3)
+
+#- par_temp:par_diet
+coxF1.f3 &lt;- coxme(Surv(lifespan, status) ~ par_eff*par_temp*par_diet - par_eff:par_temp:par_diet - par_temp:par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == &quot;f&quot;))
+#summary(coxF1.f3, digits = 3)
+
+#- par_temp:par_diet 
+coxF1.f4 &lt;- coxme(Surv(lifespan, status) ~ par_eff*par_temp*par_diet - par_eff:par_temp:par_diet - par_temp:par_diet - par_eff:par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == &quot;f&quot;))
+#summary(coxF1.f4, digits = 3)
+
+#- par_eff:par_temp (no interactions left)
+coxF1.f5 &lt;- coxme(Surv(lifespan, status) ~ par_eff+par_temp+par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == &quot;f&quot;))
+#summary(coxF1.f5, digits = 3)
+
+#- par_diet 
+coxF1.f6 &lt;- coxme(Surv(lifespan, status) ~ par_eff+par_temp + (1|specificvial), 
+  data = subset(survivalF1, sex == &quot;f&quot;))
+#summary(coxF1.f6, digits = 3)
+
+#- par_temp
+coxF1.f7 &lt;- coxme(Surv(lifespan, status) ~ par_eff + (1|specificvial), 
+  data = subset(survivalF1, sex == &quot;f&quot;))
+#summary(coxF1.f7, digits = 3)
+
+# only with par_diet
+coxF1.f7b &lt;- coxme(Surv(lifespan, status) ~ par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == &quot;f&quot;))
+#summary(coxF1.f7b, digits = 3)
+
+# NULL
+coxF1.f8 &lt;- coxme(Surv(lifespan, status) ~ 1 + (1|specificvial), 
+  data = subset(survivalF1, sex == &quot;f&quot;))
+#summary(coxF1.f8, digits = 3)
+
+# Model comparison
+AIC_addCOX_femaleF1 &lt;- model.sel(coxF1.f1, coxF1.f2, coxF1.f3, coxF1.f4, coxF1.f5, coxF1.f6, coxF1.f7, coxF1.f8, rank = &quot;AIC&quot;)
+AIC_addCOX_female_resF1 &lt;- as.data.frame(AIC_addCOX_femaleF1)[9:12]
+AIC_addCOX_female_resF1</code></pre>
+<pre><code>            logLik      AIC     delta     weight
+coxF1.f2 -5199.440 10439.32 0.0000000 0.25749306
+coxF1.f5 -5202.193 10439.67 0.3473173 0.21644449
+coxF1.f4 -5201.406 10440.06 0.7368841 0.17813660
+coxF1.f3 -5199.553 10440.16 0.8439935 0.16884751
+coxF1.f6 -5202.177 10442.42 3.0969285 0.05473638
+coxF1.f7 -5202.213 10442.81 3.4945308 0.04486811
+coxF1.f8 -5203.301 10442.94 3.6205511 0.04212819
+coxF1.f1 -5199.493 10443.18 3.8615519 0.03734566</code></pre>
+</div>
+<div
+id="f1-males-cox-ph-model-summary-table-s7-and-proportionality-assumption-test"
+class="section level3">
+<h3>2) F1 males, Cox PH: Model summary (Table S7) and proportionality
+assumption test</h3>
+<pre class="r"><code># Model specification
+coxF1.m &lt;- coxme(Surv(lifespan, status) ~ par_eff*par_temp*par_diet + (1|specificvial), 
+  data= subset(survivalF1, sex== &quot;m&quot;)) 
+
+# Model summary
+#extract_coxme_table(coxF1.m)
+summary(coxF1.m, digits = 3)</code></pre>
+<pre><code>Cox mixed-effects model fit by maximum likelihood
+  Data: subset(survivalF1, sex == &quot;m&quot;)
+  events, n = 900, 900
+  Iterations= 7 31 
+                    NULL Integrated    Fitted
+Log-likelihood -5226.476    -5220.4 -5213.712
+
+                  Chisq   df      p    AIC   BIC
+Integrated loglik  12.2 12.0 0.4336 -11.85 -69.5
+ Penalized loglik  25.5 16.1 0.0635  -6.72 -84.1
+
+Model:  Surv(lifespan, status) ~ par_eff * par_temp * par_diet + (1 |      specificvial) 
+Fixed coefficients
+                                     coef exp(coef) se(coef)     z    p
+par_effpat                      -1.250379     0.286   1.0141 -1.23 0.22
+par_temp                        -0.004071     0.996   0.0297 -0.14 0.89
+par_diet1                       -0.171654     0.842   1.0559 -0.16 0.87
+par_diet1.5                     -0.688358     0.502   1.0687 -0.64 0.52
+par_effpat:par_temp              0.042315     1.043   0.0403  1.05 0.29
+par_effpat:par_diet1             1.852480     6.376   1.4485  1.28 0.20
+par_effpat:par_diet1.5           0.255607     1.291   1.4541  0.18 0.86
+par_temp:par_diet1               0.004364     1.004   0.0419  0.10 0.92
+par_temp:par_diet1.5             0.022836     1.023   0.0425  0.54 0.59
+par_effpat:par_temp:par_diet1   -0.069936     0.932   0.0576 -1.21 0.22
+par_effpat:par_temp:par_diet1.5  0.000593     1.001   0.0578  0.01 0.99
+
+Random effects
+ Group        Variable  Std Dev Variance
+ specificvial Intercept 0.09655 0.00932 </code></pre>
+<pre class="r"><code>cox.zph(coxph(Surv(lifespan, status) ~ par_eff*par_temp*par_diet, data = subset(survivalF1, sex== &quot;m&quot;)))</code></pre>
+<pre><code>                            chisq df    p
+par_eff                    0.0720  1 0.79
+par_temp                   1.5640  1 0.21
+par_diet                   4.2275  2 0.12
+par_eff:par_temp           0.0574  1 0.81
+par_eff:par_diet           3.5909  2 0.17
+par_temp:par_diet          4.2193  2 0.12
+par_eff:par_temp:par_diet  3.8404  2 0.15
+GLOBAL                    10.9938 11 0.44</code></pre>
+</div>
+<div
+id="male-f1-survival-with-model-simplification-model-selection-table-for-model-specifications-see-code"
+class="section level3">
+<h3>Male F1 survival with model simplification: model selection table
+(for model specifications, see code)</h3>
+<pre class="r"><code># coxF1.m without 3-way interaction par_eff:par_temp:par_diet
+coxF1.m2 &lt;- coxme(Surv(lifespan, status) ~ par_eff*par_temp*par_diet - par_eff:par_temp:par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == &quot;m&quot;))
+
+# Model summary (custom function extracts 3 digit z- and p-value)
+extract_coxme_table &lt;- function (mod){
+        beta &lt;- mod$coefficients #$fixed is not needed
+        nvar &lt;- length(beta)
+        nfrail &lt;- nrow(mod$var) - nvar
+        se &lt;- sqrt(diag(mod$var)[nfrail + 1:nvar])
+        z&lt;- round(beta/se, 3)
+        p&lt;- signif(1 - pchisq((beta/se)^2, 1), 3)
+        table=data.frame(cbind(z,p))
+        return(table)
+    }
+#extract_coxme_table(coxF1.m2)
+#summary(coxF1.m2, digits = 3)
+
+#- par_temp:par_diet
+coxF1.m3 &lt;- coxme(Surv(lifespan, status) ~ par_eff*par_temp*par_diet - par_eff:par_temp:par_diet - par_temp:par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == &quot;m&quot;))
+#summary(coxF1.m3, digits = 3)
+
+#- par_temp:par_diet 
+coxF1.m4 &lt;- coxme(Surv(lifespan, status) ~ par_eff*par_temp*par_diet - par_eff:par_temp:par_diet - par_temp:par_diet - par_eff:par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == &quot;m&quot;))
+#summary(coxF1.m4, digits = 3)
+
+#- par_eff:par_temp (no interactions left)
+coxF1.m5 &lt;- coxme(Surv(lifespan, status) ~ par_eff+par_temp+par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == &quot;m&quot;))
+#summary(coxF1.m5, digits = 3)
+
+#- par_diet 
+coxF1.m6 &lt;- coxme(Surv(lifespan, status) ~ par_eff+par_temp + (1|specificvial), 
+  data = subset(survivalF1, sex == &quot;m&quot;))
+#summary(coxF1.m6, digits = 3)
+
+#- par_temp
+coxF1.m7 &lt;- coxme(Surv(lifespan, status) ~ par_eff + (1|specificvial), 
+  data = subset(survivalF1, sex == &quot;m&quot;))
+#summary(coxF1.m7, digits = 3)
+
+# NULL
+coxF1.m8 &lt;- coxme(Surv(lifespan, status) ~ 1 + (1|specificvial), 
+  data = subset(survivalF1, sex == &quot;m&quot;))
+#summary(coxF1.m8, digits = 3)
+
+# Model comparison
+AIC_addCOX_maleF1 &lt;- model.sel(coxF1.m, coxF1.m2, coxF1.m3, coxF1.m4, coxF1.m5, coxF1.m6, coxF1.m7, coxF1.m8, rank = &quot;AIC&quot;)
+AIC_addCOX_male_resF1 &lt;- as.data.frame(AIC_addCOX_maleF1)[9:12]
+AIC_addCOX_male_resF1</code></pre>
+<pre><code>            logLik      AIC     delta      weight
+coxF1.m8 -5219.969 10457.59 0.0000000 0.381550488
+coxF1.m7 -5219.489 10458.37 0.7822078 0.258046372
+coxF1.m6 -5219.372 10458.54 0.9507807 0.237187936
+coxF1.m5 -5219.372 10461.33 3.7356726 0.058933336
+coxF1.m4 -5218.956 10462.69 5.1052182 0.029714468
+coxF1.m3 -5217.067 10464.10 6.5077375 0.014737193
+coxF1.m2 -5217.278 10464.20 6.6094970 0.014006124
+coxF1.m  -5216.855 10465.95 8.3644835 0.005824082</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.1 (2023-06-16 ucrt)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19043)
+
+Matrix products: default
+
+
+locale:
+[1] LC_COLLATE=English_United Kingdom.utf8 
+[2] LC_CTYPE=English_United Kingdom.utf8   
+[3] LC_MONETARY=English_United Kingdom.utf8
+[4] LC_NUMERIC=C                           
+[5] LC_TIME=English_United Kingdom.utf8    
+
+time zone: Europe/London
+tzcode source: internal
+
+attached base packages:
+[1] splines   stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+ [1] kableExtra_1.3.4  sjPlot_2.8.14     survminer_0.4.9   ggpubr_0.6.0     
+ [5] MuMIn_1.47.5      mgcv_1.8-42       nlme_3.1-162      lme4_1.1-33      
+ [9] Matrix_1.5-4.1    coxme_2.2-18.1    bdsmatrix_1.3-6   survival_3.5-5   
+[13] rcompanion_2.4.30 lubridate_1.9.2   forcats_1.0.0     stringr_1.5.0    
+[17] purrr_1.0.1       tidyr_1.3.0       tibble_3.2.1      ggplot2_3.4.2    
+[21] tidyverse_2.0.0   reshape2_1.4.4    dplyr_1.1.2       readr_2.1.4      
+[25] workflowr_1.7.0  
+
+loaded via a namespace (and not attached):
+  [1] libcoin_1.0-9      rstudioapi_0.14    jsonlite_1.8.5    
+  [4] magrittr_2.0.3     TH.data_1.1-2      estimability_1.4.1
+  [7] modeltools_0.2-23  farver_2.1.1       nloptr_2.0.3      
+ [10] rmarkdown_2.22     fs_1.6.2           vctrs_0.6.3       
+ [13] minqa_1.2.5        webshot_0.5.4      rstatix_0.7.2     
+ [16] htmltools_0.5.5    broom_1.0.5        cellranger_1.1.0  
+ [19] sjmisc_2.8.9       sass_0.4.6         bslib_0.5.0       
+ [22] plyr_1.8.8         sandwich_3.0-2     emmeans_1.8.6     
+ [25] rootSolve_1.8.2.3  zoo_1.8-12         cachem_1.0.8      
+ [28] whisker_0.4.1      lifecycle_1.0.3    pkgconfig_2.0.3   
+ [31] sjlabelled_1.2.0   R6_2.5.1           fastmap_1.1.1     
+ [34] digest_0.6.31      Exact_3.2          colorspace_2.1-0  
+ [37] ps_1.7.5           rprojroot_2.0.3    labeling_0.4.2    
+ [40] fansi_1.0.4        km.ci_0.5-6        timechange_0.2.0  
+ [43] httr_1.4.6         abind_1.4-5        compiler_4.3.1    
+ [46] proxy_0.4-27       bit64_4.0.5        withr_2.5.0       
+ [49] backports_1.4.1    carData_3.0-5      performance_0.10.4
+ [52] highr_0.10         ggsignif_0.6.4     MASS_7.3-60       
+ [55] sjstats_0.18.2     gld_2.6.6          tools_4.3.1       
+ [58] lmtest_0.9-40      httpuv_1.6.11      glue_1.6.2        
+ [61] callr_3.7.3        promises_1.2.0.1   grid_4.3.1        
+ [64] getPass_0.2-2      generics_0.1.3     gtable_0.3.3      
+ [67] nortest_1.0-4      tzdb_0.4.0         KMsurv_0.1-5      
+ [70] class_7.3-22       data.table_1.14.8  lmom_2.9          
+ [73] hms_1.1.3          xml2_1.3.4         car_3.1-2         
+ [76] coin_1.4-2         utf8_1.2.3         pillar_1.9.0      
+ [79] vroom_1.6.3        later_1.3.1        lattice_0.21-8    
+ [82] bit_4.0.5          tidyselect_1.2.0   knitr_1.43        
+ [85] git2r_0.32.0       gridExtra_2.3      svglite_2.1.1     
+ [88] stats4_4.3.1       xfun_0.39          expm_0.999-7      
+ [91] matrixStats_1.0.0  stringi_1.7.12     yaml_2.3.7        
+ [94] boot_1.3-28.1      evaluate_0.21      codetools_0.2-19  
+ [97] multcompView_0.1-9 cli_3.6.1          systemfonts_1.0.4 
+[100] xtable_1.8-4       DescTools_0.99.49  munsell_0.5.0     
+[103] processx_3.8.1     jquerylib_0.1.4    survMisc_0.5.6    
+[106] modelr_0.1.11      Rcpp_1.0.10        readxl_1.4.2      
+[109] ggeffects_1.2.3    parallel_4.3.1     bayestestR_0.13.1 
+[112] viridisLite_0.4.2  mvtnorm_1.2-2      scales_1.2.1      
+[115] e1071_1.7-13       crayon_1.5.2       insight_0.19.2    
+[118] rlang_1.1.1        cowplot_1.1.1      rvest_1.0.3       
+[121] multcomp_1.4-25   </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Zajitschek et al." />
+
+<meta name="date" content="2023-06-01" />
+
+<title>Fecundity analyses</title>
+
+<script src="site_libs/header-attrs-2.22/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.0/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.0/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Temperature_x_Diet_D.melanogaster</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Overview</a>
+</li>
+<li>
+  <a href="survival.html">Survival</a>
+</li>
+<li>
+  <a href="fecundity.html">Female fecundity</a>
+</li>
+<li>
+  <a href="matingbehaviour.html">Male mating behaviour</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/zajitschek/Temperature_x_Diet_D.melanogaster">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Fecundity analyses</h1>
+<h4 class="author">Zajitschek et al.</h4>
+<h4 class="date">2023-06-01</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2023-06-26
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong>
+<code>Temperature_x_Diet_D.melanogaster/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20200903code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20200903)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20200903code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20200903)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzajitschekTemperaturexDietDmelanogastertree5a9dafbd215f0ecb94b8a604cb68142e689920aftargetblank5a9dafba">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/zajitschek/Temperature_x_Diet_D.melanogaster/tree/5a9dafbd215f0ecb94b8a604cb68142e689920af" target="_blank">5a9dafb</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomzajitschekTemperaturexDietDmelanogastertree5a9dafbd215f0ecb94b8a604cb68142e689920aftargetblank5a9dafba"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/zajitschek/Temperature_x_Diet_D.melanogaster/tree/5a9dafbd215f0ecb94b8a604cb68142e689920af" target="_blank">5a9dafb</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  FecF1_compound.pdf
+    Untracked:  FecF1_compound.png
+    Untracked:  Sig_effects_on_male_mating_behaviour_F2_plots_w_means.pdf
+    Untracked:  appraise.latF1mat.gamm1.png
+    Untracked:  appraise.latF1mat.gamm1log.png
+    Untracked:  data/fecF0.csv
+    Untracked:  data/fecF1.csv
+    Untracked:  data/malebehavF0.csv
+    Untracked:  data/malebehavF1.csv
+    Untracked:  data/malebehavF2.csv
+    Untracked:  data/malebehavF3.csv
+    Untracked:  data/survivalF1.csv
+    Untracked:  fec.F1.plot.pdf
+    Untracked:  latency_F0_mat_predicted.pdf
+    Untracked:  male_latency_F2_mat_predicted.pdf
+    Untracked:  male_latency_F2_pat_predicted.pdf
+    Untracked:  male_mating_behaviour_F0_plots.pdf
+    Untracked:  male_mating_behaviour_F0_plots.png
+    Untracked:  plotF0_fecundity.pdf
+    Untracked:  plotF0_fecundity.png
+    Untracked:  plotF0_fecundity_rev.pdf
+    Untracked:  plotF0_latency.pdf
+    Untracked:  plotF0_latency.png
+    Untracked:  plotF0_latencyTemponly.pdf
+    Untracked:  plotF0_latencyTemponly.png
+    Untracked:  plotF0_latency_rev.pdf
+    Untracked:  plotF1_fecundity.pdf
+    Untracked:  plotF1_fecundity.png
+    Untracked:  plotF1_fecundity_mat.pdf
+    Untracked:  plotF1_fecundity_mat_rev.pdf
+    Untracked:  plotF1_fecundity_mat_rev_afterINK.pdf
+    Untracked:  plotF1_fecundity_pat.pdf
+    Untracked:  plotF1_fecundity_pat_rev.pdf
+    Untracked:  plotF1_fecundity_pat_rev_aftterINK.pdf
+    Untracked:  plotF1_latency.pdf
+    Untracked:  plotF1_latency.png
+    Untracked:  plotF1pat_duration.pdf
+    Untracked:  plotF1pat_duration.png
+    Untracked:  plotF1pat_duration_rev.pdf
+    Untracked:  plotF2_mat+pat_latency+dur.png
+    Untracked:  plotF2_mat_latency.pdf
+    Untracked:  plotF2_mat_latency.png
+    Untracked:  plotF2_mat_latency_rev.pdf
+    Untracked:  plotF2_pat_dur.pdf
+    Untracked:  plotF2_pat_dur.png
+    Untracked:  plotF2_pat_dur_rev.pdf
+    Untracked:  survivalcurves.pdf
+    Untracked:  survivalcurves.png
+    Untracked:  survivalcurves8-6-21.pdf
+    Untracked:  survivalcurves8-6-21.png
+    Untracked:  survivalcurves_rev20-3-2023.jpg
+    Untracked:  survivalcurves_rev20-3-2023.pdf
+    Untracked:  survivalcurves_rev20-3-2023.svg
+    Untracked:  survivalcurves_rev20-3-2023_afterINK.pdf
+
+Unstaged changes:
+    Modified:   _workflowr.yml
+    Modified:   analysis/fecundity.Rmd
+    Modified:   analysis/matingbehaviour.Rmd
+    Modified:   analysis/survival.Rmd
+    Modified:   data/survival.csv
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/fecundity.Rmd</code>) and HTML
+(<code>docs/fecundity.html</code>) files. If you’ve configured a remote
+Git repository (see <code>?wflow_git_remote</code>), click on the
+hyperlinks in the table below to view the files as they were in that
+past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zajitschek/Temperature_x_Diet_D.melanogaster/5a9dafbd215f0ecb94b8a604cb68142e689920af/docs/fecundity.html" target="_blank">5a9dafb</a>
+</td>
+<td>
+zajitschek
+</td>
+<td>
+2023-06-25
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zajitschek/Temperature_x_Diet_D.melanogaster/blob/b9f595acd293b05819001b6507fd691556c50b1c/analysis/fecundity.Rmd" target="_blank">b9f595a</a>
+</td>
+<td>
+zajitschek
+</td>
+<td>
+2023-06-25
+</td>
+<td>
+25-6-2023
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="load-libraries" class="section level2">
+<h2>Load libraries</h2>
+<pre class="r"><code>library(readr)      # read data
+library(dplyr)      # data structure
+library(reshape2)   # data structure
+library(rcompanion) # mean and median (+- bootstrapped CI)
+library(ggplot2)    # plot
+library(sjPlot)     # model plots &amp; diagnostics
+library(ggeffects)  # plot
+library(car)        # anova-style results table for glm
+library(bbmle)      # IC tab
+library(robustbase) # robust glm
+library(splines)    # spline functions
+library(MuMIn)      # model selection
+library(lmtest)     # for F1 model formulation
+library(sandwich)   # for F1 model formulation
+library(multcomp)   # for F1 multiple comparisons</code></pre>
+</div>
+<div id="load-fecundity-data-parental-generation-f0-and-f1-offspring"
+class="section level2">
+<h2>Load fecundity data (parental generation F0, and F1 offspring)</h2>
+<pre class="r"><code># F0 fecundity 
+fec.F0 &lt;- read_csv(&quot;./data/fecF0.csv&quot;)
+colnames(fec.F0)[1] &lt;- &quot;generation&quot;
+fec.F0$diet_num &lt;- as.numeric(as.character(fec.F0$diet))
+fec.F0$diet &lt;- as.factor(fec.F0$diet)
+fec.F0$vial_id &lt;- as.factor(fec.F0$vial_id)
+fec.F0$rep &lt;- as.factor(fec.F0$rep)
+
+# F1 fecundity 
+fec.F1 &lt;- read_csv(&quot;./data/fecF1.csv&quot;)
+colnames(fec.F1)[1] &lt;- &quot;generation&quot;
+fec.F1$par_diet &lt;- as.factor(fec.F1$par_diet)  #&#39;par_diet&#39; stands for &#39;parental diet&#39;
+fec.F1$vial_id &lt;- as.factor(fec.F1$vial_id)
+fec.F1$rep &lt;- as.factor(fec.F1$rep)</code></pre>
+</div>
+<div id="f0-fecundity" class="section level2">
+<h2>1) F0 FECUNDITY</h2>
+</div>
+<div id="explore-f0-fecundity-data" class="section level2">
+<h2>Explore F0 fecundity data</h2>
+<pre class="r"><code>#plot(fec.F0$eggs) # ok: no off-values/outliers
+#max(fec.F0$eggs)  # max. eggs = 141
+
+print(paste0(&quot;5 measurement ages [days]: &quot;, list(unique(fec.F0$age))))</code></pre>
+<pre><code>[1] &quot;5 measurement ages [days]: c(5, 12, 19, 26, 33)&quot;</code></pre>
+<pre class="r"><code> # 5 measurement ages: 5, 12, 19, 26, 33 days old
+
+#Summary statistics and dataset for further analyses, containing sums of counted eggs per vial
+fec.F0.a &lt;- fec.F0 %&gt;% 
+  group_by(temperature, diet_num, vial_id) %&gt;% 
+  summarise(., vial_sum = sum(eggs), n_ages = n_distinct(age)) 
+fec.F0.a %&gt;% group_by(temperature, diet_num) %&gt;%
+  summarise(., mean_sum_fec = mean(vial_sum), se = sd(vial_sum)/sqrt(10), sd = sd(vial_sum), 
+   median = median(vial_sum), n_vials = n_distinct(vial_id))</code></pre>
+<pre><code># A tibble: 15 × 7
+# Groups:   temperature [5]
+   temperature diet_num mean_sum_fec    se    sd median n_vials
+         &lt;dbl&gt;    &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;int&gt;
+ 1          21      0.4         25.7  5.52  17.4   20.5      10
+ 2          21      1          112.   6.97  22.1  112        10
+ 3          21      1.5        207.   7.56  23.9  207        10
+ 4          23      0.4         30.9  5.04  15.9   27.5      10
+ 5          23      1          134.  14.8   46.8  121        10
+ 6          23      1.5        203.  15.4   48.8  208.       10
+ 7          25      0.4         30.1  7.86  24.8   21.5      10
+ 8          25      1           80.8 14.6   46.1   62        10
+ 9          25      1.5        132   13.9   44.0  141        10
+10          27      0.4         26    8.72  27.6   17        10
+11          27      1          123.  18.6   58.7  124.       10
+12          27      1.5         71.5 14.5   45.9   69        10
+13          29      0.4         31.2  6.75  21.4   23.5      10
+14          29      1           34.6  6.25  19.8   30.5      10
+15          29      1.5         25.4  9.28  29.3   10.5      10</code></pre>
+</div>
+<div id="calculate-mean-fecundity-across-vials-with-bootstrapped-ci"
+class="section level2">
+<h2>Calculate mean fecundity (across vials) with bootstrapped CI</h2>
+<pre class="r"><code>boot.fec.F0 &lt;- groupwiseMean(vial_sum ~ temperature*diet_num, data = fec.F0.a, boot = T, bca = T)  #5000 bootstrap replicates for CI
+boot.fec.F0</code></pre>
+<pre><code>   temperature diet_num  n  Mean Boot.mean Conf.level Trad.lower Trad.upper
+1           21      0.4 10  25.7      25.7       0.95      13.20       38.2
+2           21      1.0 10 112.0     112.0       0.95      96.30      128.0
+3           21      1.5 10 207.0     207.0       0.95     189.00      224.0
+4           23      0.4 10  30.9      31.0       0.95      19.50       42.3
+5           23      1.0 10 134.0     133.0       0.95     100.00      167.0
+6           23      1.5 10 203.0     202.0       0.95     168.00      237.0
+7           25      0.4 10  30.1      30.2       0.95      12.30       47.9
+8           25      1.0 10  80.8      80.9       0.95      47.80      114.0
+9           25      1.5 10 132.0     132.0       0.95     101.00      163.0
+10          27      0.4 10  26.0      26.1       0.95       6.28       45.7
+11          27      1.0 10 123.0     123.0       0.95      80.90      165.0
+12          27      1.5 10  71.5      71.0       0.95      38.70      104.0
+13          29      0.4 10  31.2      31.1       0.95      15.90       46.5
+14          29      1.0 10  34.6      34.7       0.95      20.50       48.7
+15          29      1.5 10  25.4      25.4       0.95       4.41       46.4
+   Bca.lower Bca.upper
+1       18.0      39.7
+2       99.2     125.0
+3      192.0     220.0
+4       21.7      40.4
+5      114.0     176.0
+6      174.0     232.0
+7       20.6      58.4
+8       58.0     116.0
+9      104.0     156.0
+10      14.9      51.6
+11      89.5     157.0
+12      50.7     108.0
+13      21.0      48.0
+14      23.3      45.9
+15      12.5      48.5</code></pre>
+</div>
+<div id="plot-f0-mean-fecundity-not-in-manuscript"
+class="section level2">
+<h2>Plot F0 mean fecundity (not in manuscript)</h2>
+<pre class="r"><code>mycols &lt;- colors()[c(30, 62, 119, 504, 554)]
+
+fec.F0.plot &lt;- ggplot(data= boot.fec.F0, aes(x= as.factor(diet_num), y= Boot.mean, fill= as.factor(temperature))) +  
+    #scale_fill_grey(start=0.8, end=0.3, name = &quot;Temperature&quot;) +
+    scale_fill_manual(values= mycols, name = &quot;Temperature&quot;) +
+        geom_bar(position=position_dodge(), stat = &quot;identity&quot;, colour=&quot;black&quot;) +    
+    geom_errorbar(aes(ymin= Bca.lower, ymax= Bca.upper), width=.4, , colour=&quot;black&quot;, position=position_dodge(0.9)) +
+    ylab(&quot;Fecundity (mean # of eggs)&quot;)  + 
+    xlab(&quot;Diet&quot;)  + 
+    ggtitle(&quot;F0 Fecundity\n(vial means over first 5 weeks \U00B1 95% CI)&quot;) + 
+    theme_bw(base_size = 18)+
+    theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(), panel.border = element_blank(), 
+    axis.line.x = element_line(), axis.line.y = element_line()) 
+fec.F0.plot </code></pre>
+<p><img src="figure/fecundity.Rmd/plot-F0-mean-fecundity-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="f0-fecundity-analyses" class="section level2">
+<h2>F0 FECUNDITY ANALYSES</h2>
+<div id="model-specification-results-table-s8-and-comparison"
+class="section level3">
+<h3>Model specification, results (Table S8), and comparison</h3>
+<pre class="r"><code>fec.F0.glm.num.1 &lt;- glm(vial_sum ~ bs(temperature)*diet_num +
+                          bs(temperature)*I(diet_num^2), data= fec.F0.a) 
+#plot(fec.F0.glm.num.1) #problematic QQ-plot for upper quantiles
+
+#Square-root transformed response 
+#Refit above with new response variable &#39;vial_sum2&#39;
+fec.F0.a$vial_sum2 &lt;- (fec.F0.a$vial_sum)^(1/2)
+
+fec.F0.glm.num.2 &lt;- glm(vial_sum2 ~ bs(temperature)*diet_num +
+                          bs(temperature)*I(diet_num^2), data= fec.F0.a) 
+#plot(fec.F0.glm.num.2) #better QQ-plot
+
+
+#Robust GLM
+fec.F0.glm.4 &lt;- glmrob(vial_sum2 ~ bs(temperature)*diet_num +
+                          bs(temperature)*I(diet_num^2), family = gaussian(), data = fec.F0.a)
+summary(fec.F0.glm.4)</code></pre>
+<pre><code>
+Call:  glmrob(formula = vial_sum2 ~ bs(temperature) * diet_num + bs(temperature) *      I(diet_num^2), family = gaussian(), data = fec.F0.a) 
+
+
+Coefficients:
+                               Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                     -0.2938     1.0029  -0.293  0.76960    
+bs(temperature)1                10.3495     3.4018   3.042  0.00235 ** 
+bs(temperature)2               -14.7216     2.9367  -5.013 5.36e-07 ***
+bs(temperature)3                 2.8179     1.4286   1.972  0.04855 *  
+diet_num                        13.5400     2.5145   5.385 7.26e-08 ***
+I(diet_num^2)                   -2.5140     1.3168  -1.909  0.05625 .  
+bs(temperature)1:diet_num      -24.6827     8.5290  -2.894  0.00380 ** 
+bs(temperature)2:diet_num       40.2693     7.3629   5.469 4.52e-08 ***
+bs(temperature)3:diet_num       -4.8662     3.5818  -1.359  0.17427    
+bs(temperature)1:I(diet_num^2)  12.5123     4.4666   2.801  0.00509 ** 
+bs(temperature)2:I(diet_num^2) -22.6590     3.8559  -5.876 4.19e-09 ***
+bs(temperature)3:I(diet_num^2)  -2.6530     1.8757  -1.414  0.15726    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+Robustness weights w.r * w.x: 
+ 117 weights are ~= 1. The remaining 33 ones are summarized as
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.4007  0.4816  0.6642  0.6677  0.8438  0.9748 
+
+Number of observations: 150 
+Fitted by method &#39;Mqle&#39;  (in 13 iterations)
+
+(Dispersion parameter for gaussian family taken to be 2.720412)
+
+No deviance values available 
+Algorithmic parameters: 
+   acc    tcc 
+0.0001 1.3450 
+maxit 
+   50 
+test.acc 
+  &quot;coef&quot; </code></pre>
+<pre class="r"><code>#Remove highest interaction term from initial model
+fec.F0.glm.4b &lt;- update(fec.F0.glm.4, . ~ . - bs(temperature):I(diet_num^2))
+
+#Compare models
+anova(fec.F0.glm.4b, fec.F0.glm.4, test = &quot;Wald&quot;)</code></pre>
+<pre><code>Robust Wald Test Table
+
+Model 1: vial_sum2 ~ bs(temperature) + diet_num + I(diet_num^2) + bs(temperature):diet_num
+Model 2: vial_sum2 ~ bs(temperature) * diet_num + bs(temperature) * I(diet_num^2)
+Models fitted by method &#39;Mqle&#39;
+
+  pseudoDf Test.Stat Df Pr(&gt;chisq)    
+1      141                            
+2      138    40.129  3      1e-08 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="plot-figure-2-f0-female-fecundity" class="section level3">
+<h3>Plot Figure 2: F0 female fecundity</h3>
+<pre class="r"><code>predrob.4 &lt;- ggpredict(fec.F0.glm.4, c(&quot;temperature&quot;, &quot;diet_num&quot;)) 
+predFecF0_plot &lt;- ggplot(predrob.4, aes(x, predicted))  +
+  geom_point(data = fec.F0.a, aes(x = temperature, y = vial_sum2, shape  = factor(diet_num), colour = factor(diet_num), stroke=NA, alpha = 0.1), size = 3, position= position_jitterdodge(dodge.width = 0.8, jitter.width = 0.1), inherit.aes = F) + 
+    geom_line(aes(linetype= group, color= group), linewidth = 1.5) +
+    geom_ribbon(aes(ymin=conf.low, ymax=conf.high, fill=group), alpha=0.15) +
+    scale_color_manual(name  =&quot;Diet&quot;, values=c(&quot;#F8766D&quot;, &quot;#619CFF&quot;, &quot;#00BA38&quot;), labels=c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;)) +
+  scale_fill_manual(name  =&quot;Diet&quot;, values=c(&quot;#F8766D&quot;, &quot;#619CFF&quot;, &quot;#00BA38&quot;), labels=c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;))  +
+  scale_shape_discrete(name  =&quot;Diet&quot;, labels=c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;)) +
+    scale_linetype_manual(name  =&quot;Diet&quot;, values = c(&quot;solid&quot;, &quot;dashed&quot;, &quot;dotted&quot;), labels=c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;)) +
+  scale_x_continuous(breaks=c(21, 23, 25, 27, 29)) + 
+  labs(title = &quot;&quot;, color = &quot;Diet&quot;, y = &quot;Total fecundity\n(square-root, weeks 1 to 5)&quot;, x = &quot;Temperature [degree Celsius]&quot;) + theme_classic(base_size = 23) + 
+ guides(alpha = &quot;none&quot;)
+
+predFecF0_plot</code></pre>
+<p><img src="figure/fecundity.Rmd/Figure-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="f1-fecundity" class="section level2">
+<h2>2) F1 FECUNDITY</h2>
+<div id="explore-f1-fecundity-data" class="section level3">
+<h3>Explore F1 fecundity data</h3>
+<pre class="r"><code>#plot(fec.F1$eggs) # ok: no off-values/outliers
+#max(fec.F1$eggs)  # max. eggs = 217
+
+print(paste0(&quot;5 measurement ages [days]: &quot;, list(unique(fec.F1$age))))</code></pre>
+<pre><code>[1] &quot;5 measurement ages [days]: c(4, 11, 18, 25, 32)&quot;</code></pre>
+<pre class="r"><code> # 5 measurement ages: 4, 11, 18, 25, 32 days old
+
+fec.F1.a &lt;- fec.F1 %&gt;% 
+  group_by(par_temp, par_diet, par_eff, vial_id) %&gt;% 
+  summarise(., vial_sum = sum(eggs), n_ages = n_distinct(age)) 
+fec.F1.a %&gt;% group_by(par_temp, par_diet, par_eff) %&gt;%
+  summarise(., mean_sum_fec = mean(vial_sum), se = sd(vial_sum)/sqrt(length(vial_sum)), 
+  sd = sd(vial_sum), median = median(vial_sum), n_vials = n_distinct(vial_id))</code></pre>
+<pre><code># A tibble: 30 × 8
+# Groups:   par_temp, par_diet [15]
+   par_temp par_diet par_eff mean_sum_fec    se    sd median n_vials
+      &lt;dbl&gt; &lt;fct&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;int&gt;
+ 1       21 0.4      mat             212.  13.5 19.1    212.       2
+ 2       21 0.4      pat             410   11   15.6    410        2
+ 3       21 1        mat             280.  40.5 57.3    280.       2
+ 4       21 1        pat             300.  16.5 23.3    300.       2
+ 5       21 1.5      mat             412   36   50.9    412        2
+ 6       21 1.5      pat             254    5    7.07   254        2
+ 7       23 0.4      mat             228.   2.5  3.54   228.       2
+ 8       23 0.4      pat             322.  50.5 71.4    322.       2
+ 9       23 1        mat             260.  23.5 33.2    260.       2
+10       23 1        pat             236.  10.5 14.8    236.       2
+# ℹ 20 more rows</code></pre>
+</div>
+<div id="calculate-f1-mean-fecundity-across-vials-with-bootstrapped-ci"
+class="section level3">
+<h3>Calculate F1 mean fecundity (across vials) with bootstrapped CI</h3>
+<pre class="r"><code>F1.fec.CI &lt;- groupwiseMean(vial_sum ~ par_temp*par_diet*par_eff, data = fec.F1.a, boot = F, bca = F)  
+F1.fec.CI$Trad.lower[F1.fec.CI$Trad.lower &lt; 0] &lt;- 0  #set negative lower CI range values to zero</code></pre>
+</div>
+<div id="plot-f1-mean-fecundity-not-in-manuscript"
+class="section level3">
+<h3>Plot F1 mean fecundity (not in manuscript)</h3>
+<pre class="r"><code>mycols &lt;- colors()[c(30, 62, 119, 504, 554)]
+
+fec.F1.plot &lt;- ggplot(data= F1.fec.CI, aes(x= as.factor(par_diet), y= Mean, fill= as.factor(par_temp))) +  
+    #scale_fill_grey(start=0.8, end=0.3, name = &quot;Temperature&quot;) +
+    scale_fill_manual(values= mycols, name = &quot;Parental\ntemperature&quot;) +
+        geom_bar(position=position_dodge(), stat = &quot;identity&quot;, colour=&quot;black&quot;) +    
+    geom_errorbar(aes(ymin= Trad.lower, ymax= Trad.upper), width=.4, , colour=&quot;black&quot;, position=position_dodge(0.9)) + 
+    ylab(&quot;Fecundity (mean # of eggs)&quot;)  + 
+    xlab(&quot;Parental diet&quot;)  + 
+    ggtitle(&quot;F1 Fecundity\n(vial means over first 5 weeks \U00B1 95% CI)&quot;) + 
+    theme_bw(base_size = 18)+
+    theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(), panel.border = element_blank(), 
+    axis.line.x = element_line(), axis.line.y = element_line()) +
+  facet_grid(vars(par_eff), vars(par_temp))
+
+fec.F1.plot </code></pre>
+<p><img src="figure/fecundity.Rmd/plot-F1-mean-fecundity-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="f1-fecundity-analyses" class="section level2">
+<h2>F1 FECUNDITY ANALYSES</h2>
+<div id="additional-data-preparation" class="section level3">
+<h3>Additional data preparation</h3>
+<pre class="r"><code>fec.F1.a$par_diet_num &lt;- as.numeric(as.character(fec.F1.a$par_diet))
+fec.F1.a$vial_sum2 &lt;- (fec.F1.a$vial_sum)^(1/2)</code></pre>
+</div>
+<div id="robust-estimation-of-effects-on-f1-fecundity-table-s9"
+class="section level3">
+<h3>Robust estimation of effects on F1 fecundity (Table S9)</h3>
+<pre class="r"><code>#All independent variables as factor to make the model less complex; separate for each level of par_eff
+fec.F1.a$par_temp_fac &lt;- as.factor(fec.F1.a$par_temp)
+
+# Maternal effects with robust covariance matrix 
+fec.F1.a.mat &lt;- subset(fec.F1.a, par_eff==&quot;mat&quot;)
+
+fec.F1.glm.rev1c.mat &lt;- aov(vial_sum ~ par_temp_fac*par_diet, data = fec.F1.a.mat)
+fec.F1.glm.rev1c.mat.coef &lt;- coeftest(fec.F1.glm.rev1c.mat, vcov = vcovHC)
+
+fec.F1.glm.rev1c.mat2 &lt;- aov(vial_sum ~ par_temp_fac+par_diet, data = fec.F1.a.mat)
+
+# Model comparison
+waldtest(fec.F1.glm.rev1c.mat, fec.F1.glm.rev1c.mat2, vcov = vcovHC, test = &quot;F&quot;)</code></pre>
+<pre><code>Wald test
+
+Model 1: vial_sum ~ par_temp_fac * par_diet
+Model 2: vial_sum ~ par_temp_fac + par_diet
+  Res.Df Df      F  Pr(&gt;F)  
+1     15                    
+2     23 -8 2.7542 0.04325 *
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>Tukey. &lt;- contrMat(table(fec.F1.a.mat$par_temp_fac), &quot;Tukey&quot;)
+K1. &lt;- cbind(Tukey., matrix(0, nrow = nrow(Tukey.), ncol = ncol(Tukey.)), matrix(0, nrow = nrow(Tukey.), ncol = ncol(Tukey.)))
+
+rownames(K1.) &lt;- paste(levels(fec.F1.a$par_diet)[1], rownames(K1.), sep = &quot;:&quot;)
+
+K2. &lt;- cbind(matrix(0, nrow = nrow(Tukey.), ncol = ncol(Tukey.)), Tukey., matrix(0, nrow = nrow(Tukey.), ncol = ncol(Tukey.)))
+rownames(K2.) &lt;- paste(levels(fec.F1.a$par_diet)[2], rownames(K2.), sep = &quot;:&quot;)
+
+K3. &lt;- cbind(matrix(0, nrow = nrow(Tukey.), ncol = ncol(Tukey.)), matrix(0, nrow = nrow(Tukey.), ncol = ncol(Tukey.)),Tukey.)
+rownames(K3.) &lt;- paste(levels(fec.F1.a$par_diet)[3], rownames(K3.), sep = &quot;:&quot;)
+K. &lt;- rbind(K1., K2., K3.)
+colnames(K.) &lt;- c(colnames(Tukey.), colnames(Tukey.), colnames(Tukey.))
+
+#todo: summary(glht(fec.F1.glm.rev1c.mat, linfct = K. %*% X., vcov = sandwich::vcovHC(fec.F1.glm.rev1c.mat)), test = adjusted(&quot;BH&quot;))  
+ 
+
+# Paternal effects with robust covariance matrix 
+fec.F1.a.pat &lt;- subset(fec.F1.a, par_eff==&quot;pat&quot;)
+
+fec.F1.glm.rev1c.pat &lt;- aov(vial_sum ~ par_temp_fac*par_diet, data = fec.F1.a.pat)
+coeftest(fec.F1.glm.rev1c.pat, vcov = sandwich::vcovHC)</code></pre>
+<pre><code>
+t test of coefficients:
+
+                           Estimate Std. Error t value  Pr(&gt;|t|)    
+(Intercept)                 410.000     15.556 26.3558 5.607e-14 ***
+par_temp_fac23              -87.500     73.092 -1.1971  0.249839    
+par_temp_fac25              -79.500     21.506 -3.6967  0.002154 ** 
+par_temp_fac27             -118.000     33.526 -3.5196  0.003096 ** 
+par_temp_fac29             -165.000     43.863 -3.7617  0.001885 ** 
+par_diet1                  -109.500     28.045 -3.9045  0.001408 ** 
+par_diet1.5                -156.000     17.088 -9.1292 1.634e-07 ***
+par_temp_fac23:par_diet1     23.500     78.150  0.3007  0.767770    
+par_temp_fac25:par_diet1     59.000     52.981  1.1136  0.282976    
+par_temp_fac27:par_diet1    150.500     41.719  3.6074  0.002586 ** 
+par_temp_fac29:par_diet1    107.000     81.296  1.3162  0.207872    
+par_temp_fac23:par_diet1.5   97.500     75.700  1.2880  0.217269    
+par_temp_fac25:par_diet1.5   57.500     26.693  2.1541  0.047897 *  
+par_temp_fac27:par_diet1.5  155.000    202.326  0.7661  0.455511    
+par_temp_fac29:par_diet1.5  126.500     47.313  2.6737  0.017349 *  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>fec.F1.glm.rev1c.pat2 &lt;- aov(vial_sum ~ par_temp_fac+par_diet, data = fec.F1.a.pat)
+
+# Model comparison
+waldtest(fec.F1.glm.rev1c.pat, fec.F1.glm.rev1c.pat2, vcov = vcovHC, test = &quot;F&quot;)</code></pre>
+<pre><code>Wald test
+
+Model 1: vial_sum ~ par_temp_fac * par_diet
+Model 2: vial_sum ~ par_temp_fac + par_diet
+  Res.Df Df      F  Pr(&gt;F)  
+1     15                    
+2     23 -8 3.9926 0.01013 *
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>Tukey &lt;- contrMat(table(fec.F1.a.pat$par_temp_fac), &quot;Tukey&quot;)
+K1 &lt;- cbind(Tukey, matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)), matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)))
+
+rownames(K1) &lt;- paste(levels(fec.F1.a$par_diet)[1], rownames(K1), sep = &quot;:&quot;)
+
+K2 &lt;- cbind(matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)), Tukey, matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)))
+rownames(K2) &lt;- paste(levels(fec.F1.a$par_diet)[2], rownames(K2), sep = &quot;:&quot;)
+
+K3 &lt;- cbind(matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)), matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)),Tukey)
+rownames(K3) &lt;- paste(levels(fec.F1.a$par_diet)[3], rownames(K3), sep = &quot;:&quot;)
+K &lt;- rbind(K1, K2, K3)
+colnames(K) &lt;- c(colnames(Tukey), colnames(Tukey), colnames(Tukey))
+ 
+#todo: summary(glht(fec.F1.glm.rev1c.pat, linfct = K %*% X, vcov = sandwich::vcovHC(fec.F1.glm.rev1c.pat)), test = adjusted(&quot;BH&quot;)) </code></pre>
+</div>
+<div id="plot-figures-3-and-4" class="section level3">
+<h3>Plot Figures 3 and 4</h3>
+<pre class="r"><code>#Maternal
+
+predrob.F1.mat &lt;- ggpredict(fec.F1.glm.rev1c.mat, c(&quot;par_temp_fac&quot;, &quot;par_diet&quot;), vcov.fun = &quot;vcovHC&quot;, vcov.type = &quot;HC&quot;)
+
+predFecF1.mat &lt;- plot(predrob.F1.mat, rawdata = T, facet = T, connect.lines = T, ci.style = &quot;errorbar&quot;, line.size = 1.5, dot.size = 5)  
+
+predFecF1_plot.mat &lt;- predFecF1.mat  + 
+  labs(title = &quot;Maternal diet&quot;, y = &quot;Total fecundity\n(weeks 1 to 5)&quot;, x = &quot;Temperature [degree Celsius]&quot;, color = &quot;Parental\ndiet&quot;) + theme_classic(base_size = 23) 
+predFecF1_plot.mat</code></pre>
+<p><img src="figure/fecundity.Rmd/F1-fecundity-model-predictions-plot-rev-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Paternal
+
+predrob.F1.pat &lt;- ggpredict(fec.F1.glm.rev1c.pat, c(&quot;par_temp_fac&quot;, &quot;par_diet&quot;), vcov.fun = &quot;vcovHC&quot;, vcov.type = &quot;HC&quot;)
+plot(predrob.F1.pat, rawdata = T, facet = T, connect.lines = T, ci.style = &quot;errorbar&quot;, line.size = 1.5, dot.size = 5)-&gt; predFecF1.pat
+predFecF1_plot.pat &lt;- predFecF1.pat + 
+  labs(title = &quot;Paternal diet&quot;, y = &quot;Total fecundity\n(weeks 1 to 5)&quot;, x = &quot;Temperature [degree Celsius]&quot;, color = &quot;Parental\ndiet&quot;) + theme_classic(base_size = 23)
+predFecF1_plot.pat</code></pre>
+<p><img src="figure/fecundity.Rmd/F1-fecundity-model-predictions-plot-rev-2.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.1 (2023-06-16 ucrt)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19043)
+
+Matrix products: default
+
+
+locale:
+[1] LC_COLLATE=English_United Kingdom.utf8 
+[2] LC_CTYPE=English_United Kingdom.utf8   
+[3] LC_MONETARY=English_United Kingdom.utf8
+[4] LC_NUMERIC=C                           
+[5] LC_TIME=English_United Kingdom.utf8    
+
+time zone: Europe/London
+tzcode source: internal
+
+attached base packages:
+[1] splines   stats4    stats     graphics  grDevices utils     datasets 
+[8] methods   base     
+
+other attached packages:
+ [1] multcomp_1.4-25   TH.data_1.1-2     MASS_7.3-60       survival_3.5-5   
+ [5] mvtnorm_1.2-2     sandwich_3.0-2    lmtest_0.9-40     zoo_1.8-12       
+ [9] MuMIn_1.47.5      robustbase_0.99-0 bbmle_1.0.25      car_3.1-2        
+[13] carData_3.0-5     ggeffects_1.2.3   sjPlot_2.8.14     ggplot2_3.4.2    
+[17] rcompanion_2.4.30 reshape2_1.4.4    dplyr_1.1.2       readr_2.1.4      
+[21] workflowr_1.7.0  
+
+loaded via a namespace (and not attached):
+  [1] libcoin_1.0-9       rstudioapi_0.14     jsonlite_1.8.5     
+  [4] magrittr_2.0.3      estimability_1.4.1  modeltools_0.2-23  
+  [7] farver_2.1.1        nloptr_2.0.3        rmarkdown_2.22     
+ [10] fs_1.6.2            vctrs_0.6.3         minqa_1.2.5        
+ [13] forcats_1.0.0       htmltools_0.5.5     haven_2.5.2        
+ [16] broom_1.0.5         cellranger_1.1.0    sjmisc_2.8.9       
+ [19] sass_0.4.6          bslib_0.5.0         plyr_1.8.8         
+ [22] emmeans_1.8.6       rootSolve_1.8.2.3   cachem_1.0.8       
+ [25] whisker_0.4.1       lifecycle_1.0.3     pkgconfig_2.0.3    
+ [28] sjlabelled_1.2.0    Matrix_1.5-4.1      R6_2.5.1           
+ [31] fastmap_1.1.1       digest_0.6.31       Exact_3.2          
+ [34] numDeriv_2016.8-1.1 colorspace_2.1-0    ps_1.7.5           
+ [37] rprojroot_2.0.3     labeling_0.4.2      fansi_1.0.4        
+ [40] httr_1.4.6          abind_1.4-5         compiler_4.3.1     
+ [43] proxy_0.4-27        bit64_4.0.5         withr_2.5.0        
+ [46] backports_1.4.1     performance_0.10.4  highr_0.10         
+ [49] sjstats_0.18.2      gld_2.6.6           tools_4.3.1        
+ [52] httpuv_1.6.11       glue_1.6.2          callr_3.7.3        
+ [55] nlme_3.1-162        promises_1.2.0.1    grid_4.3.1         
+ [58] getPass_0.2-2       generics_0.1.3      gtable_0.3.3       
+ [61] nortest_1.0-4       tzdb_0.4.0          class_7.3-22       
+ [64] tidyr_1.3.0         data.table_1.14.8   lmom_2.9           
+ [67] hms_1.1.3           coin_1.4-2          utf8_1.2.3         
+ [70] pillar_1.9.0        stringr_1.5.0       vroom_1.6.3        
+ [73] later_1.3.1         lattice_0.21-8      bit_4.0.5          
+ [76] tidyselect_1.2.0    knitr_1.43          git2r_0.32.0       
+ [79] xfun_0.39           expm_0.999-7        matrixStats_1.0.0  
+ [82] DEoptimR_1.0-14     stringi_1.7.12      yaml_2.3.7         
+ [85] boot_1.3-28.1       evaluate_0.21       codetools_0.2-19   
+ [88] tibble_3.2.1        multcompView_0.1-9  cli_3.6.1          
+ [91] xtable_1.8-4        DescTools_0.99.49   munsell_0.5.0      
+ [94] processx_3.8.1      jquerylib_0.1.4     modelr_0.1.11      
+ [97] Rcpp_1.0.10         readxl_1.4.2        bdsmatrix_1.3-6    
+[100] parallel_4.3.1      bayestestR_0.13.1   lme4_1.1-33        
+[103] scales_1.2.1        e1071_1.7-13        insight_0.19.2     
+[106] purrr_1.0.1         crayon_1.5.2        rlang_1.1.1        </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

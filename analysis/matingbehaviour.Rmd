@@ -1,0 +1,838 @@
+---
+title: "Mating behaviour analyses"
+author: "Zajitschek et al."
+date: "2023-06-01"
+output: 
+  workflowr::wflow_html:
+   code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+## Load libraries
+```{r load-libraries, message=FALSE, warning=FALSE, results="hide"}
+library(readr)      # read data
+library(dplyr)      # data structure
+library(reshape2)   # data structure
+library(rcompanion) # mean and median (+- bootstrapped CI)
+library(ggplot2)    # plot
+library(sjPlot)     # model plots & diagnostics
+library(grid)       # figure arrangement
+library(gtable)     # figure arrangement
+library(gridExtra)  # figure arrangement
+library(lme4)       # linear mixed models (LMM)
+library(lmerTest)   # significance testing for LMM
+library(multcomp)   # multiple comparison correction
+library(lsmeans)
+library(pbkrtest)
+library(predictmeans) #diagnostic plots for (g)lmer: residplot
+library(gamm4)      # additive mixed models
+library(robustbase)
+library(effects)
+library(MuMIn)
+library(gratia)     # diagnostics of gam models
+library(DHARMa)
+library(splines)
+
+```
+
+## Load male mating behaviour data (parental generation F0, F1, F2, and F3)
+
+```{r import-matingbehaviour, message=FALSE}
+
+# F0 male mating behaviour 
+mb.f0 <- read_csv("./data/malebehavF0.csv")
+mb.f0a <- mb.f0[1:210, ]
+mb.f0a$treat <- interaction(mb.f0a$diet, mb.f0a$temp)
+mb.f0a$tray <- interaction(mb.f0a$treat, ifelse(mb.f0a$male_id < 8, c("a"), c("b")) )
+mb.f0a$male_id <- factor(mb.f0a$male_id)
+mb.f0a$diet_fac <- factor(mb.f0a$diet)
+mb.f0a$temp_fac <- factor(mb.f0a$temp)
+mb.f0a$replicate_vial_sep <- interaction(mb.f0a$treat, mb.f0a$replicate_vial)
+mb.f0a$indobs <- factor(1:nrow(mb.f0a))
+
+# F1 male mating behaviour 
+mb.f1 <- read_csv("./data/malebehavF1.csv")
+mb.f1a <- mb.f1
+mb.f1a$treat <- interaction(mb.f1a$parental_effects, mb.f1a$parental_diet, mb.f1a$parental_temp)
+mb.f1a$tray <- interaction(mb.f1a$treat, ifelse(mb.f1a$male_id < 8, c("a"), c("b")) )
+mb.f1a$male_id <- factor(mb.f1a$male_id)
+mb.f1a$parental_diet_fac <- factor(mb.f1a$parental_diet)
+mb.f1a$parental_temp_fac <- factor(mb.f1a$parental_temp)
+mb.f1a$replicate_vial_sep <- interaction(mb.f1a$treat, mb.f1a$replicate_vial)
+mb.f1a$indobs <- factor(1:nrow(mb.f1a))
+mb.f1.analysis <- mb.f1a %>% 
+  filter(!is.na(latency_to_mate))
+
+# F2 male mating behaviour 
+mb.f2 <- read.csv("./data/malebehavF2.csv")  
+mb.f2a <- mb.f2
+mb.f2a$treat <- interaction(mb.f2a$parental_effects, mb.f2a$parental_diet, mb.f2a$parental_temp)
+mb.f2a$tray <- interaction(mb.f2a$treat, ifelse(mb.f2a$male_id < 8, c("a"), c("b")) )
+mb.f2a$male_id <- factor(mb.f2a$male_id)
+mb.f2a$parental_diet_fac <- factor(mb.f2a$parental_diet)
+mb.f2a$parental_temp_fac <- factor(mb.f2a$parental_temp)
+mb.f2a$replicate_vial_sep <- interaction(mb.f2a$treat, mb.f2a$replicate_vial)
+mb.f2a$indobs <- factor(1:nrow(mb.f2a))
+
+# F3 male mating behaviour 
+mb.f3 <- read.csv("./data/malebehavF3.csv")  
+mb.f3a <- mb.f3
+mb.f3a$treat <- interaction(mb.f3a$parental_effects, mb.f3a$parental_diet, mb.f3a$parental_temp)
+mb.f3a$tray <- interaction(mb.f3a$treat, ifelse(mb.f3a$male_id < 8, c("a"), c("b")) )
+mb.f3a$male_id <- factor(mb.f3a$male_id)
+mb.f3a$parental_diet_fac <- factor(mb.f3a$parental_diet)
+mb.f3a$parental_temp_fac <- factor(mb.f3a$parental_temp)
+mb.f3a$replicate_vial_sep <- interaction(mb.f3a$treat, mb.f3a$replicate_vial)
+mb.f3a$indobs <- factor(1:nrow(mb.f3a))
+
+```
+
+## Data for latency to mate and mating duration in F0
+
+```{r malelatency-F0, message=FALSE}
+
+mb.f0 <- mb.f0a %>% 
+  filter(!is.na(latency_to_mate)) %>%
+  group_by(temp_fac, diet_fac) %>%   
+  summarise(mean_latency_to_mate = mean(latency_to_mate, na.rm = TRUE),  
+            sd_latency_to_mate = sd(latency_to_mate), 
+            n_latency_to_mate = n(),  
+            SE_latency_to_mate = sd(latency_to_mate)/sqrt(n()),
+		mean_mating_duration = mean(mating_duration, na.rm = TRUE),  
+            sd_mating_duration = sd(mating_duration), 
+            n_mating_duration = n(),  
+            SE_mating_duration = sd(mating_duration)/sqrt(n())) 
+
+print(mb.f0, n= 30)
+
+```
+
+## Data for F0 mating success
+
+```{r malematingsuccessF0-data}
+
+mb.f0.yn <- mb.f0a %>% 
+  group_by(temp_fac, diet_fac) %>%   
+  summarise(mating_success = sum(mated == "yes") / 14) 
+print(mb.f0.yn, n= 60)
+
+```
+
+## MALE MATING BEHAVIOUR ANALYSES
+
+## F0 MALE MATING BEHAVIOUR
+
+### F0 Latency to mate, GAMM: model comparison (table S10) and results (inspect code for model specifications)
+
+```{r latency-F0-gamm}
+
+mb.f0.analysis <- mb.f0a %>% 
+  filter(!is.na(latency_to_mate))
+
+# Full model: residuals are right-skewed
+matlatF0.gamm0 <- gamm4(latency_to_mate ~ s(temp, k= 5, by= diet_fac, bs="cr") + diet_fac, random= ~ (1|replicate_vial_sep), data= mb.f0.analysis )
+# Diagnostic plot
+appraise(matlatF0.gamm0$gam)
+
+# Better with log-transformed response
+matlatF0.gamm1 <- gamm4(log(latency_to_mate) ~ s(temp, k= 5, by= diet_fac, bs="cr") + diet_fac, random= ~ (1|replicate_vial_sep), data= mb.f0.analysis )
+# Diagnostic plot
+appraise(matlatF0.gamm1$gam)
+
+# Model without linear diet term
+matlatF0.gamm1b <- gamm4(log(latency_to_mate) ~ s(temp, k= 5, by= diet_fac, bs="cr"), random= ~ (1|replicate_vial_sep), data= mb.f0.analysis )
+
+# Model without diet-specific smooth terms
+matlatF0.gamm2 <- gamm4(log(latency_to_mate) ~s(temp, k= 5, bs="cr") + diet_fac, random= ~ (1|replicate_vial_sep), data= mb.f0.analysis)
+
+# Model without any diet effects
+matlatF0.gamm3 <- gamm4(log(latency_to_mate) ~s(temp, k= 5, bs="cr"), 
+			    random= ~ (1|replicate_vial_sep), data= mb.f0.analysis)
+
+# Model with linear temperature term only
+matlatF0.gamm3b <- gamm4(log(latency_to_mate) ~ temp, 
+			    random= ~ (1|replicate_vial_sep), data= mb.f0.analysis)
+
+# Model with linear temperature and diet terms only
+matlatF0.gamm3c <- gamm4(log(latency_to_mate) ~ temp*diet, 
+			    random= ~ (1|replicate_vial_sep), data= mb.f0.analysis)
+
+matlatF0.gamm.null <- gamm4(log(latency_to_mate) ~ 1, 
+			    random= ~ (1|replicate_vial_sep), data= mb.f0.analysis )
+
+# AIC model table (Table S10)
+model.sel(matlatF0.gamm1$mer, matlatF0.gamm1b$mer, matlatF0.gamm2$mer, matlatF0.gamm3$mer, matlatF0.gamm3b$mer, matlatF0.gamm3c$mer, matlatF0.gamm.null$mer, rank = AIC)
+
+summary(matlatF0.gamm3$gam)
+
+```
+
+### Plot Figure 5 
+
+```{r Figure-5}
+# Fitted.values(matlatF0.gamm3$gam)
+x_latF0dat <- data.frame(temp = seq(21, 29, length.out = 100))
+pred_latF0dat <- predict(matlatF0.gamm3$gam, x_latF0dat, se.fit = TRUE)
+
+new_latF0dat <- cbind(x_latF0dat, pred_latF0dat)
+
+# Calculate CIs 
+new_latF0dat <- within(new_latF0dat, {
+    lower = fit - 1.96*se.fit
+    upper = fit + 1.96*se.fit
+    fit_orig = exp(fit)
+    lower_orig = exp(lower)
+    upper_orig = exp(upper)
+})
+
+latF0_gamm3_plot <- ggplot(new_latF0dat, aes(x = temp, y = fit_orig)) + 
+  geom_point(data = mb.f0.analysis, aes(x = temp, y = latency_to_mate, color = factor(diet), shape  = factor(diet)), size = 3.2, alpha = 0.6, position= position_jitterdodge(dodge.width = 0.8, jitter.width = 0.1)) + 
+  geom_ribbon(aes(ymin = lower_orig, ymax = upper_orig), alpha=0.1) +
+  geom_line(size = 1.1) +
+  scale_x_continuous(breaks=c(21, 23, 25, 27, 29)) + 
+  scale_color_manual(name  ="Diet", values=c("#F8766D", "#619CFF", "#00BA38"), labels=c("restricted", "standard", "rich")) +
+  scale_fill_manual(name  ="Diet", values=c("#F8766D", "#619CFF", "#00BA38"), labels=c("restricted", "standard", "rich"))  +
+  scale_shape_discrete(name  ="Diet", labels=c("restricted", "standard", "rich")) +
+  labs(title = "", color = "Diet", y = "Latency to mate [min]", x = "Temperature [degree Celsius]") + theme_classic(base_size = 23) 
+
+latF0_gamm3_plot
+
+```
+
+### F0 Mating duration, GAMM: model comparison (Table S11; inspect code for model specifications)
+
+```{r dur-F0-gamm}
+
+# Full model
+matdurF0.gamm1 <- gamm4(mating_duration ~s(temp, k= 5, by= diet_fac, bs="cr") + diet_fac, random= ~ (1|replicate_vial_sep), data= mb.f0.analysis)
+
+appraise(matdurF0.gamm1$gam)
+
+# Model without diet-specific smooth terms
+matdurF0.gamm2 <- gamm4(mating_duration ~s(temp, k= 5, bs="cr") + diet_fac, 
+			    random= ~ (1|replicate_vial_sep), data= mb.f0.analysis)
+
+# Model without any diet effects
+matdurF0.gamm3 <- gamm4(mating_duration ~s(temp, k= 5, bs="cr"), 
+			    random= ~ (1|replicate_vial_sep), data= mb.f0.analysis)
+
+# Model with linear temperature term only
+matdurF0.gamm3b <- gamm4(mating_duration ~ temp, 
+			    random= ~ (1|replicate_vial_sep), data= mb.f0.analysis)
+
+# Null model
+matdurF0.gamm.null <- gamm4(mating_duration ~ 1, 
+			    random= ~ (1|replicate_vial_sep), data= mb.f0.analysis )
+
+# AIC model table (Table S11)
+model.sel(matdurF0.gamm1$mer, matdurF0.gamm2$mer, matdurF0.gamm3$mer, matdurF0.gamm3b$mer, matdurF0.gamm.null$mer, rank = AIC)
+
+```
+
+### F0 Mating success, GAMM: model comparison (Table S12; inspect code for model specifications)
+
+```{r success-F0-gamm}
+
+# Full model
+matsucF0.gamm1 <- gamm4(factor(mated) ~s(temp, k= 5, by= diet_fac, bs="cr") + diet_fac, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= mb.f0a )
+
+# Model without diet-specific smooth terms
+matsucF0.gamm2 <- gamm4(factor(mated) ~s(temp, k= 5, bs="cr") + diet_fac, 
+			    family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= mb.f0a )
+
+matsucF0.gamm2b <- gamm4(factor(mated) ~ temp*diet_fac, 
+			    family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= mb.f0a )
+
+# Model without any diet effects
+matsucF0.gamm3 <- gamm4(factor(mated) ~s(temp, k= 5, bs="cr"), 
+			    family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= mb.f0a )
+
+# Model with linear temperature term only
+matsucF0.gamm3b <- gamm4(factor(mated) ~ temp, 
+			    family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= mb.f0a )
+
+# Null model
+matsucF0.gamm.null <- gamm4(factor(mated) ~ 1, 
+			    family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= mb.f0a )
+
+# AIC model table (Table S12)
+model.sel(matsucF0.gamm1$mer, matsucF0.gamm2$mer, matsucF0.gamm2b$mer, matsucF0.gamm3$mer, matsucF0.gamm3b$mer, matsucF0.gamm.null$mer, rank = AIC)
+
+```
+
+## F1 MALE MATING BEHAVIOUR
+
+## F1 Latency to mate
+
+### Maternal effects on F1 offspring: Latency to mate (Table S13)
+
+```{r lat-F1-mat}
+
+# Full model
+latF1mat.gamm1 <- gamm4(latency_to_mate ~s(parental_temp, k= 5, by= parental_diet_fac, bs="cr") + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "mat"))
+appraise(latF1mat.gamm1$gam)
+
+latF1mat.gamm1log <- gamm4(log(latency_to_mate) ~s(parental_temp, k= 5, by= parental_diet_fac, bs="cr") + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "mat"))
+appraise(latF1mat.gamm1log$gam)
+
+# Model without diet-specific smooth terms
+latF1mat.gamm2 <- gamm4(log(latency_to_mate) ~ s(parental_temp, k= 5, bs="cr") + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "mat"))
+
+# Model without any diet effects
+latF1mat.gamm3 <- gamm4(log(latency_to_mate) ~ s(parental_temp, k= 5, bs="cr"), random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "mat"))
+
+# Model with linear temperature term only
+latF1mat.gamm3b <- gamm4(log(latency_to_mate) ~ parental_temp, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "mat"))
+
+# Null model
+latF1mat.gamm.null <- gamm4(log(latency_to_mate) ~ 1, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "mat"))
+
+# AIC model table (Table S13)
+model.sel(latF1mat.gamm1log$mer, latF1mat.gamm2$mer, latF1mat.gamm3$mer, latF1mat.gamm3b$mer, latF1mat.gamm.null$mer, rank = AIC)
+
+```
+
+### Paternal effects on F1 offspring: Latency to mate (Table S16)
+
+```{r lat-F1-pat}
+
+# Full model, untransformed response
+latF1pat.gamm0 <- gamm4(latency_to_mate ~s(parental_temp, k= 5, by= parental_diet_fac, bs="cr") + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "pat"))
+
+appraise(latF1pat.gamm0$gam) 
+
+# Full model, log-transformed response
+latF1pat.gamm1 <- gamm4(log(latency_to_mate) ~s(parental_temp, k= 5, by= parental_diet_fac, bs="cr") + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "pat"))
+
+appraise(latF1pat.gamm1$gam)
+
+# Model without diet-specific smooth terms
+latF1pat.gamm2 <- gamm4(log(latency_to_mate) ~ s(parental_temp, k= 5, bs="cr") + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "pat"))
+
+# Model without any diet effects
+latF1pat.gamm3 <- gamm4(log(latency_to_mate) ~ s(parental_temp, k= 5, bs="cr"), random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "pat"))
+
+# Model with linear temperature term only
+latF1pat.gamm3b <- gamm4(log(latency_to_mate) ~ parental_temp, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "pat"))
+
+# Null model
+latF1pat.gamm.null <- gamm4(log(latency_to_mate) ~ 1, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "pat"))
+
+# AIC model table (Table S16)
+model.sel(latF1pat.gamm1$mer, latF1pat.gamm2$mer, latF1pat.gamm3$mer, latF1pat.gamm3b$mer, latF1pat.gamm.null$mer, rank = AIC)
+
+```
+
+## F1 Mating duration
+
+### F1 Mating duration, maternal effects (Table S14)
+
+```{r dur-F1-mat}
+
+# Full model
+durF1mat.gamm1 <- gamm4(mating_duration ~s(parental_temp, k= 5, by= parental_diet_fac, bs="cr") + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "mat"))
+
+draw(durF1mat.gamm1$gam)
+appraise(durF1mat.gamm1$gam)
+
+# Model without diet-specific smooth terms
+durF1mat.gamm2 <- gamm4(mating_duration ~ s(parental_temp, k= 5, bs="cr") + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "mat"))
+
+# Model without any diet effects
+durF1mat.gamm3 <- gamm4(mating_duration ~ s(parental_temp, k= 5, bs="cr"), random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "mat"))
+
+# Model with linear temperature term only
+durF1mat.gamm3b <- gamm4(mating_duration ~ parental_temp, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "mat"))
+
+# Null model 
+durF1mat.gamm.null <- gamm4(mating_duration ~ 1, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "mat"))
+
+# AIC model table (Table S14)
+model.sel(durF1mat.gamm1$mer, durF1mat.gamm2$mer, durF1mat.gamm3$mer, durF1mat.gamm3b$mer, durF1mat.gamm.null$mer, rank = AIC)
+
+```
+
+### F1 Mating duration, paternal effects (Table S17)
+
+```{r dur-F1-pat}
+
+# Full model, untransformed response
+durF1pat.gamm1 <- gamm4(mating_duration ~s(parental_temp, k= 5, by= parental_diet_fac, bs="cr") + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "pat"))
+
+appraise(durF1pat.gamm1$gam) 
+
+# Model without diet-specific smooth terms
+durF1pat.gamm2 <- gamm4(mating_duration ~ s(parental_temp, k= 5, bs="cr") + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "pat"))
+
+# Model without any diet effects
+durF1pat.gamm3 <- gamm4(mating_duration ~ s(parental_temp, k= 5, bs="cr"), random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "pat"))
+
+# Model with linear temperature term only
+durF1pat.gamm3b <- gamm4(mating_duration ~ parental_temp, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "pat"))
+
+# Null model
+durF1pat.gamm.null <- gamm4(mating_duration ~ 1, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== "pat"))
+
+# AIC model table (Table S17)
+model.sel(durF1pat.gamm1$mer, durF1pat.gamm2$mer, durF1pat.gamm3$mer, durF1pat.gamm3b$mer, durF1pat.gamm.null$mer, rank = AIC)
+
+summary(durF1pat.gamm3$gam)
+```
+
+### Plot Figure 6: Male mating duration F1, paternal effects
+
+```{r Figure-6}
+
+# Create new data for predictions
+x_durF1dat <- data.frame(parental_temp = seq(21, 29, length.out = 100))
+pred_durF1patdat <- predict(durF1pat.gamm3$gam, x_durF1dat, se.fit = TRUE)
+
+new_durF1patdat <- cbind(x_durF1dat, pred_durF1patdat)
+
+# Calculate CIs 
+new_durF1patdat <- data.frame(new_durF1patdat,
+                      mu   = new_durF1patdat$fit,
+                      lower  = new_durF1patdat$fit - 1.96 * new_durF1patdat$se.fit,
+                      higher = new_durF1patdat$fit + 1.96 * new_durF1patdat$se.fit)
+
+# Plot Figure 5
+
+predDurF1pat_plot <- ggplot(new_durF1patdat) +
+  geom_point(data= subset(mb.f1.analysis, parental_effects== "pat"), aes(x = parental_temp, y = mating_duration, color = factor(parental_diet), shape  = factor(parental_diet)), size = 3.2, alpha = 0.6, position= position_jitterdodge(dodge.width = 0.8, jitter.width = 0.1), show.legend = TRUE) +
+  geom_smooth(aes(ymin = lower, ymax = higher, x = parental_temp, y = fit), stat = "identity", alpha = 0.1, color = "black", size = 1.1, show.legend = FALSE) +
+  scale_x_continuous(breaks=c(21, 23, 25, 27, 29)) + 
+  scale_color_manual(name  ="Paternal diet", values=c("#F8766D", "#619CFF", "#00BA38"), labels=c("restricted", "standard", "rich")) +
+  scale_fill_manual(name  ="Paternal diet", values=c("#F8766D", "#619CFF", "#00BA38"), labels=c("restricted", "standard", "rich"))  +
+  scale_shape_discrete(name  ="Paternal diet", labels=c("restricted", "standard", "rich")) + 
+ # scale_color_manual(values=c("#F8766D", "#619CFF", "#00BA38")) +
+ # scale_fill_manual(values=c("#F8766D", "#619CFF", "#00BA38")) +
+  labs(title = "", color = "Paternal diet", y = "Mating duration [min]", x = "Temperature [degree Celsius]") + theme_classic(base_size = 23) 
+
+predDurF1pat_plot
+
+```
+
+## F1 Male mating success
+
+### F1 Mating success, maternal effects (Table S15)
+
+```{r success-F1-mat}
+
+matsucF1mat.gamm1 <- gamm4(factor(mated) ~s(parental_temp, k= 5, by= parental_diet_fac) + parental_diet_fac, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== "mat") )
+
+appraise(latF1mat.gamm1$gam)
+
+# Model without diet-specific smooth terms
+matsucF1mat.gamm2 <- gamm4(factor(mated) ~s(parental_temp, k= 5) + parental_diet_fac, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== "mat") )
+
+# Model without any diet effects
+matsucF1mat.gamm3 <- gamm4(factor(mated) ~s(parental_temp, k= 5), family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== "mat") )
+
+# Model with linear temperature term only
+matsucF1mat.gamm4 <- gamm4(factor(mated) ~ parental_temp, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== "mat") )
+
+# Null model
+matsucF1mat.gamm5 <- gamm4(factor(mated) ~ 1, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== "mat") )
+
+# AIC model table (Table S15)
+model.sel(matsucF1mat.gamm1$mer, matsucF1mat.gamm2$mer, matsucF1mat.gamm3$mer, matsucF1mat.gamm4$mer, matsucF1mat.gamm5$mer, rank = AIC)
+
+```
+
+### F1 Mating success, paternal effects (Table S18)
+
+```{r success-F1-pat}
+
+matsucF1pat.gamm1 <- gamm4(factor(mated) ~s(parental_temp, k= 5, by= parental_diet_fac) + parental_diet_fac, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== "pat") )
+
+appraise(latF1pat.gamm1$gam)
+
+# Model without diet-specific smooth terms
+matsucF1pat.gamm2 <- gamm4(factor(mated) ~s(parental_temp, k= 5) + parental_diet_fac, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== "pat") )
+
+# Model without any diet effects
+matsucF1pat.gamm3 <- gamm4(factor(mated) ~s(parental_temp, k= 5), family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== "pat") )
+
+# Model with linear temperature term only
+matsucF1pat.gamm4 <- gamm4(factor(mated) ~ parental_temp, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== "pat") )
+
+# Null model
+matsucF1pat.gamm5 <- gamm4(factor(mated) ~ 1, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== "pat") )
+
+# AIC model table (Table S18)
+model.sel(matsucF1pat.gamm1$mer, matsucF1pat.gamm2$mer, matsucF1pat.gamm3$mer, matsucF1pat.gamm4$mer, matsucF1pat.gamm5$mer, rank = AIC)
+
+summary(matsucF1pat.gamm3$gam)
+
+```
+
+## F2 MALE MATING BEHAVIOUR
+
+### F2 Latency to mate
+
+```{r F2_latdat}
+
+mb.f2.analysis <- mb.f2a %>% 
+  filter(!is.na(latency_to_mate))
+str(mb.f2.analysis)
+
+```
+
+### F2 Latency to mate, grandmaternal effects: LMER (Table S19)
+
+```{r F2_lat_analysis_a}
+
+latencyF2mat.lmer1 <- lmer(latency_to_mate ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== "mat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4))) 
+anova(latencyF2mat.lmer1)
+
+latencyF2mat.lmer2 <- lmer(latency_to_mate ~ parental_temp + parental_diet_fac + I(parental_temp^2) + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== "mat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4))) 
+anova(latencyF2mat.lmer2)
+
+latencyF2mat.lmer3 <- lmer(latency_to_mate ~ parental_temp  + I(parental_temp^2) + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== "mat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4))) 
+
+# Table S19
+summary(latencyF2mat.lmer3, correlation = FALSE)
+
+# Diagnostics
+plot(simulateResiduals(latencyF2mat.lmer3))
+
+```
+
+### Plot preparation: F2 Latency to mate, grandmaternal effects
+
+```{r F2_latmat_plot_a}
+
+latF2.mat <- subset(mb.f2.analysis, parental_effects== "mat")
+
+latencyF2mat.lmer3 <- lmer(latency_to_mate ~ parental_temp + I(parental_temp^2) + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== "mat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4))) 
+eF2mat <- allEffects(latencyF2mat.lmer3, xlevels= 300) 
+
+```
+
+### Plot Figure 7: F2 Latency to mate, grandmaternal effects
+
+```{r Figure-7}
+
+predMatLatF2_plot <- ggplot(as.data.frame(eF2mat)$parental_temp, aes(x= parental_temp, y = fit)) +
+	geom_ribbon(aes(ymin = lower, ymax = upper), alpha= 0.1, linetype = 0, color = "black", size = 1.1) +
+	geom_line(size= 1.2) +
+	geom_point(data= mb.f2.analysis, aes(x= parental_temp, y= latency_to_mate, color = factor(parental_diet), shape = factor(parental_diet)), size = 3.2, alpha = 0.6, position= position_jitterdodge(dodge.width = 0.6, jitter.width = 0.1), show.legend = TRUE) + 
+	xlab("Temperature [degree Celsius]")  +
+	ylab("Latency to mate [min]")  + 
+	scale_x_continuous(breaks= c(21, 23, 25, 27, 29)) +
+	theme_bw(base_size = 23) +
+	theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+		 panel.border = element_blank()) +
+		 	scale_fill_manual(values= c("#F8766D", "#00BA38"), 
+		 	                  name= "Grandmaternal\ndiet", labels= c("restricted", "rich")) +
+	scale_colour_manual(values= c("#F8766D", "#00BA38"), 
+                       name= "Grandmaternal\ndiet",
+                       labels= c("restricted", "rich"))  +
+	scale_shape_manual(values= c(16, 15), 
+                       name= "Grandmaternal\ndiet",
+                       labels= c("restricted", "rich")) 
+	
+predMatLatF2_plot
+
+```
+
+### F2 Latency to mate, grandpaternal effects (Table S21)
+
+```{r F2_latency_pat}
+
+latencyF2pat.lmer1 <- lmer(latency_to_mate ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== "pat"), REML = T) #, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+
+# Table S21
+summary(latencyF2pat.lmer1,  correlation = FALSE)
+
+latencyF2pat.lmer2 <- lmer(latency_to_mate ~ parental_temp*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== "pat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+anova(latencyF2pat.lmer2)
+
+anova(latencyF2pat.lmer1, latencyF2pat.lmer2)
+
+latencyF2pat.lmer3 <- lmer(latency_to_mate ~ parental_temp + parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== "pat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+anova(latencyF2pat.lmer3)
+
+latencyF2pat.lmer4 <- lmer(latency_to_mate ~ parental_temp + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== "pat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+anova(latencyF2pat.lmer4)
+
+latencyF2pat.lmer5 <- lmer(latency_to_mate ~ parental_temp + I(parental_temp^2) + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== "pat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+anova(latencyF2pat.lmer5)
+
+latencyF2pat.lmer.null <- lmer(latency_to_mate ~ 1 + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== "pat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+
+anova(latencyF2pat.lmer4, latencyF2pat.lmer.null)
+
+```
+
+## F2 Mating duration
+
+### F2 mating duration, grandmaternal effects (Table S22)
+
+```{r F2_matdur_mat_}
+
+matdurF2mat.lmer1 <- lmer(mating_duration ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== "mat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+
+# Table S22
+summary(matdurF2mat.lmer1, correlation = FALSE)
+
+# Diagnostics
+plot(simulateResiduals(matdurF2mat.lmer1))
+
+matdurF2mat.lmer2 <- lmer(mating_duration ~ parental_temp*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== "mat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+anova(matdurF2mat.lmer2)
+
+matdurF2mat.lmer3 <- lmer(mating_duration ~ parental_temp + parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== "mat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+anova(matdurF2mat.lmer3)
+
+matdurF2mat.lmer4 <- lmer(mating_duration ~ parental_temp + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== "mat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+anova(matdurF2mat.lmer4)
+
+```
+
+## F2 mating duration, grandpaternal effects (Table S20)
+
+```{r F2_matdur_pat_}
+
+matdurF2pat.lmer1 <- lmer(mating_duration ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== "pat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+
+# Table S20
+summary(matdurF2pat.lmer1, correlation = FALSE) 
+
+# Diagnostics
+plot(simulateResiduals(matdurF2pat.lmer1))
+
+matdurF2pat.lmer2 <- lmer(mating_duration ~ parental_temp + I(parental_temp^2) +
+  parental_temp*parental_diet_fac +
+  (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== "pat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+
+anova(matdurF2pat.lmer1, matdurF2pat.lmer2)
+
+```
+
+### Plot Figure 8: F2 Mating duration, grandpaternal effects
+
+```{r Figure-8)}
+
+# Plot preparation: F2 Mating duration, paternal effects
+matdurF2.pat <- subset(mb.f2.analysis, parental_effects== "pat")
+
+matdurF2pat.lmer1 <- lmer(mating_duration ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial), data= matdurF2.pat, REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+
+pp <- 50
+plot.df.matdurF2pat = data.frame( parental_temp = rep(seq(min(matdurF2.pat$parental_temp), max(matdurF2.pat$parental_temp),
+       length.out= pp), 2),
+       parental_diet_fac = rep(levels(matdurF2.pat$parental_diet_fac),times= 1, each= pp), mating_duration= 0 )
+
+eF2pat <- as.data.frame(predict(matdurF2pat.lmer1, newdata= plot.df.matdurF2pat, re.form = NA))
+
+plot.df.matdurF2pat$pred <- eF2pat[,1]
+mm <- model.matrix(terms(matdurF2pat.lmer1), plot.df.matdurF2pat)
+pvar1 <- diag(mm %*% tcrossprod(vcov(matdurF2pat.lmer1),mm))
+cmult <- 1.96
+plot.df.matdurF2pat <- data.frame(
+    plot.df.matdurF2pat
+    , lwr = plot.df.matdurF2pat$pred - cmult*sqrt(pvar1)
+    , upr = plot.df.matdurF2pat$pred + cmult*sqrt(pvar1) )
+
+#adding mean and SE of raw data
+matdurF2.pat.means <- mb.f2.analysis %>%
+  filter(parental_effects == "pat") %>%
+  group_by(parental_temp, parental_diet_fac) %>%
+  summarise(mean_latency_to_mate = mean(latency_to_mate, na.rm = TRUE),
+            sd_latency_to_mate = sd(latency_to_mate),
+            n_latency_to_mate = n(),
+            SE_latency_to_mate = sd(latency_to_mate)/sqrt(n()),
+		mean_mating_duration = mean(mating_duration, na.rm = TRUE),
+            sd_mating_duration = sd(mating_duration),
+            n_mating_duration = n(),
+            SE_mating_duration = sd(mating_duration)/sqrt(n()))
+
+# Figure 8
+
+matdur.F2.pat.plot <- ggplot(plot.df.matdurF2pat, aes(x= parental_temp, y = pred, col= parental_diet_fac, fill = parental_diet_fac)) +
+	geom_ribbon(aes(ymin = lwr, ymax = upr, col= parental_diet_fac), alpha= 0.1, linetype = 0) +
+	geom_smooth(method = "lm", formula = y ~ x + I(x^2), aes(col= parental_diet_fac, linetype= parental_diet_fac), size= 1.5, se = F) +
+	geom_point(data= subset(mb.f2.analysis, parental_effects== "pat"),
+	  aes(x= parental_temp, y= mating_duration, col= parental_diet_fac, shape = parental_diet_fac), size = 3.2, alpha = 0.6, position= position_jitterdodge(dodge.width = 0.6, jitter.width = 0.1), show.legend = TRUE) +
+	xlab("Temperature [degree Celsius]")  +
+	ylab("Mating duration [min]")  +
+	#ggtitle("(b) Grand-paternal effects in F2 males:\nPredicted mating duration") +
+	scale_x_continuous(breaks= c(21, 23, 25, 27, 29)) +
+	theme_bw(base_size = 23) +
+	theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+		 panel.border = element_blank()) +
+	scale_fill_manual(name= "Grandpaternal\ndiet", labels= c("restricted", "rich"),
+			     values= c("#F8766D", "#00BA38")) +
+	scale_colour_manual(values= c("#F8766D", "#00BA38"),
+                       name= "Grandpaternal\ndiet",
+                       labels= c("restricted", "rich")) +
+	scale_shape_manual(values= c(16, 15),
+                       name= "Grandpaternal\ndiet",
+                       labels= c("restricted", "rich")) +
+  scale_linetype_manual(name  ="Grandpaternal\ndiet", values = c("solid", "dotted"), labels=c("restricted", "rich"))
+
+matdur.F2.pat.plot
+
+```
+
+### F2 Mating success, grandmaternal effects (Table S23)
+
+```{r F2 matsuc_mat}
+
+# GLMER not converging
+matsucF2mat.lmer1.04 <- glmer(factor(mated) ~ parental_temp + I(parental_temp^2) + (1|indobs), family= binomial, data= subset(mb.f2a, parental_effects== "mat"))
+
+# GLM
+matsucF2mat.glm1 <- glm(factor(mated) ~ parental_diet_fac*parental_temp + parental_diet_fac*I(parental_temp^2), family= quasibinomial, data= subset(mb.f2a, parental_effects== "mat"))
+
+# Table S23
+summary(matsucF2mat.glm1)
+
+matsucF2mat.glm2 <- glm(factor(mated) ~ parental_diet_fac*parental_temp, family= quasibinomial, data= subset(mb.f2a, parental_effects== "mat"))
+summary(matsucF2mat.glm2)
+
+matsucF2mat.glm3 <- glm(factor(mated) ~ parental_temp + I(parental_temp^2), family= quasibinomial, data= subset(mb.f2a, parental_effects== "mat"))
+
+anova(matsucF2mat.glm1, matsucF2mat.glm2, test= "Chisq")
+
+anova(matsucF2mat.glm1, matsucF2mat.glm3, test= "Chisq")
+
+anova(matsucF2mat.glm2, matsucF2mat.glm3, test= "Chisq")
+
+matsucF2mat.glm4 <- glm(factor(mated) ~ parental_diet_fac+parental_temp, family= quasibinomial, data= subset(mb.f2a, parental_effects== "mat"))
+anova(matsucF2mat.glm2, matsucF2mat.glm4, test= "Chisq")
+
+matsucF2mat.glm5 <- glm(factor(mated) ~ parental_diet_fac, family= quasibinomial, data= subset(mb.f2a, parental_effects== "mat"))
+anova(matsucF2mat.glm4, matsucF2mat.glm5, test= "Chisq")
+
+matsucF2mat.glm6 <- glm(factor(mated) ~ parental_temp, family= quasibinomial, data= subset(mb.f2a, parental_effects== "mat"))
+anova(matsucF2mat.glm4, matsucF2mat.glm6, test= "Chisq")
+
+matsucF2mat.glm.null <- glm(factor(mated) ~ 1, family= quasibinomial, data= subset(mb.f2a, parental_effects== "mat"))
+
+anova(matsucF2mat.glm5, matsucF2mat.glm.null, test= "Chisq")
+
+anova(matsucF2mat.glm6, matsucF2mat.glm.null, test= "Chisq")
+
+```
+
+### F2 Mating success, grandpaternal effects (Table S24)
+
+```{r F2 matsuc_pat}
+
+# GLM
+matsucF2pat.glm1 <- glm(factor(mated) ~ parental_diet_fac*parental_temp + parental_diet_fac*I(parental_temp^2), family= quasibinomial, data= subset(mb.f2a, parental_effects== "pat"))
+
+# Table S24
+summary(matsucF2pat.glm1)
+
+matsucF2pat.glm2 <- glm(factor(mated) ~ parental_diet_fac*parental_temp, family= quasibinomial, data= subset(mb.f2a, parental_effects== "pat"))
+summary(matsucF2pat.glm2)
+
+matsucF2pat.glm3 <- glm(factor(mated) ~ parental_temp + I(parental_temp^2), family= quasibinomial, data= subset(mb.f2a, parental_effects== "pat"))
+
+anova(matsucF2pat.glm1, matsucF2pat.glm2, test= "Chisq")
+
+anova(matsucF2pat.glm1, matsucF2pat.glm3, test= "Chisq")
+
+anova(matsucF2pat.glm2, matsucF2pat.glm3, test= "Chisq")
+
+matsucF2pat.glm4 <- glm(factor(mated) ~ parental_diet_fac+parental_temp, family= quasibinomial, data= subset(mb.f2a, parental_effects== "pat"))
+
+anova(matsucF2pat.glm2, matsucF2pat.glm4, test= "Chisq")
+
+matsucF2pat.glm5 <- glm(factor(mated) ~ parental_temp, family= quasibinomial, data= subset(mb.f2a, parental_effects== "pat"))
+
+anova(matsucF2pat.glm4, matsucF2pat.glm5, test= "Chisq")
+
+matsucF2pat.glm6 <- glm(factor(mated) ~ parental_diet_fac, family= quasibinomial, data= subset(mb.f2a, parental_effects== "pat"))
+
+anova(matsucF2pat.glm4, matsucF2pat.glm6, test= "Chisq")
+
+matsucF2pat.glm.null <- glm(factor(mated) ~ 1, family= quasibinomial, data= subset(mb.f2a, parental_effects== "pat"))
+anova(matsucF2pat.glm5, matsucF2pat.glm.null, test= "Chisq")
+
+anova(matsucF2pat.glm6, matsucF2pat.glm.null, test= "Chisq")
+
+```
+
+## F3 MALE MATING BEHAVIOUR
+
+### F3 Latency to mate
+
+```{r F3_a}
+
+mb.f3.analysis <- mb.f3a %>%
+  filter(!is.na(latency_to_mate))
+str(mb.f3.analysis)
+```
+
+### F3 Latency to mate, great-grandmaternal and great-grandpaternal effects (Tables S25, S26)
+
+```{r F3_latency_maternal_paternal}
+
+# F3 Latency to mate, maternal effects
+
+latencyF3mat.lmer1 <- lmer(latency_to_mate ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f3.analysis, parental_effects== "mat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+
+# Table S25
+summary(latencyF3mat.lmer1, correlation = FALSE)
+
+# F3 Latency to mate, paternal effects
+
+latencyF3pat.lmer1 <- lmer(latency_to_mate ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f3.analysis, parental_effects== "pat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+
+# Table S26
+summary(latencyF3pat.lmer1, correlation = FALSE)
+
+```
+
+### F3 Mating duration, great-grandmaternal effects (Tables S27, S28)
+
+```{r F3_matingduration_maternal_paternal}
+
+matdurF3mat.lmer1 <- lmer(mating_duration ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f3.analysis, parental_effects== "mat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+
+# Table S27
+summary(matdurF3mat.lmer1, correlation = FALSE)
+
+# F3 Mating duration, paternal effects
+
+matdurF3pat.lmer1 <- lmer(mating_duration ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f3.analysis, parental_effects== "pat"), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4)))
+
+# Table S28
+summary(matdurF3pat.lmer1, correlation = FALSE)
+
+```
+
+## F3 Mating success
+
+```{r F3_matingsuccess_a}
+mb.f3.analysis2 <- mb.f3a
+str(mb.f3.analysis2)
+```
+
+### F3 Mating success, great-grandmaternal and great-grandpaternal effects (Tables S29, S30)
+
+```{r F3_matingsuc_mat_pat}
+
+# GLMER not converging
+matsucF3mat.lmer1 <- glmer(factor(mated) ~ parental_temp + I(parental_temp^2) + (1|indobs), family= binomial, data= subset(mb.f3.analysis2, parental_effects== "mat" & parental_diet_fac== "1.5" ))
+
+# GLM
+matsucF3mat.glm1 <- glm(factor(mated) ~ parental_diet_fac*parental_temp + parental_diet_fac*I(parental_temp^2), family= quasibinomial, data= subset(mb.f3.analysis2, parental_effects== "mat"))
+
+# Table S29
+summary(matsucF3mat.glm1) 
+
+## F3 Mating success, paternal effects
+
+# GLM
+matsucF3pat.glm1 <- glm(factor(mated) ~ parental_diet_fac*parental_temp + parental_diet_fac*I(parental_temp^2), family= quasibinomial, data= subset(mb.f3.analysis2, parental_effects== "pat"))
+
+# Table S30
+summary(matsucF3pat.glm1)
+
+```

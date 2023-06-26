@@ -1,0 +1,23 @@
+name: Temperature_x_Diet_D.melanogaster
+output_dir: ../docs
+navbar:
+  title: Temperature_x_Diet_D.melanogaster
+  left:
+  - text: Overview
+    href: index.html
+  - text: Survival
+    href: survival.html
+  - text: Female fecundity
+    href: fecundity.html
+  - text: Male mating behaviour
+    href: matingbehaviour.html
+  right:
+  - icon: fa-github
+    text: Source code
+    href: https://github.com/zajitschek/Temperature_x_Diet_D.melanogaster
+output:
+  workflowr::wflow_html:
+    toc: yes
+    toc_float: yes
+    theme: flatly
+    highlight: textmate

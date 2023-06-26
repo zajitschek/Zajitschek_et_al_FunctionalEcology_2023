@@ -1,0 +1,22 @@
+---
+title: "Dietary restriction fails to extend life in stressful environments"
+site: workflowr::wflow_site
+output:
+  workflowr::wflow_html:
+    toc: false
+editor_options:
+  chunk_output_type: console
+---
+
+This website contains R analyses and results used for the manuscript *Dietary restriction fails to extend life in stressful environments*, authored by Zajitschek, F, Zajitschek, SRK, Vasconcelos, ACO & Bonduriansky, R. Functional Ecology, 2023. doi: 10.1111/1365-2435.14389
+
+Data are available at Dryad: http://doi.org/10.5061/dryad.rv15dv4d3
+
+## Survival (females and males, F0 and F1)
+Click this link: **[Survival analysis](survival.html)** to view the survival analyses.
+
+## Reproduction I: Female fecundity (F0 and F1)
+Click this link: **[Fecundity analysis](fecundity.html)** to view the female fecundity analyses.
+
+## Reproduction II: Male mating behaviour (F0, F1, F2, F3)
+Click this link: **[Mating behaviour analysis](matingbehaviour.html)** to view the male mating behaviour analyses.

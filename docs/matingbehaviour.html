@@ -1,0 +1,2541 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Zajitschek et al." />
+
+<meta name="date" content="2023-06-01" />
+
+<title>Mating behaviour analyses</title>
+
+<script src="site_libs/header-attrs-2.22/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.0/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.0/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Temperature_x_Diet_D.melanogaster</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Overview</a>
+</li>
+<li>
+  <a href="survival.html">Survival</a>
+</li>
+<li>
+  <a href="fecundity.html">Female fecundity</a>
+</li>
+<li>
+  <a href="matingbehaviour.html">Male mating behaviour</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/zajitschek/Temperature_x_Diet_D.melanogaster">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Mating behaviour analyses</h1>
+<h4 class="author">Zajitschek et al.</h4>
+<h4 class="date">2023-06-01</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2023-06-26
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong>
+<code>Temperature_x_Diet_D.melanogaster/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20200903code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20200903)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20200903code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20200903)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzajitschekTemperaturexDietDmelanogastertree5a9dafbd215f0ecb94b8a604cb68142e689920aftargetblank5a9dafba">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/zajitschek/Temperature_x_Diet_D.melanogaster/tree/5a9dafbd215f0ecb94b8a604cb68142e689920af" target="_blank">5a9dafb</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomzajitschekTemperaturexDietDmelanogastertree5a9dafbd215f0ecb94b8a604cb68142e689920aftargetblank5a9dafba"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/zajitschek/Temperature_x_Diet_D.melanogaster/tree/5a9dafbd215f0ecb94b8a604cb68142e689920af" target="_blank">5a9dafb</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  FecF1_compound.pdf
+    Untracked:  FecF1_compound.png
+    Untracked:  Sig_effects_on_male_mating_behaviour_F2_plots_w_means.pdf
+    Untracked:  appraise.latF1mat.gamm1.png
+    Untracked:  appraise.latF1mat.gamm1log.png
+    Untracked:  data/fecF0.csv
+    Untracked:  data/fecF1.csv
+    Untracked:  data/malebehavF0.csv
+    Untracked:  data/malebehavF1.csv
+    Untracked:  data/malebehavF2.csv
+    Untracked:  data/malebehavF3.csv
+    Untracked:  data/survivalF1.csv
+    Untracked:  fec.F1.plot.pdf
+    Untracked:  latency_F0_mat_predicted.pdf
+    Untracked:  male_latency_F2_mat_predicted.pdf
+    Untracked:  male_latency_F2_pat_predicted.pdf
+    Untracked:  male_mating_behaviour_F0_plots.pdf
+    Untracked:  male_mating_behaviour_F0_plots.png
+    Untracked:  plotF0_fecundity.pdf
+    Untracked:  plotF0_fecundity.png
+    Untracked:  plotF0_fecundity_rev.pdf
+    Untracked:  plotF0_latency.pdf
+    Untracked:  plotF0_latency.png
+    Untracked:  plotF0_latencyTemponly.pdf
+    Untracked:  plotF0_latencyTemponly.png
+    Untracked:  plotF0_latency_rev.pdf
+    Untracked:  plotF1_fecundity.pdf
+    Untracked:  plotF1_fecundity.png
+    Untracked:  plotF1_fecundity_mat.pdf
+    Untracked:  plotF1_fecundity_mat_rev.pdf
+    Untracked:  plotF1_fecundity_mat_rev_afterINK.pdf
+    Untracked:  plotF1_fecundity_pat.pdf
+    Untracked:  plotF1_fecundity_pat_rev.pdf
+    Untracked:  plotF1_fecundity_pat_rev_aftterINK.pdf
+    Untracked:  plotF1_latency.pdf
+    Untracked:  plotF1_latency.png
+    Untracked:  plotF1pat_duration.pdf
+    Untracked:  plotF1pat_duration.png
+    Untracked:  plotF1pat_duration_rev.pdf
+    Untracked:  plotF2_mat+pat_latency+dur.png
+    Untracked:  plotF2_mat_latency.pdf
+    Untracked:  plotF2_mat_latency.png
+    Untracked:  plotF2_mat_latency_rev.pdf
+    Untracked:  plotF2_pat_dur.pdf
+    Untracked:  plotF2_pat_dur.png
+    Untracked:  plotF2_pat_dur_rev.pdf
+    Untracked:  survivalcurves.pdf
+    Untracked:  survivalcurves.png
+    Untracked:  survivalcurves8-6-21.pdf
+    Untracked:  survivalcurves8-6-21.png
+    Untracked:  survivalcurves_rev20-3-2023.jpg
+    Untracked:  survivalcurves_rev20-3-2023.pdf
+    Untracked:  survivalcurves_rev20-3-2023.svg
+    Untracked:  survivalcurves_rev20-3-2023_afterINK.pdf
+
+Unstaged changes:
+    Modified:   _workflowr.yml
+    Modified:   analysis/fecundity.Rmd
+    Modified:   analysis/matingbehaviour.Rmd
+    Modified:   analysis/survival.Rmd
+    Modified:   data/survival.csv
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/matingbehaviour.Rmd</code>) and
+HTML (<code>docs/matingbehaviour.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zajitschek/Temperature_x_Diet_D.melanogaster/5a9dafbd215f0ecb94b8a604cb68142e689920af/docs/matingbehaviour.html" target="_blank">5a9dafb</a>
+</td>
+<td>
+zajitschek
+</td>
+<td>
+2023-06-25
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zajitschek/Temperature_x_Diet_D.melanogaster/blob/b9f595acd293b05819001b6507fd691556c50b1c/analysis/matingbehaviour.Rmd" target="_blank">b9f595a</a>
+</td>
+<td>
+zajitschek
+</td>
+<td>
+2023-06-25
+</td>
+<td>
+25-6-2023
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="load-libraries" class="section level2">
+<h2>Load libraries</h2>
+<pre class="r"><code>library(readr)      # read data
+library(dplyr)      # data structure
+library(reshape2)   # data structure
+library(rcompanion) # mean and median (+- bootstrapped CI)
+library(ggplot2)    # plot
+library(sjPlot)     # model plots &amp; diagnostics
+library(grid)       # figure arrangement
+library(gtable)     # figure arrangement
+library(gridExtra)  # figure arrangement
+library(lme4)       # linear mixed models (LMM)
+library(lmerTest)   # significance testing for LMM
+library(multcomp)   # multiple comparison correction
+library(lsmeans)
+library(pbkrtest)
+library(predictmeans) #diagnostic plots for (g)lmer: residplot
+library(gamm4)      # additive mixed models
+library(robustbase)
+library(effects)
+library(MuMIn)
+library(gratia)     # diagnostics of gam models
+library(DHARMa)
+library(splines)</code></pre>
+</div>
+<div
+id="load-male-mating-behaviour-data-parental-generation-f0-f1-f2-and-f3"
+class="section level2">
+<h2>Load male mating behaviour data (parental generation F0, F1, F2, and
+F3)</h2>
+<pre class="r"><code># F0 male mating behaviour 
+mb.f0 &lt;- read_csv(&quot;./data/malebehavF0.csv&quot;)
+mb.f0a &lt;- mb.f0[1:210, ]
+mb.f0a$treat &lt;- interaction(mb.f0a$diet, mb.f0a$temp)
+mb.f0a$tray &lt;- interaction(mb.f0a$treat, ifelse(mb.f0a$male_id &lt; 8, c(&quot;a&quot;), c(&quot;b&quot;)) )
+mb.f0a$male_id &lt;- factor(mb.f0a$male_id)
+mb.f0a$diet_fac &lt;- factor(mb.f0a$diet)
+mb.f0a$temp_fac &lt;- factor(mb.f0a$temp)
+mb.f0a$replicate_vial_sep &lt;- interaction(mb.f0a$treat, mb.f0a$replicate_vial)
+mb.f0a$indobs &lt;- factor(1:nrow(mb.f0a))
+
+# F1 male mating behaviour 
+mb.f1 &lt;- read_csv(&quot;./data/malebehavF1.csv&quot;)
+mb.f1a &lt;- mb.f1
+mb.f1a$treat &lt;- interaction(mb.f1a$parental_effects, mb.f1a$parental_diet, mb.f1a$parental_temp)
+mb.f1a$tray &lt;- interaction(mb.f1a$treat, ifelse(mb.f1a$male_id &lt; 8, c(&quot;a&quot;), c(&quot;b&quot;)) )
+mb.f1a$male_id &lt;- factor(mb.f1a$male_id)
+mb.f1a$parental_diet_fac &lt;- factor(mb.f1a$parental_diet)
+mb.f1a$parental_temp_fac &lt;- factor(mb.f1a$parental_temp)
+mb.f1a$replicate_vial_sep &lt;- interaction(mb.f1a$treat, mb.f1a$replicate_vial)
+mb.f1a$indobs &lt;- factor(1:nrow(mb.f1a))
+mb.f1.analysis &lt;- mb.f1a %&gt;% 
+  filter(!is.na(latency_to_mate))
+
+# F2 male mating behaviour 
+mb.f2 &lt;- read.csv(&quot;./data/malebehavF2.csv&quot;)  
+mb.f2a &lt;- mb.f2
+mb.f2a$treat &lt;- interaction(mb.f2a$parental_effects, mb.f2a$parental_diet, mb.f2a$parental_temp)
+mb.f2a$tray &lt;- interaction(mb.f2a$treat, ifelse(mb.f2a$male_id &lt; 8, c(&quot;a&quot;), c(&quot;b&quot;)) )
+mb.f2a$male_id &lt;- factor(mb.f2a$male_id)
+mb.f2a$parental_diet_fac &lt;- factor(mb.f2a$parental_diet)
+mb.f2a$parental_temp_fac &lt;- factor(mb.f2a$parental_temp)
+mb.f2a$replicate_vial_sep &lt;- interaction(mb.f2a$treat, mb.f2a$replicate_vial)
+mb.f2a$indobs &lt;- factor(1:nrow(mb.f2a))
+
+# F3 male mating behaviour 
+mb.f3 &lt;- read.csv(&quot;./data/malebehavF3.csv&quot;)  
+mb.f3a &lt;- mb.f3
+mb.f3a$treat &lt;- interaction(mb.f3a$parental_effects, mb.f3a$parental_diet, mb.f3a$parental_temp)
+mb.f3a$tray &lt;- interaction(mb.f3a$treat, ifelse(mb.f3a$male_id &lt; 8, c(&quot;a&quot;), c(&quot;b&quot;)) )
+mb.f3a$male_id &lt;- factor(mb.f3a$male_id)
+mb.f3a$parental_diet_fac &lt;- factor(mb.f3a$parental_diet)
+mb.f3a$parental_temp_fac &lt;- factor(mb.f3a$parental_temp)
+mb.f3a$replicate_vial_sep &lt;- interaction(mb.f3a$treat, mb.f3a$replicate_vial)
+mb.f3a$indobs &lt;- factor(1:nrow(mb.f3a))</code></pre>
+</div>
+<div id="data-for-latency-to-mate-and-mating-duration-in-f0"
+class="section level2">
+<h2>Data for latency to mate and mating duration in F0</h2>
+<pre class="r"><code>mb.f0 &lt;- mb.f0a %&gt;% 
+  filter(!is.na(latency_to_mate)) %&gt;%
+  group_by(temp_fac, diet_fac) %&gt;%   
+  summarise(mean_latency_to_mate = mean(latency_to_mate, na.rm = TRUE),  
+            sd_latency_to_mate = sd(latency_to_mate), 
+            n_latency_to_mate = n(),  
+            SE_latency_to_mate = sd(latency_to_mate)/sqrt(n()),
+        mean_mating_duration = mean(mating_duration, na.rm = TRUE),  
+            sd_mating_duration = sd(mating_duration), 
+            n_mating_duration = n(),  
+            SE_mating_duration = sd(mating_duration)/sqrt(n())) 
+
+print(mb.f0, n= 30)</code></pre>
+<pre><code># A tibble: 15 × 10
+# Groups:   temp_fac [5]
+   temp_fac diet_fac mean_latency_to_mate sd_latency_to_mate n_latency_to_mate
+   &lt;fct&gt;    &lt;fct&gt;                   &lt;dbl&gt;              &lt;dbl&gt;             &lt;int&gt;
+ 1 21       0.4                      21.9              17.4                 14
+ 2 21       1                        27.8              39.0                 13
+ 3 21       1.5                      16                 8.59                11
+ 4 23       0.4                      57                51.7                 11
+ 5 23       1                        30.3              27.0                 13
+ 6 23       1.5                      32.8              34.9                 13
+ 7 25       0.4                      39.6              46.3                 14
+ 8 25       1                        48.7              57.5                 13
+ 9 25       1.5                      50.1              30.9                 14
+10 27       0.4                      56.8              51.7                 12
+11 27       1                        18.5              11.1                 11
+12 27       1.5                      54.4              46.0                 14
+13 29       0.4                      48                44.9                 12
+14 29       1                        53.4              32.6                 11
+15 29       1.5                      80.7              49.7                 13
+# ℹ 5 more variables: SE_latency_to_mate &lt;dbl&gt;, mean_mating_duration &lt;dbl&gt;,
+#   sd_mating_duration &lt;dbl&gt;, n_mating_duration &lt;int&gt;, SE_mating_duration &lt;dbl&gt;</code></pre>
+</div>
+<div id="data-for-f0-mating-success" class="section level2">
+<h2>Data for F0 mating success</h2>
+<pre class="r"><code>mb.f0.yn &lt;- mb.f0a %&gt;% 
+  group_by(temp_fac, diet_fac) %&gt;%   
+  summarise(mating_success = sum(mated == &quot;yes&quot;) / 14) </code></pre>
+<pre><code>`summarise()` has grouped output by &#39;temp_fac&#39;. You can override using the
+`.groups` argument.</code></pre>
+<pre class="r"><code>print(mb.f0.yn, n= 60)</code></pre>
+<pre><code># A tibble: 15 × 3
+# Groups:   temp_fac [5]
+   temp_fac diet_fac mating_success
+   &lt;fct&gt;    &lt;fct&gt;             &lt;dbl&gt;
+ 1 21       0.4               1    
+ 2 21       1                 0.929
+ 3 21       1.5               0.786
+ 4 23       0.4               0.786
+ 5 23       1                 0.929
+ 6 23       1.5               0.929
+ 7 25       0.4               1    
+ 8 25       1                 0.929
+ 9 25       1.5               1    
+10 27       0.4               0.857
+11 27       1                 0.786
+12 27       1.5               1    
+13 29       0.4               0.857
+14 29       1                 0.786
+15 29       1.5               0.929</code></pre>
+</div>
+<div id="male-mating-behaviour-analyses" class="section level2">
+<h2>MALE MATING BEHAVIOUR ANALYSES</h2>
+</div>
+<div id="f0-male-mating-behaviour" class="section level2">
+<h2>F0 MALE MATING BEHAVIOUR</h2>
+<div
+id="f0-latency-to-mate-gamm-model-comparison-table-s10-and-results-inspect-code-for-model-specifications"
+class="section level3">
+<h3>F0 Latency to mate, GAMM: model comparison (table S10) and results
+(inspect code for model specifications)</h3>
+<pre class="r"><code>mb.f0.analysis &lt;- mb.f0a %&gt;% 
+  filter(!is.na(latency_to_mate))
+
+# Full model: residuals are right-skewed
+matlatF0.gamm0 &lt;- gamm4(latency_to_mate ~ s(temp, k= 5, by= diet_fac, bs=&quot;cr&quot;) + diet_fac, random= ~ (1|replicate_vial_sep), data= mb.f0.analysis )
+# Diagnostic plot
+appraise(matlatF0.gamm0$gam)</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/latency-F0-gamm-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Better with log-transformed response
+matlatF0.gamm1 &lt;- gamm4(log(latency_to_mate) ~ s(temp, k= 5, by= diet_fac, bs=&quot;cr&quot;) + diet_fac, random= ~ (1|replicate_vial_sep), data= mb.f0.analysis )
+# Diagnostic plot
+appraise(matlatF0.gamm1$gam)</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/latency-F0-gamm-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Model without linear diet term
+matlatF0.gamm1b &lt;- gamm4(log(latency_to_mate) ~ s(temp, k= 5, by= diet_fac, bs=&quot;cr&quot;), random= ~ (1|replicate_vial_sep), data= mb.f0.analysis )
+
+# Model without diet-specific smooth terms
+matlatF0.gamm2 &lt;- gamm4(log(latency_to_mate) ~s(temp, k= 5, bs=&quot;cr&quot;) + diet_fac, random= ~ (1|replicate_vial_sep), data= mb.f0.analysis)
+
+# Model without any diet effects
+matlatF0.gamm3 &lt;- gamm4(log(latency_to_mate) ~s(temp, k= 5, bs=&quot;cr&quot;), 
+                random= ~ (1|replicate_vial_sep), data= mb.f0.analysis)
+
+# Model with linear temperature term only
+matlatF0.gamm3b &lt;- gamm4(log(latency_to_mate) ~ temp, 
+                random= ~ (1|replicate_vial_sep), data= mb.f0.analysis)
+
+# Model with linear temperature and diet terms only
+matlatF0.gamm3c &lt;- gamm4(log(latency_to_mate) ~ temp*diet, 
+                random= ~ (1|replicate_vial_sep), data= mb.f0.analysis)
+
+matlatF0.gamm.null &lt;- gamm4(log(latency_to_mate) ~ 1, 
+                random= ~ (1|replicate_vial_sep), data= mb.f0.analysis )
+
+# AIC model table (Table S10)
+model.sel(matlatF0.gamm1$mer, matlatF0.gamm1b$mer, matlatF0.gamm2$mer, matlatF0.gamm3$mer, matlatF0.gamm3b$mer, matlatF0.gamm3c$mer, matlatF0.gamm.null$mer, rank = AIC)</code></pre>
+<pre><code>Model selection table 
+                           X          random df   logLik   AIC delta weight
+matlatF0.gamm3$mer                   X+r_v_s  5 -253.637 517.3  0.00  0.575
+matlatF0.gamm3b$mer                    r_v_s  4 -255.482 519.0  1.69  0.247
+matlatF0.gamm1b$mer          X+X.0+X.1+r_v_s  9 -251.681 521.4  4.09  0.074
+matlatF0.gamm2$mer                   X+r_v_s  7 -254.008 522.0  4.74  0.054
+matlatF0.gamm.null$mer 3.299           r_v_s  3 -258.691 523.4  6.11  0.027
+matlatF0.gamm3c$mer                    r_v_s  6 -256.240 524.5  7.21  0.016
+matlatF0.gamm1$mer           X+X.0+X.1+r_v_s 11 -252.108 526.2  8.94  0.007
+Models ranked by AIC(x) 
+Random terms: 
+ X    : 1 | Xr
+ r_v_s: 1 | replicate_vial_sep
+ X.0  : 1 | Xr.0
+ X.1  : 1 | Xr.1</code></pre>
+<pre class="r"><code>summary(matlatF0.gamm3$gam)</code></pre>
+<pre><code>
+Family: gaussian 
+Link function: identity 
+
+Formula:
+log(latency_to_mate) ~ s(temp, k = 5, bs = &quot;cr&quot;)
+
+Parametric coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  3.29897    0.07507   43.94   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Approximate significance of smooth terms:
+        edf Ref.df     F  p-value    
+s(temp)   1      1 14.29 0.000211 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+R-sq.(adj) =  0.0829   
+lmer.REML = 507.27  Scale est. = 0.80776   n = 189</code></pre>
+</div>
+<div id="plot-figure-5" class="section level3">
+<h3>Plot Figure 5</h3>
+<pre class="r"><code># Fitted.values(matlatF0.gamm3$gam)
+x_latF0dat &lt;- data.frame(temp = seq(21, 29, length.out = 100))
+pred_latF0dat &lt;- predict(matlatF0.gamm3$gam, x_latF0dat, se.fit = TRUE)
+
+new_latF0dat &lt;- cbind(x_latF0dat, pred_latF0dat)
+
+# Calculate CIs 
+new_latF0dat &lt;- within(new_latF0dat, {
+    lower = fit - 1.96*se.fit
+    upper = fit + 1.96*se.fit
+    fit_orig = exp(fit)
+    lower_orig = exp(lower)
+    upper_orig = exp(upper)
+})
+
+latF0_gamm3_plot &lt;- ggplot(new_latF0dat, aes(x = temp, y = fit_orig)) + 
+  geom_point(data = mb.f0.analysis, aes(x = temp, y = latency_to_mate, color = factor(diet), shape  = factor(diet)), size = 3.2, alpha = 0.6, position= position_jitterdodge(dodge.width = 0.8, jitter.width = 0.1)) + 
+  geom_ribbon(aes(ymin = lower_orig, ymax = upper_orig), alpha=0.1) +
+  geom_line(size = 1.1) +
+  scale_x_continuous(breaks=c(21, 23, 25, 27, 29)) + 
+  scale_color_manual(name  =&quot;Diet&quot;, values=c(&quot;#F8766D&quot;, &quot;#619CFF&quot;, &quot;#00BA38&quot;), labels=c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;)) +
+  scale_fill_manual(name  =&quot;Diet&quot;, values=c(&quot;#F8766D&quot;, &quot;#619CFF&quot;, &quot;#00BA38&quot;), labels=c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;))  +
+  scale_shape_discrete(name  =&quot;Diet&quot;, labels=c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;)) +
+  labs(title = &quot;&quot;, color = &quot;Diet&quot;, y = &quot;Latency to mate [min]&quot;, x = &quot;Temperature [degree Celsius]&quot;) + theme_classic(base_size = 23) </code></pre>
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.
+This warning is displayed once every 8 hours.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+generated.</code></pre>
+<pre class="r"><code>latF0_gamm3_plot</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/Figure-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div
+id="f0-mating-duration-gamm-model-comparison-table-s11-inspect-code-for-model-specifications"
+class="section level3">
+<h3>F0 Mating duration, GAMM: model comparison (Table S11; inspect code
+for model specifications)</h3>
+<pre class="r"><code># Full model
+matdurF0.gamm1 &lt;- gamm4(mating_duration ~s(temp, k= 5, by= diet_fac, bs=&quot;cr&quot;) + diet_fac, random= ~ (1|replicate_vial_sep), data= mb.f0.analysis)
+
+appraise(matdurF0.gamm1$gam)</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/dur-F0-gamm-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Model without diet-specific smooth terms
+matdurF0.gamm2 &lt;- gamm4(mating_duration ~s(temp, k= 5, bs=&quot;cr&quot;) + diet_fac, 
+                random= ~ (1|replicate_vial_sep), data= mb.f0.analysis)
+
+# Model without any diet effects
+matdurF0.gamm3 &lt;- gamm4(mating_duration ~s(temp, k= 5, bs=&quot;cr&quot;), 
+                random= ~ (1|replicate_vial_sep), data= mb.f0.analysis)
+
+# Model with linear temperature term only
+matdurF0.gamm3b &lt;- gamm4(mating_duration ~ temp, 
+                random= ~ (1|replicate_vial_sep), data= mb.f0.analysis)
+
+# Null model
+matdurF0.gamm.null &lt;- gamm4(mating_duration ~ 1, 
+                random= ~ (1|replicate_vial_sep), data= mb.f0.analysis )
+
+# AIC model table (Table S11)
+model.sel(matdurF0.gamm1$mer, matdurF0.gamm2$mer, matdurF0.gamm3$mer, matdurF0.gamm3b$mer, matdurF0.gamm.null$mer, rank = AIC)</code></pre>
+<pre><code>Model selection table 
+                           X          random df   logLik    AIC delta weight
+matdurF0.gamm.null$mer 23.17           r_v_s  3 -551.773 1109.5  0.00  0.385
+matdurF0.gamm1$mer           X+X.0+X.1+r_v_s 11 -544.020 1110.0  0.49  0.301
+matdurF0.gamm3$mer                   X+r_v_s  5 -550.745 1111.5  1.94  0.146
+matdurF0.gamm2$mer                   X+r_v_s  7 -548.915 1111.8  2.28  0.123
+matdurF0.gamm3b$mer                    r_v_s  4 -552.892 1113.8  4.24  0.046
+Models ranked by AIC(x) 
+Random terms: 
+ r_v_s: 1 | replicate_vial_sep
+ X    : 1 | Xr
+ X.0  : 1 | Xr.0
+ X.1  : 1 | Xr.1</code></pre>
+</div>
+<div
+id="f0-mating-success-gamm-model-comparison-table-s12-inspect-code-for-model-specifications"
+class="section level3">
+<h3>F0 Mating success, GAMM: model comparison (Table S12; inspect code
+for model specifications)</h3>
+<pre class="r"><code># Full model
+matsucF0.gamm1 &lt;- gamm4(factor(mated) ~s(temp, k= 5, by= diet_fac, bs=&quot;cr&quot;) + diet_fac, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= mb.f0a )
+
+# Model without diet-specific smooth terms
+matsucF0.gamm2 &lt;- gamm4(factor(mated) ~s(temp, k= 5, bs=&quot;cr&quot;) + diet_fac, 
+                family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= mb.f0a )
+
+matsucF0.gamm2b &lt;- gamm4(factor(mated) ~ temp*diet_fac, 
+                family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= mb.f0a )
+
+# Model without any diet effects
+matsucF0.gamm3 &lt;- gamm4(factor(mated) ~s(temp, k= 5, bs=&quot;cr&quot;), 
+                family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= mb.f0a )
+
+# Model with linear temperature term only
+matsucF0.gamm3b &lt;- gamm4(factor(mated) ~ temp, 
+                family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= mb.f0a )
+
+# Null model
+matsucF0.gamm.null &lt;- gamm4(factor(mated) ~ 1, 
+                family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= mb.f0a )
+
+# AIC model table (Table S12)
+model.sel(matsucF0.gamm1$mer, matsucF0.gamm2$mer, matsucF0.gamm2b$mer, matsucF0.gamm3$mer, matsucF0.gamm3b$mer, matsucF0.gamm.null$mer, rank = AIC)</code></pre>
+<pre><code>Model selection table 
+                           X            random df  logLik   AIC delta weight
+matsucF0.gamm.null$mer 12.81           r_v_s+i  3 -32.817  71.6  0.00   0.88
+matsucF0.gamm3$mer                   X+r_v_s+i  5 -32.811  75.6  3.99   0.12
+matsucF0.gamm1$mer           X+X.0+X.1+r_v_s+i 11 -32.670  87.3 15.70   0.00
+matsucF0.gamm3b$mer                    r_v_s+i  4 -68.055 144.1 72.48   0.00
+matsucF0.gamm2b$mer                    r_v_s+i  8 -64.649 145.3 73.66   0.00
+matsucF0.gamm2$mer                   X+r_v_s+i  7 -67.401 148.8 77.17   0.00
+Models ranked by AIC(x) 
+Random terms: 
+ r_v_s: 1 | replicate_vial_sep
+ i    : 1 | indobs
+ X    : 1 | Xr
+ X.0  : 1 | Xr.0
+ X.1  : 1 | Xr.1</code></pre>
+</div>
+</div>
+<div id="f1-male-mating-behaviour" class="section level2">
+<h2>F1 MALE MATING BEHAVIOUR</h2>
+</div>
+<div id="f1-latency-to-mate" class="section level2">
+<h2>F1 Latency to mate</h2>
+<div id="maternal-effects-on-f1-offspring-latency-to-mate-table-s13"
+class="section level3">
+<h3>Maternal effects on F1 offspring: Latency to mate (Table S13)</h3>
+<pre class="r"><code># Full model
+latF1mat.gamm1 &lt;- gamm4(latency_to_mate ~s(parental_temp, k= 5, by= parental_diet_fac, bs=&quot;cr&quot;) + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;mat&quot;))
+appraise(latF1mat.gamm1$gam)</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/lat-F1-mat-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>latF1mat.gamm1log &lt;- gamm4(log(latency_to_mate) ~s(parental_temp, k= 5, by= parental_diet_fac, bs=&quot;cr&quot;) + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;mat&quot;))
+appraise(latF1mat.gamm1log$gam)</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/lat-F1-mat-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Model without diet-specific smooth terms
+latF1mat.gamm2 &lt;- gamm4(log(latency_to_mate) ~ s(parental_temp, k= 5, bs=&quot;cr&quot;) + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;mat&quot;))
+
+# Model without any diet effects
+latF1mat.gamm3 &lt;- gamm4(log(latency_to_mate) ~ s(parental_temp, k= 5, bs=&quot;cr&quot;), random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;mat&quot;))
+
+# Model with linear temperature term only
+latF1mat.gamm3b &lt;- gamm4(log(latency_to_mate) ~ parental_temp, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;mat&quot;))
+
+# Null model
+latF1mat.gamm.null &lt;- gamm4(log(latency_to_mate) ~ 1, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;mat&quot;))
+
+# AIC model table (Table S13)
+model.sel(latF1mat.gamm1log$mer, latF1mat.gamm2$mer, latF1mat.gamm3$mer, latF1mat.gamm3b$mer, latF1mat.gamm.null$mer, rank = AIC)</code></pre>
+<pre><code>Model selection table 
+                           X          random df   logLik   AIC delta weight
+latF1mat.gamm.null$mer 3.279           r_v_s  3 -227.068 460.1  0.00  0.884
+latF1mat.gamm3$mer                   X+r_v_s  5 -227.513 465.0  4.89  0.077
+latF1mat.gamm3b$mer                    r_v_s  4 -229.358 466.7  6.58  0.033
+latF1mat.gamm2$mer                   X+r_v_s  7 -228.000 470.0  9.86  0.006
+latF1mat.gamm1log$mer        X+X.0+X.1+r_v_s 11 -227.023 476.0 15.91  0.000
+Models ranked by AIC(x) 
+Random terms: 
+ r_v_s: 1 | replicate_vial_sep
+ X    : 1 | Xr
+ X.0  : 1 | Xr.0
+ X.1  : 1 | Xr.1</code></pre>
+</div>
+<div id="paternal-effects-on-f1-offspring-latency-to-mate-table-s16"
+class="section level3">
+<h3>Paternal effects on F1 offspring: Latency to mate (Table S16)</h3>
+<pre class="r"><code># Full model, untransformed response
+latF1pat.gamm0 &lt;- gamm4(latency_to_mate ~s(parental_temp, k= 5, by= parental_diet_fac, bs=&quot;cr&quot;) + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;pat&quot;))
+
+appraise(latF1pat.gamm0$gam) </code></pre>
+<p><img src="figure/matingbehaviour.Rmd/lat-F1-pat-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Full model, log-transformed response
+latF1pat.gamm1 &lt;- gamm4(log(latency_to_mate) ~s(parental_temp, k= 5, by= parental_diet_fac, bs=&quot;cr&quot;) + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;pat&quot;))
+
+appraise(latF1pat.gamm1$gam)</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/lat-F1-pat-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Model without diet-specific smooth terms
+latF1pat.gamm2 &lt;- gamm4(log(latency_to_mate) ~ s(parental_temp, k= 5, bs=&quot;cr&quot;) + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;pat&quot;))
+
+# Model without any diet effects
+latF1pat.gamm3 &lt;- gamm4(log(latency_to_mate) ~ s(parental_temp, k= 5, bs=&quot;cr&quot;), random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;pat&quot;))
+
+# Model with linear temperature term only
+latF1pat.gamm3b &lt;- gamm4(log(latency_to_mate) ~ parental_temp, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;pat&quot;))
+
+# Null model
+latF1pat.gamm.null &lt;- gamm4(log(latency_to_mate) ~ 1, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;pat&quot;))
+
+# AIC model table (Table S16)
+model.sel(latF1pat.gamm1$mer, latF1pat.gamm2$mer, latF1pat.gamm3$mer, latF1pat.gamm3b$mer, latF1pat.gamm.null$mer, rank = AIC)</code></pre>
+<pre><code>Model selection table 
+                           X          random df   logLik   AIC delta weight
+latF1pat.gamm.null$mer 3.139           r_v_s  3 -253.613 513.2  0.00  0.797
+latF1pat.gamm3$mer                   X+r_v_s  5 -253.365 516.7  3.50  0.138
+latF1pat.gamm3b$mer                    r_v_s  4 -255.212 518.4  5.20  0.059
+latF1pat.gamm2$mer                   X+r_v_s  7 -254.718 523.4 10.21  0.005
+latF1pat.gamm1$mer           X+X.0+X.1+r_v_s 11 -254.297 530.6 17.37  0.000
+Models ranked by AIC(x) 
+Random terms: 
+ r_v_s: 1 | replicate_vial_sep
+ X    : 1 | Xr
+ X.0  : 1 | Xr.0
+ X.1  : 1 | Xr.1</code></pre>
+</div>
+</div>
+<div id="f1-mating-duration" class="section level2">
+<h2>F1 Mating duration</h2>
+<div id="f1-mating-duration-maternal-effects-table-s14"
+class="section level3">
+<h3>F1 Mating duration, maternal effects (Table S14)</h3>
+<pre class="r"><code># Full model
+durF1mat.gamm1 &lt;- gamm4(mating_duration ~s(parental_temp, k= 5, by= parental_diet_fac, bs=&quot;cr&quot;) + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;mat&quot;))
+
+draw(durF1mat.gamm1$gam)</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/dur-F1-mat-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>appraise(durF1mat.gamm1$gam)</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/dur-F1-mat-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Model without diet-specific smooth terms
+durF1mat.gamm2 &lt;- gamm4(mating_duration ~ s(parental_temp, k= 5, bs=&quot;cr&quot;) + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;mat&quot;))
+
+# Model without any diet effects
+durF1mat.gamm3 &lt;- gamm4(mating_duration ~ s(parental_temp, k= 5, bs=&quot;cr&quot;), random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;mat&quot;))
+
+# Model with linear temperature term only
+durF1mat.gamm3b &lt;- gamm4(mating_duration ~ parental_temp, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;mat&quot;))
+
+# Null model 
+durF1mat.gamm.null &lt;- gamm4(mating_duration ~ 1, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;mat&quot;))
+
+# AIC model table (Table S14)
+model.sel(durF1mat.gamm1$mer, durF1mat.gamm2$mer, durF1mat.gamm3$mer, durF1mat.gamm3b$mer, durF1mat.gamm.null$mer, rank = AIC)</code></pre>
+<pre><code>Model selection table 
+                          X          random df   logLik    AIC delta weight
+durF1mat.gamm1$mer          X+X.0+X.1+r_v_s 11 -501.147 1024.3  0.00  0.497
+durF1mat.gamm.null$mer 24.2           r_v_s  3 -509.816 1025.6  1.34  0.255
+durF1mat.gamm2$mer                  X+r_v_s  7 -506.611 1027.2  2.93  0.115
+durF1mat.gamm3$mer                  X+r_v_s  5 -508.821 1027.6  3.35  0.093
+durF1mat.gamm3b$mer                   r_v_s  4 -510.665 1029.3  5.04  0.040
+Models ranked by AIC(x) 
+Random terms: 
+ X    : 1 | Xr
+ X.0  : 1 | Xr.0
+ X.1  : 1 | Xr.1
+ r_v_s: 1 | replicate_vial_sep</code></pre>
+</div>
+<div id="f1-mating-duration-paternal-effects-table-s17"
+class="section level3">
+<h3>F1 Mating duration, paternal effects (Table S17)</h3>
+<pre class="r"><code># Full model, untransformed response
+durF1pat.gamm1 &lt;- gamm4(mating_duration ~s(parental_temp, k= 5, by= parental_diet_fac, bs=&quot;cr&quot;) + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;pat&quot;))
+
+appraise(durF1pat.gamm1$gam) </code></pre>
+<p><img src="figure/matingbehaviour.Rmd/dur-F1-pat-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Model without diet-specific smooth terms
+durF1pat.gamm2 &lt;- gamm4(mating_duration ~ s(parental_temp, k= 5, bs=&quot;cr&quot;) + parental_diet_fac, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;pat&quot;))
+
+# Model without any diet effects
+durF1pat.gamm3 &lt;- gamm4(mating_duration ~ s(parental_temp, k= 5, bs=&quot;cr&quot;), random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;pat&quot;))
+
+# Model with linear temperature term only
+durF1pat.gamm3b &lt;- gamm4(mating_duration ~ parental_temp, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;pat&quot;))
+
+# Null model
+durF1pat.gamm.null &lt;- gamm4(mating_duration ~ 1, random= ~ (1|replicate_vial_sep), data= subset(mb.f1.analysis, parental_effects== &quot;pat&quot;))
+
+# AIC model table (Table S17)
+model.sel(durF1pat.gamm1$mer, durF1pat.gamm2$mer, durF1pat.gamm3$mer, durF1pat.gamm3b$mer, durF1pat.gamm.null$mer, rank = AIC)</code></pre>
+<pre><code>Model selection table 
+                           X          random df   logLik    AIC delta weight
+durF1pat.gamm2$mer                   X+r_v_s  7 -530.047 1074.1  0.00  0.542
+durF1pat.gamm3$mer                   X+r_v_s  5 -532.892 1075.8  1.69  0.233
+durF1pat.gamm1$mer           X+X.0+X.1+r_v_s 11 -527.381 1076.8  2.67  0.143
+durF1pat.gamm.null$mer 24.23           r_v_s  3 -536.341 1078.7  4.59  0.055
+durF1pat.gamm3b$mer                    r_v_s  4 -536.007 1080.0  5.92  0.028
+Models ranked by AIC(x) 
+Random terms: 
+ X    : 1 | Xr
+ r_v_s: 1 | replicate_vial_sep
+ X.0  : 1 | Xr.0
+ X.1  : 1 | Xr.1</code></pre>
+<pre class="r"><code>summary(durF1pat.gamm3$gam)</code></pre>
+<pre><code>
+Family: gaussian 
+Link function: identity 
+
+Formula:
+mating_duration ~ s(parental_temp, k = 5, bs = &quot;cr&quot;)
+
+Parametric coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  24.2312     0.4004   60.52   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Approximate significance of smooth terms:
+                  edf Ref.df     F p-value  
+s(parental_temp) 2.75   2.75 3.712  0.0485 *
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+R-sq.(adj) =  0.0456   
+lmer.REML = 1065.8  Scale est. = 27.737    n = 173</code></pre>
+</div>
+<div id="plot-figure-6-male-mating-duration-f1-paternal-effects"
+class="section level3">
+<h3>Plot Figure 6: Male mating duration F1, paternal effects</h3>
+<pre class="r"><code># Create new data for predictions
+x_durF1dat &lt;- data.frame(parental_temp = seq(21, 29, length.out = 100))
+pred_durF1patdat &lt;- predict(durF1pat.gamm3$gam, x_durF1dat, se.fit = TRUE)
+
+new_durF1patdat &lt;- cbind(x_durF1dat, pred_durF1patdat)
+
+# Calculate CIs 
+new_durF1patdat &lt;- data.frame(new_durF1patdat,
+                      mu   = new_durF1patdat$fit,
+                      lower  = new_durF1patdat$fit - 1.96 * new_durF1patdat$se.fit,
+                      higher = new_durF1patdat$fit + 1.96 * new_durF1patdat$se.fit)
+
+# Plot Figure 5
+
+predDurF1pat_plot &lt;- ggplot(new_durF1patdat) +
+  geom_point(data= subset(mb.f1.analysis, parental_effects== &quot;pat&quot;), aes(x = parental_temp, y = mating_duration, color = factor(parental_diet), shape  = factor(parental_diet)), size = 3.2, alpha = 0.6, position= position_jitterdodge(dodge.width = 0.8, jitter.width = 0.1), show.legend = TRUE) +
+  geom_smooth(aes(ymin = lower, ymax = higher, x = parental_temp, y = fit), stat = &quot;identity&quot;, alpha = 0.1, color = &quot;black&quot;, size = 1.1, show.legend = FALSE) +
+  scale_x_continuous(breaks=c(21, 23, 25, 27, 29)) + 
+  scale_color_manual(name  =&quot;Paternal diet&quot;, values=c(&quot;#F8766D&quot;, &quot;#619CFF&quot;, &quot;#00BA38&quot;), labels=c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;)) +
+  scale_fill_manual(name  =&quot;Paternal diet&quot;, values=c(&quot;#F8766D&quot;, &quot;#619CFF&quot;, &quot;#00BA38&quot;), labels=c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;))  +
+  scale_shape_discrete(name  =&quot;Paternal diet&quot;, labels=c(&quot;restricted&quot;, &quot;standard&quot;, &quot;rich&quot;)) + 
+ # scale_color_manual(values=c(&quot;#F8766D&quot;, &quot;#619CFF&quot;, &quot;#00BA38&quot;)) +
+ # scale_fill_manual(values=c(&quot;#F8766D&quot;, &quot;#619CFF&quot;, &quot;#00BA38&quot;)) +
+  labs(title = &quot;&quot;, color = &quot;Paternal diet&quot;, y = &quot;Mating duration [min]&quot;, x = &quot;Temperature [degree Celsius]&quot;) + theme_classic(base_size = 23) 
+
+predDurF1pat_plot</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/Figure-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="f1-male-mating-success" class="section level2">
+<h2>F1 Male mating success</h2>
+<div id="f1-mating-success-maternal-effects-table-s15"
+class="section level3">
+<h3>F1 Mating success, maternal effects (Table S15)</h3>
+<pre class="r"><code>matsucF1mat.gamm1 &lt;- gamm4(factor(mated) ~s(parental_temp, k= 5, by= parental_diet_fac) + parental_diet_fac, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== &quot;mat&quot;) )
+
+appraise(latF1mat.gamm1$gam)</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/success-F1-mat-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Model without diet-specific smooth terms
+matsucF1mat.gamm2 &lt;- gamm4(factor(mated) ~s(parental_temp, k= 5) + parental_diet_fac, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== &quot;mat&quot;) )
+
+# Model without any diet effects
+matsucF1mat.gamm3 &lt;- gamm4(factor(mated) ~s(parental_temp, k= 5), family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== &quot;mat&quot;) )
+
+# Model with linear temperature term only
+matsucF1mat.gamm4 &lt;- gamm4(factor(mated) ~ parental_temp, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== &quot;mat&quot;) )
+
+# Null model
+matsucF1mat.gamm5 &lt;- gamm4(factor(mated) ~ 1, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== &quot;mat&quot;) )
+
+# AIC model table (Table S15)
+model.sel(matsucF1mat.gamm1$mer, matsucF1mat.gamm2$mer, matsucF1mat.gamm3$mer, matsucF1mat.gamm4$mer, matsucF1mat.gamm5$mer, rank = AIC)</code></pre>
+<pre><code>Model selection table 
+                          X            random df   logLik   AIC delta weight
+matsucF1mat.gamm5$mer 1.185           r_v_s+i  3 -116.804 239.6  0.00  0.440
+matsucF1mat.gamm1$mer       X+X.0+X.1+r_v_s+i 11 -109.494 241.0  1.38  0.221
+matsucF1mat.gamm4$mer                 r_v_s+i  4 -116.804 241.6  2.00  0.162
+matsucF1mat.gamm2$mer               X+r_v_s+i  7 -114.115 242.2  2.62  0.119
+matsucF1mat.gamm3$mer               X+r_v_s+i  5 -116.804 243.6  4.00  0.060
+Models ranked by AIC(x) 
+Random terms: 
+ r_v_s: 1 | replicate_vial_sep
+ i    : 1 | indobs
+ X    : 1 | Xr
+ X.0  : 1 | Xr.0
+ X.1  : 1 | Xr.1</code></pre>
+</div>
+<div id="f1-mating-success-paternal-effects-table-s18"
+class="section level3">
+<h3>F1 Mating success, paternal effects (Table S18)</h3>
+<pre class="r"><code>matsucF1pat.gamm1 &lt;- gamm4(factor(mated) ~s(parental_temp, k= 5, by= parental_diet_fac) + parental_diet_fac, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== &quot;pat&quot;) )
+
+appraise(latF1pat.gamm1$gam)</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/success-F1-pat-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Model without diet-specific smooth terms
+matsucF1pat.gamm2 &lt;- gamm4(factor(mated) ~s(parental_temp, k= 5) + parental_diet_fac, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== &quot;pat&quot;) )
+
+# Model without any diet effects
+matsucF1pat.gamm3 &lt;- gamm4(factor(mated) ~s(parental_temp, k= 5), family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== &quot;pat&quot;) )
+
+# Model with linear temperature term only
+matsucF1pat.gamm4 &lt;- gamm4(factor(mated) ~ parental_temp, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== &quot;pat&quot;) )
+
+# Null model
+matsucF1pat.gamm5 &lt;- gamm4(factor(mated) ~ 1, family= binomial, random= ~ (1|replicate_vial_sep) + (1|indobs), data= subset(mb.f1a, parental_effects== &quot;pat&quot;) )
+
+# AIC model table (Table S18)
+model.sel(matsucF1pat.gamm1$mer, matsucF1pat.gamm2$mer, matsucF1pat.gamm3$mer, matsucF1pat.gamm4$mer, matsucF1pat.gamm5$mer, rank = AIC)</code></pre>
+<pre><code>Warning in vcov.merMod(object, use.hessian = use.hessian): variance-covariance matrix computed from finite-difference Hessian is
+not positive definite or contains NA values: falling back to var-cov estimated from RX</code></pre>
+<pre><code>Warning in vcov.merMod(object, correlation = correlation, sigm = sig): variance-covariance matrix computed from finite-difference Hessian is
+not positive definite or contains NA values: falling back to var-cov estimated from RX</code></pre>
+<pre><code>Model selection table 
+                          X            random df  logLik   AIC delta weight
+matsucF1pat.gamm3$mer               X+r_v_s+i  5 -56.892 123.8  0.00  0.886
+matsucF1pat.gamm2$mer               X+r_v_s+i  7 -56.948 127.9  4.11  0.113
+matsucF1pat.gamm1$mer       X+X.0+X.1+r_v_s+i 11 -58.607 139.2 15.43  0.000
+matsucF1pat.gamm4$mer                 r_v_s+i  4 -95.018 198.0 74.25  0.000
+matsucF1pat.gamm5$mer 1.625           r_v_s+i  3 -97.385 200.8 76.99  0.000
+Models ranked by AIC(x) 
+Random terms: 
+ X    : 1 | Xr
+ r_v_s: 1 | replicate_vial_sep
+ i    : 1 | indobs
+ X.0  : 1 | Xr.0
+ X.1  : 1 | Xr.1</code></pre>
+<pre class="r"><code>summary(matsucF1pat.gamm3$gam)</code></pre>
+<pre><code>
+Family: binomial 
+Link function: logit 
+
+Formula:
+factor(mated) ~ s(parental_temp, k = 5)
+
+Parametric coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)
+(Intercept)   11.893      8.006   1.486    0.137
+
+Approximate significance of smooth terms:
+                 edf Ref.df Chi.sq p-value
+s(parental_temp)   1      1  0.003   0.954
+
+R-sq.(adj) =  -0.0048   
+glmer.ML = 0.58387  Scale est. = 1         n = 210</code></pre>
+</div>
+</div>
+<div id="f2-male-mating-behaviour" class="section level2">
+<h2>F2 MALE MATING BEHAVIOUR</h2>
+<div id="f2-latency-to-mate" class="section level3">
+<h3>F2 Latency to mate</h3>
+<pre class="r"><code>mb.f2.analysis &lt;- mb.f2a %&gt;% 
+  filter(!is.na(latency_to_mate))
+str(mb.f2.analysis)</code></pre>
+<pre><code>&#39;data.frame&#39;:   128 obs. of  19 variables:
+ $ generation        : chr  &quot;F2&quot; &quot;F2&quot; &quot;F2&quot; &quot;F2&quot; ...
+ $ parental_effects  : chr  &quot;mat&quot; &quot;mat&quot; &quot;mat&quot; &quot;mat&quot; ...
+ $ parental_temp     : int  21 21 21 21 21 21 21 21 21 21 ...
+ $ parental_diet     : num  0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 1.5 ...
+ $ replicate_vial    : chr  &quot;a&quot; &quot;b&quot; &quot;a&quot; &quot;b&quot; ...
+ $ male_id           : Factor w/ 14 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 4 7 8 9 10 11 12 13 1 ...
+ $ date              : chr  &quot;6/08/2019&quot; &quot;6/08/2019&quot; &quot;6/08/2019&quot; &quot;6/08/2019&quot; ...
+ $ time_in           : chr  &quot;10:23&quot; &quot;10:23&quot; &quot;10:23&quot; &quot;10:23&quot; ...
+ $ start_mating      : chr  &quot;11:02&quot; &quot;10:30&quot; &quot;10:33&quot; &quot;10:35&quot; ...
+ $ end_mating        : chr  &quot;11:25&quot; &quot;10:49&quot; &quot;10:53&quot; &quot;10:59&quot; ...
+ $ mated             : chr  &quot;yes&quot; &quot;yes&quot; &quot;yes&quot; &quot;yes&quot; ...
+ $ latency_to_mate   : int  39 7 10 12 113 171 8 22 176 53 ...
+ $ mating_duration   : int  23 19 20 24 18 23 18 25 16 21 ...
+ $ treat             : Factor w/ 12 levels &quot;mat.0.4.21&quot;,&quot;pat.0.4.21&quot;,..: 1 1 1 1 1 1 1 1 1 3 ...
+ $ tray              : Factor w/ 24 levels &quot;mat.0.4.21.a&quot;,..: 1 1 1 13 13 13 13 13 13 3 ...
+ $ parental_diet_fac : Factor w/ 2 levels &quot;0.4&quot;,&quot;1.5&quot;: 1 1 1 1 1 1 1 1 1 2 ...
+ $ parental_temp_fac : Factor w/ 3 levels &quot;21&quot;,&quot;25&quot;,&quot;29&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ replicate_vial_sep: Factor w/ 24 levels &quot;mat.0.4.21.a&quot;,..: 1 13 1 13 1 13 1 13 1 3 ...
+ $ indobs            : Factor w/ 168 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 4 7 8 9 10 11 12 13 15 ...</code></pre>
+</div>
+<div id="f2-latency-to-mate-grandmaternal-effects-lmer-table-s19"
+class="section level3">
+<h3>F2 Latency to mate, grandmaternal effects: LMER (Table S19)</h3>
+<pre class="r"><code>latencyF2mat.lmer1 &lt;- lmer(latency_to_mate ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== &quot;mat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4))) 
+anova(latencyF2mat.lmer1)</code></pre>
+<pre><code>Type III Analysis of Variance Table with Satterthwaite&#39;s method
+                                      Sum Sq Mean Sq NumDF DenDF F value
+parental_temp                        11515.3 11515.3     1    53  4.3019
+parental_diet_fac                       67.3    67.3     1    53  0.0251
+I(parental_temp^2)                   12178.8 12178.8     1    53  4.5498
+parental_temp:parental_diet_fac         76.0    76.0     1    53  0.0284
+parental_diet_fac:I(parental_temp^2)    83.5    83.5     1    53  0.0312
+                                      Pr(&gt;F)  
+parental_temp                        0.04294 *
+parental_diet_fac                    0.87462  
+I(parental_temp^2)                   0.03757 *
+parental_temp:parental_diet_fac      0.86687  
+parental_diet_fac:I(parental_temp^2) 0.86048  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>latencyF2mat.lmer2 &lt;- lmer(latency_to_mate ~ parental_temp + parental_diet_fac + I(parental_temp^2) + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== &quot;mat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4))) 
+anova(latencyF2mat.lmer2)</code></pre>
+<pre><code>Type III Analysis of Variance Table with Satterthwaite&#39;s method
+                    Sum Sq Mean Sq NumDF DenDF F value  Pr(&gt;F)  
+parental_temp      11532.2 11532.2     1    55  4.4656 0.03914 *
+parental_diet_fac     16.5    16.5     1    55  0.0064 0.93653  
+I(parental_temp^2) 12190.9 12190.9     1    55  4.7206 0.03413 *
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>latencyF2mat.lmer3 &lt;- lmer(latency_to_mate ~ parental_temp  + I(parental_temp^2) + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== &quot;mat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4))) 
+
+# Table S19
+summary(latencyF2mat.lmer3, correlation = FALSE)</code></pre>
+<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+lmerModLmerTest]
+Formula: 
+latency_to_mate ~ parental_temp + I(parental_temp^2) + (1 | replicate_vial_sep)
+   Data: subset(mb.f2.analysis, parental_effects == &quot;mat&quot;)
+Control: lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  
+    tol = 1e-04))
+
+REML criterion at convergence: 616.5
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.4985 -0.7112 -0.2278  0.7352  2.4160 
+
+Random effects:
+ Groups             Name        Variance Std.Dev.
+ replicate_vial_sep (Intercept)    0      0.00   
+ Residual                       2537     50.37   
+Number of obs: 59, groups:  replicate_vial_sep, 12
+
+Fixed effects:
+                     Estimate Std. Error         df t value Pr(&gt;|t|)  
+(Intercept)        -1066.6167   544.7864    56.0000  -1.958   0.0552 .
+parental_temp         94.2416    44.0834    56.0000   2.138   0.0369 *
+I(parental_temp^2)    -1.9311     0.8785    56.0000  -2.198   0.0321 *
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code># Diagnostics
+plot(simulateResiduals(latencyF2mat.lmer3))</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/F2_lat_analysis_a-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="plot-preparation-f2-latency-to-mate-grandmaternal-effects"
+class="section level3">
+<h3>Plot preparation: F2 Latency to mate, grandmaternal effects</h3>
+<pre class="r"><code>latF2.mat &lt;- subset(mb.f2.analysis, parental_effects== &quot;mat&quot;)
+
+latencyF2mat.lmer3 &lt;- lmer(latency_to_mate ~ parental_temp + I(parental_temp^2) + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== &quot;mat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4))) 
+eF2mat &lt;- allEffects(latencyF2mat.lmer3, xlevels= 300) </code></pre>
+</div>
+<div id="plot-figure-7-f2-latency-to-mate-grandmaternal-effects"
+class="section level3">
+<h3>Plot Figure 7: F2 Latency to mate, grandmaternal effects</h3>
+<pre class="r"><code>predMatLatF2_plot &lt;- ggplot(as.data.frame(eF2mat)$parental_temp, aes(x= parental_temp, y = fit)) +
+    geom_ribbon(aes(ymin = lower, ymax = upper), alpha= 0.1, linetype = 0, color = &quot;black&quot;, size = 1.1) +
+    geom_line(size= 1.2) +
+    geom_point(data= mb.f2.analysis, aes(x= parental_temp, y= latency_to_mate, color = factor(parental_diet), shape = factor(parental_diet)), size = 3.2, alpha = 0.6, position= position_jitterdodge(dodge.width = 0.6, jitter.width = 0.1), show.legend = TRUE) + 
+    xlab(&quot;Temperature [degree Celsius]&quot;)  +
+    ylab(&quot;Latency to mate [min]&quot;)  + 
+    scale_x_continuous(breaks= c(21, 23, 25, 27, 29)) +
+    theme_bw(base_size = 23) +
+    theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(), axis.line = element_line(colour = &quot;black&quot;),
+         panel.border = element_blank()) +
+            scale_fill_manual(values= c(&quot;#F8766D&quot;, &quot;#00BA38&quot;), 
+                              name= &quot;Grandmaternal\ndiet&quot;, labels= c(&quot;restricted&quot;, &quot;rich&quot;)) +
+    scale_colour_manual(values= c(&quot;#F8766D&quot;, &quot;#00BA38&quot;), 
+                       name= &quot;Grandmaternal\ndiet&quot;,
+                       labels= c(&quot;restricted&quot;, &quot;rich&quot;))  +
+    scale_shape_manual(values= c(16, 15), 
+                       name= &quot;Grandmaternal\ndiet&quot;,
+                       labels= c(&quot;restricted&quot;, &quot;rich&quot;)) 
+    
+predMatLatF2_plot</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/Figure-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="f2-latency-to-mate-grandpaternal-effects-table-s21"
+class="section level3">
+<h3>F2 Latency to mate, grandpaternal effects (Table S21)</h3>
+<pre class="r"><code>latencyF2pat.lmer1 &lt;- lmer(latency_to_mate ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== &quot;pat&quot;), REML = T) #, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+
+# Table S21
+summary(latencyF2pat.lmer1,  correlation = FALSE)</code></pre>
+<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+lmerModLmerTest]
+Formula: 
+latency_to_mate ~ parental_temp * parental_diet_fac + I(parental_temp^2) *  
+    parental_diet_fac + (1 | replicate_vial_sep)
+   Data: subset(mb.f2.analysis, parental_effects == &quot;pat&quot;)
+
+REML criterion at convergence: 685.3
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.2625 -0.6502 -0.3668  0.6689  2.5181 
+
+Random effects:
+ Groups             Name        Variance Std.Dev.
+ replicate_vial_sep (Intercept)  284.4   16.86   
+ Residual                       1696.3   41.19   
+Number of obs: 69, groups:  replicate_vial_sep, 12
+
+Fixed effects:
+                                         Estimate Std. Error        df t value
+(Intercept)                               689.107    833.981     7.261   0.826
+parental_temp                             -52.081     67.484     7.194  -0.772
+parental_diet_fac1.5                    -1463.501   1157.376     6.734  -1.264
+I(parental_temp^2)                          1.040      1.345     7.125   0.773
+parental_temp:parental_diet_fac1.5        120.923     93.790     6.710   1.289
+parental_diet_fac1.5:I(parental_temp^2)    -2.459      1.871     6.677  -1.314
+                                        Pr(&gt;|t|)
+(Intercept)                                0.435
+parental_temp                              0.465
+parental_diet_fac1.5                       0.248
+I(parental_temp^2)                         0.464
+parental_temp:parental_diet_fac1.5         0.240
+parental_diet_fac1.5:I(parental_temp^2)    0.232</code></pre>
+<pre class="r"><code>latencyF2pat.lmer2 &lt;- lmer(latency_to_mate ~ parental_temp*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== &quot;pat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+anova(latencyF2pat.lmer2)</code></pre>
+<pre><code>Type III Analysis of Variance Table with Satterthwaite&#39;s method
+                                Sum Sq Mean Sq NumDF  DenDF F value Pr(&gt;F)
+parental_temp                   408.77  408.77     1 7.5872  0.2401 0.6380
+parental_diet_fac               388.52  388.52     1 7.7679  0.2282 0.6460
+parental_temp:parental_diet_fac 463.62  463.62     1 7.5872  0.2723 0.6167</code></pre>
+<pre class="r"><code>anova(latencyF2pat.lmer1, latencyF2pat.lmer2)</code></pre>
+<pre><code>refitting model(s) with ML (instead of REML)</code></pre>
+<pre><code>Data: subset(mb.f2.analysis, parental_effects == &quot;pat&quot;)
+Models:
+latencyF2pat.lmer2: latency_to_mate ~ parental_temp * parental_diet_fac + (1 | replicate_vial_sep)
+latencyF2pat.lmer1: latency_to_mate ~ parental_temp * parental_diet_fac + I(parental_temp^2) * parental_diet_fac + (1 | replicate_vial_sep)
+                   npar    AIC    BIC  logLik deviance Chisq Df Pr(&gt;Chisq)
+latencyF2pat.lmer2    6 723.62 737.02 -355.81   711.62                    
+latencyF2pat.lmer1    8 724.81 742.68 -354.40   708.81 2.807  2     0.2457</code></pre>
+<pre class="r"><code>latencyF2pat.lmer3 &lt;- lmer(latency_to_mate ~ parental_temp + parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== &quot;pat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+anova(latencyF2pat.lmer3)</code></pre>
+<pre><code>Type III Analysis of Variance Table with Satterthwaite&#39;s method
+                  Sum Sq Mean Sq NumDF  DenDF F value Pr(&gt;F)
+parental_temp     500.13  500.13     1 8.5041  0.2939 0.6016
+parental_diet_fac 174.67  174.67     1 8.9519  0.1027 0.7560</code></pre>
+<pre class="r"><code>latencyF2pat.lmer4 &lt;- lmer(latency_to_mate ~ parental_temp + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== &quot;pat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+anova(latencyF2pat.lmer4)</code></pre>
+<pre><code>Type III Analysis of Variance Table with Satterthwaite&#39;s method
+              Sum Sq Mean Sq NumDF  DenDF F value Pr(&gt;F)
+parental_temp 524.62  524.62     1 9.3419  0.3085 0.5917</code></pre>
+<pre class="r"><code>latencyF2pat.lmer5 &lt;- lmer(latency_to_mate ~ parental_temp + I(parental_temp^2) + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== &quot;pat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+anova(latencyF2pat.lmer5)</code></pre>
+<pre><code>Type III Analysis of Variance Table with Satterthwaite&#39;s method
+                    Sum Sq Mean Sq NumDF DenDF F value Pr(&gt;F)
+parental_temp       85.071  85.071     1 9.488  0.0500 0.8278
+I(parental_temp^2) 104.263 104.263     1 9.447  0.0613 0.8098</code></pre>
+<pre class="r"><code>latencyF2pat.lmer.null &lt;- lmer(latency_to_mate ~ 1 + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== &quot;pat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+
+anova(latencyF2pat.lmer4, latencyF2pat.lmer.null)</code></pre>
+<pre><code>refitting model(s) with ML (instead of REML)</code></pre>
+<pre><code>Data: subset(mb.f2.analysis, parental_effects == &quot;pat&quot;)
+Models:
+latencyF2pat.lmer.null: latency_to_mate ~ 1 + (1 | replicate_vial_sep)
+latencyF2pat.lmer4: latency_to_mate ~ parental_temp + (1 | replicate_vial_sep)
+                       npar    AIC    BIC  logLik deviance Chisq Df Pr(&gt;Chisq)
+latencyF2pat.lmer.null    3 718.57 725.28 -356.29   712.57                    
+latencyF2pat.lmer4        4 720.20 729.14 -356.10   712.20 0.373  1     0.5414</code></pre>
+</div>
+</div>
+<div id="f2-mating-duration" class="section level2">
+<h2>F2 Mating duration</h2>
+<div id="f2-mating-duration-grandmaternal-effects-table-s22"
+class="section level3">
+<h3>F2 mating duration, grandmaternal effects (Table S22)</h3>
+<pre class="r"><code>matdurF2mat.lmer1 &lt;- lmer(mating_duration ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== &quot;mat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+
+# Table S22
+summary(matdurF2mat.lmer1, correlation = FALSE)</code></pre>
+<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+lmerModLmerTest]
+Formula: 
+mating_duration ~ parental_temp * parental_diet_fac + I(parental_temp^2) *  
+    parental_diet_fac + (1 | replicate_vial_sep)
+   Data: subset(mb.f2.analysis, parental_effects == &quot;mat&quot;)
+Control: lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  
+    tol = 1e-04))
+
+REML criterion at convergence: 351.6
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.3598 -0.5376 -0.1103  0.4350  4.5820 
+
+Random effects:
+ Groups             Name        Variance Std.Dev.
+ replicate_vial_sep (Intercept)  0.4523  0.6725  
+ Residual                       23.6275  4.8608  
+Number of obs: 59, groups:  replicate_vial_sep, 12
+
+Fixed effects:
+                                         Estimate Std. Error        df t value
+(Intercept)                             -28.76653   77.22206   5.52725  -0.373
+parental_temp                             3.69781    6.25327   5.46609   0.591
+parental_diet_fac1.5                    -80.04476  110.25124   6.20000  -0.726
+I(parental_temp^2)                       -0.06396    0.12477   5.42991  -0.513
+parental_temp:parental_diet_fac1.5        7.00383    8.92465   6.13487   0.785
+parental_diet_fac1.5:I(parental_temp^2)  -0.14750    0.17791   6.07531  -0.829
+                                        Pr(&gt;|t|)
+(Intercept)                                0.723
+parental_temp                              0.578
+parental_diet_fac1.5                       0.494
+I(parental_temp^2)                         0.628
+parental_temp:parental_diet_fac1.5         0.462
+parental_diet_fac1.5:I(parental_temp^2)    0.438</code></pre>
+<pre class="r"><code># Diagnostics
+plot(simulateResiduals(matdurF2mat.lmer1))</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/F2_matdur_mat_-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>matdurF2mat.lmer2 &lt;- lmer(mating_duration ~ parental_temp*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== &quot;mat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+anova(matdurF2mat.lmer2)</code></pre>
+<pre><code>Type III Analysis of Variance Table with Satterthwaite&#39;s method
+                                Sum Sq Mean Sq NumDF  DenDF F value Pr(&gt;F)
+parental_temp                   45.772  45.772     1 7.9502  1.9321 0.2022
+parental_diet_fac               23.927  23.927     1 8.2402  1.0100 0.3435
+parental_temp:parental_diet_fac 19.501  19.501     1 7.9502  0.8232 0.3909</code></pre>
+<pre class="r"><code>matdurF2mat.lmer3 &lt;- lmer(mating_duration ~ parental_temp + parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== &quot;mat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+anova(matdurF2mat.lmer3)</code></pre>
+<pre><code>Type III Analysis of Variance Table with Satterthwaite&#39;s method
+                  Sum Sq Mean Sq NumDF  DenDF F value Pr(&gt;F)
+parental_temp     42.541  42.541     1 9.7945  1.8106 0.2088
+parental_diet_fac 15.566  15.566     1 9.7126  0.6625 0.4352</code></pre>
+<pre class="r"><code>matdurF2mat.lmer4 &lt;- lmer(mating_duration ~ parental_temp + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== &quot;mat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+anova(matdurF2mat.lmer4)</code></pre>
+<pre><code>Type III Analysis of Variance Table with Satterthwaite&#39;s method
+              Sum Sq Mean Sq NumDF  DenDF F value Pr(&gt;F)
+parental_temp  47.66   47.66     1 9.9744  2.0117 0.1866</code></pre>
+</div>
+</div>
+<div id="f2-mating-duration-grandpaternal-effects-table-s20"
+class="section level2">
+<h2>F2 mating duration, grandpaternal effects (Table S20)</h2>
+<pre class="r"><code>matdurF2pat.lmer1 &lt;- lmer(mating_duration ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== &quot;pat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+
+# Table S20
+summary(matdurF2pat.lmer1, correlation = FALSE) </code></pre>
+<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+lmerModLmerTest]
+Formula: 
+mating_duration ~ parental_temp * parental_diet_fac + I(parental_temp^2) *  
+    parental_diet_fac + (1 | replicate_vial_sep)
+   Data: subset(mb.f2.analysis, parental_effects == &quot;pat&quot;)
+Control: lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  
+    tol = 1e-04))
+
+REML criterion at convergence: 426.6
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-2.80934 -0.45100 -0.06107  0.69059  1.87446 
+
+Random effects:
+ Groups             Name        Variance  Std.Dev. 
+ replicate_vial_sep (Intercept) 3.546e-14 1.883e-07
+ Residual                       2.979e+01 5.458e+00
+Number of obs: 69, groups:  replicate_vial_sep, 12
+
+Fixed effects:
+                                         Estimate Std. Error        df t value
+(Intercept)                              194.1804    81.4346   63.0000   2.384
+parental_temp                            -14.0385     6.5766   63.0000  -2.135
+parental_diet_fac1.5                    -226.0915   111.1219   63.0000  -2.035
+I(parental_temp^2)                         0.2811     0.1308   63.0000   2.149
+parental_temp:parental_diet_fac1.5        18.6587     8.9978   63.0000   2.074
+parental_diet_fac1.5:I(parental_temp^2)   -0.3748     0.1793   63.0000  -2.090
+                                        Pr(&gt;|t|)  
+(Intercept)                               0.0201 *
+parental_temp                             0.0367 *
+parental_diet_fac1.5                      0.0461 *
+I(parental_temp^2)                        0.0355 *
+parental_temp:parental_diet_fac1.5        0.0422 *
+parental_diet_fac1.5:I(parental_temp^2)   0.0406 *
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code># Diagnostics
+plot(simulateResiduals(matdurF2pat.lmer1))</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/F2_matdur_pat_-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>matdurF2pat.lmer2 &lt;- lmer(mating_duration ~ parental_temp + I(parental_temp^2) +
+  parental_temp*parental_diet_fac +
+  (1|replicate_vial_sep), data= subset(mb.f2.analysis, parental_effects== &quot;pat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+
+anova(matdurF2pat.lmer1, matdurF2pat.lmer2)</code></pre>
+<pre><code>refitting model(s) with ML (instead of REML)</code></pre>
+<pre><code>Data: subset(mb.f2.analysis, parental_effects == &quot;pat&quot;)
+Models:
+matdurF2pat.lmer2: mating_duration ~ parental_temp + I(parental_temp^2) + parental_temp * parental_diet_fac + (1 | replicate_vial_sep)
+matdurF2pat.lmer1: mating_duration ~ parental_temp * parental_diet_fac + I(parental_temp^2) * parental_diet_fac + (1 | replicate_vial_sep)
+                  npar    AIC    BIC  logLik deviance  Chisq Df Pr(&gt;Chisq)  
+matdurF2pat.lmer2    7 442.36 458.00 -214.18   428.36                       
+matdurF2pat.lmer1    8 439.73 457.61 -211.87   423.73 4.6262  1    0.03149 *
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div id="plot-figure-8-f2-mating-duration-grandpaternal-effects"
+class="section level3">
+<h3>Plot Figure 8: F2 Mating duration, grandpaternal effects</h3>
+<pre class="r"><code># Plot preparation: F2 Mating duration, paternal effects
+matdurF2.pat &lt;- subset(mb.f2.analysis, parental_effects== &quot;pat&quot;)
+
+matdurF2pat.lmer1 &lt;- lmer(mating_duration ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial), data= matdurF2.pat, REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+
+pp &lt;- 50
+plot.df.matdurF2pat = data.frame( parental_temp = rep(seq(min(matdurF2.pat$parental_temp), max(matdurF2.pat$parental_temp),
+       length.out= pp), 2),
+       parental_diet_fac = rep(levels(matdurF2.pat$parental_diet_fac),times= 1, each= pp), mating_duration= 0 )
+
+eF2pat &lt;- as.data.frame(predict(matdurF2pat.lmer1, newdata= plot.df.matdurF2pat, re.form = NA))
+
+plot.df.matdurF2pat$pred &lt;- eF2pat[,1]
+mm &lt;- model.matrix(terms(matdurF2pat.lmer1), plot.df.matdurF2pat)
+pvar1 &lt;- diag(mm %*% tcrossprod(vcov(matdurF2pat.lmer1),mm))
+cmult &lt;- 1.96
+plot.df.matdurF2pat &lt;- data.frame(
+    plot.df.matdurF2pat
+    , lwr = plot.df.matdurF2pat$pred - cmult*sqrt(pvar1)
+    , upr = plot.df.matdurF2pat$pred + cmult*sqrt(pvar1) )
+
+#adding mean and SE of raw data
+matdurF2.pat.means &lt;- mb.f2.analysis %&gt;%
+  filter(parental_effects == &quot;pat&quot;) %&gt;%
+  group_by(parental_temp, parental_diet_fac) %&gt;%
+  summarise(mean_latency_to_mate = mean(latency_to_mate, na.rm = TRUE),
+            sd_latency_to_mate = sd(latency_to_mate),
+            n_latency_to_mate = n(),
+            SE_latency_to_mate = sd(latency_to_mate)/sqrt(n()),
+        mean_mating_duration = mean(mating_duration, na.rm = TRUE),
+            sd_mating_duration = sd(mating_duration),
+            n_mating_duration = n(),
+            SE_mating_duration = sd(mating_duration)/sqrt(n()))</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;parental_temp&#39;. You can override using the
+`.groups` argument.</code></pre>
+<pre class="r"><code># Figure 8
+
+matdur.F2.pat.plot &lt;- ggplot(plot.df.matdurF2pat, aes(x= parental_temp, y = pred, col= parental_diet_fac, fill = parental_diet_fac)) +
+    geom_ribbon(aes(ymin = lwr, ymax = upr, col= parental_diet_fac), alpha= 0.1, linetype = 0) +
+    geom_smooth(method = &quot;lm&quot;, formula = y ~ x + I(x^2), aes(col= parental_diet_fac, linetype= parental_diet_fac), size= 1.5, se = F) +
+    geom_point(data= subset(mb.f2.analysis, parental_effects== &quot;pat&quot;),
+      aes(x= parental_temp, y= mating_duration, col= parental_diet_fac, shape = parental_diet_fac), size = 3.2, alpha = 0.6, position= position_jitterdodge(dodge.width = 0.6, jitter.width = 0.1), show.legend = TRUE) +
+    xlab(&quot;Temperature [degree Celsius]&quot;)  +
+    ylab(&quot;Mating duration [min]&quot;)  +
+    #ggtitle(&quot;(b) Grand-paternal effects in F2 males:\nPredicted mating duration&quot;) +
+    scale_x_continuous(breaks= c(21, 23, 25, 27, 29)) +
+    theme_bw(base_size = 23) +
+    theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(), axis.line = element_line(colour = &quot;black&quot;),
+         panel.border = element_blank()) +
+    scale_fill_manual(name= &quot;Grandpaternal\ndiet&quot;, labels= c(&quot;restricted&quot;, &quot;rich&quot;),
+                 values= c(&quot;#F8766D&quot;, &quot;#00BA38&quot;)) +
+    scale_colour_manual(values= c(&quot;#F8766D&quot;, &quot;#00BA38&quot;),
+                       name= &quot;Grandpaternal\ndiet&quot;,
+                       labels= c(&quot;restricted&quot;, &quot;rich&quot;)) +
+    scale_shape_manual(values= c(16, 15),
+                       name= &quot;Grandpaternal\ndiet&quot;,
+                       labels= c(&quot;restricted&quot;, &quot;rich&quot;)) +
+  scale_linetype_manual(name  =&quot;Grandpaternal\ndiet&quot;, values = c(&quot;solid&quot;, &quot;dotted&quot;), labels=c(&quot;restricted&quot;, &quot;rich&quot;))
+
+matdur.F2.pat.plot</code></pre>
+<p><img src="figure/matingbehaviour.Rmd/Figure-8)-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="f2-mating-success-grandmaternal-effects-table-s23"
+class="section level3">
+<h3>F2 Mating success, grandmaternal effects (Table S23)</h3>
+<pre class="r"><code># GLMER not converging
+matsucF2mat.lmer1.04 &lt;- glmer(factor(mated) ~ parental_temp + I(parental_temp^2) + (1|indobs), family= binomial, data= subset(mb.f2a, parental_effects== &quot;mat&quot;))</code></pre>
+<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
+Model failed to converge with max|grad| = 0.119617 (tol = 0.002, component 1)</code></pre>
+<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
+ - Rescale variables?;Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?</code></pre>
+<pre class="r"><code># GLM
+matsucF2mat.glm1 &lt;- glm(factor(mated) ~ parental_diet_fac*parental_temp + parental_diet_fac*I(parental_temp^2), family= quasibinomial, data= subset(mb.f2a, parental_effects== &quot;mat&quot;))
+
+# Table S23
+summary(matsucF2mat.glm1)</code></pre>
+<pre><code>
+Call:
+glm(formula = factor(mated) ~ parental_diet_fac * parental_temp + 
+    parental_diet_fac * I(parental_temp^2), family = quasibinomial, 
+    data = subset(mb.f2a, parental_effects == &quot;mat&quot;))
+
+Coefficients:
+                                        Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)                             -6.52638   28.62695  -0.228    0.820
+parental_diet_fac1.5                    26.86685   40.57052   0.662    0.510
+parental_temp                            0.55435    2.32677   0.238    0.812
+I(parental_temp^2)                      -0.01027    0.04656  -0.220    0.826
+parental_diet_fac1.5:parental_temp      -2.28506    3.30726  -0.691    0.492
+parental_diet_fac1.5:I(parental_temp^2)  0.04789    0.06646   0.721    0.473
+
+(Dispersion parameter for quasibinomial family taken to be 1.076924)
+
+    Null deviance: 102.284  on 83  degrees of freedom
+Residual deviance:  99.734  on 78  degrees of freedom
+AIC: NA
+
+Number of Fisher Scoring iterations: 4</code></pre>
+<pre class="r"><code>matsucF2mat.glm2 &lt;- glm(factor(mated) ~ parental_diet_fac*parental_temp, family= quasibinomial, data= subset(mb.f2a, parental_effects== &quot;mat&quot;))
+summary(matsucF2mat.glm2)</code></pre>
+<pre><code>
+Call:
+glm(formula = factor(mated) ~ parental_diet_fac * parental_temp, 
+    family = quasibinomial, data = subset(mb.f2a, parental_effects == 
+        &quot;mat&quot;))
+
+Coefficients:
+                                   Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)                        -0.24132    2.62737  -0.092    0.927
+parental_diet_fac1.5               -2.17580    3.79905  -0.573    0.568
+parental_temp                       0.04189    0.10491   0.399    0.691
+parental_diet_fac1.5:parental_temp  0.09311    0.15314   0.608    0.545
+
+(Dispersion parameter for quasibinomial family taken to be 1.045466)
+
+    Null deviance: 102.28  on 83  degrees of freedom
+Residual deviance: 100.46  on 80  degrees of freedom
+AIC: NA
+
+Number of Fisher Scoring iterations: 4</code></pre>
+<pre class="r"><code>matsucF2mat.glm3 &lt;- glm(factor(mated) ~ parental_temp + I(parental_temp^2), family= quasibinomial, data= subset(mb.f2a, parental_effects== &quot;mat&quot;))
+
+anova(matsucF2mat.glm1, matsucF2mat.glm2, test= &quot;Chisq&quot;)</code></pre>
+<pre><code>Analysis of Deviance Table
+
+Model 1: factor(mated) ~ parental_diet_fac * parental_temp + parental_diet_fac * 
+    I(parental_temp^2)
+Model 2: factor(mated) ~ parental_diet_fac * parental_temp
+  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)
+1        78     99.734                     
+2        80    100.463 -2 -0.72871    0.713</code></pre>
+<pre class="r"><code>anova(matsucF2mat.glm1, matsucF2mat.glm3, test= &quot;Chisq&quot;)</code></pre>
+<pre><code>Analysis of Deviance Table
+
+Model 1: factor(mated) ~ parental_diet_fac * parental_temp + parental_diet_fac * 
+    I(parental_temp^2)
+Model 2: factor(mated) ~ parental_temp + I(parental_temp^2)
+  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)
+1        78     99.734                     
+2        81    100.760 -3  -1.0257   0.8128</code></pre>
+<pre class="r"><code>anova(matsucF2mat.glm2, matsucF2mat.glm3, test= &quot;Chisq&quot;)</code></pre>
+<pre><code>Analysis of Deviance Table
+
+Model 1: factor(mated) ~ parental_diet_fac * parental_temp
+Model 2: factor(mated) ~ parental_temp + I(parental_temp^2)
+  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)
+1        80     100.46                     
+2        81     100.76 -1 -0.29695   0.5941</code></pre>
+<pre class="r"><code>matsucF2mat.glm4 &lt;- glm(factor(mated) ~ parental_diet_fac+parental_temp, family= quasibinomial, data= subset(mb.f2a, parental_effects== &quot;mat&quot;))
+anova(matsucF2mat.glm2, matsucF2mat.glm4, test= &quot;Chisq&quot;)</code></pre>
+<pre><code>Analysis of Deviance Table
+
+Model 1: factor(mated) ~ parental_diet_fac * parental_temp
+Model 2: factor(mated) ~ parental_diet_fac + parental_temp
+  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)
+1        80     100.46                     
+2        81     100.85 -1 -0.38887   0.5419</code></pre>
+<pre class="r"><code>matsucF2mat.glm5 &lt;- glm(factor(mated) ~ parental_diet_fac, family= quasibinomial, data= subset(mb.f2a, parental_effects== &quot;mat&quot;))
+anova(matsucF2mat.glm4, matsucF2mat.glm5, test= &quot;Chisq&quot;)</code></pre>
+<pre><code>Analysis of Deviance Table
+
+Model 1: factor(mated) ~ parental_diet_fac + parental_temp
+Model 2: factor(mated) ~ parental_diet_fac
+  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)
+1        81     100.85                     
+2        82     102.23 -1  -1.3756   0.2489</code></pre>
+<pre class="r"><code>matsucF2mat.glm6 &lt;- glm(factor(mated) ~ parental_temp, family= quasibinomial, data= subset(mb.f2a, parental_effects== &quot;mat&quot;))
+anova(matsucF2mat.glm4, matsucF2mat.glm6, test= &quot;Chisq&quot;)</code></pre>
+<pre><code>Analysis of Deviance Table
+
+Model 1: factor(mated) ~ parental_diet_fac + parental_temp
+Model 2: factor(mated) ~ parental_temp
+  Resid. Df Resid. Dev Df  Deviance Pr(&gt;Chi)
+1        81     100.85                      
+2        82     100.91 -1 -0.057905    0.813</code></pre>
+<pre class="r"><code>matsucF2mat.glm.null &lt;- glm(factor(mated) ~ 1, family= quasibinomial, data= subset(mb.f2a, parental_effects== &quot;mat&quot;))
+
+anova(matsucF2mat.glm5, matsucF2mat.glm.null, test= &quot;Chisq&quot;)</code></pre>
+<pre><code>Analysis of Deviance Table
+
+Model 1: factor(mated) ~ parental_diet_fac
+Model 2: factor(mated) ~ 1
+  Resid. Df Resid. Dev Df  Deviance Pr(&gt;Chi)
+1        82     102.23                      
+2        83     102.28 -1 -0.056961   0.8136</code></pre>
+<pre class="r"><code>anova(matsucF2mat.glm6, matsucF2mat.glm.null, test= &quot;Chisq&quot;)</code></pre>
+<pre><code>Analysis of Deviance Table
+
+Model 1: factor(mated) ~ parental_temp
+Model 2: factor(mated) ~ 1
+  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)
+1        82     100.91                     
+2        83     102.28 -1  -1.3746   0.2464</code></pre>
+</div>
+<div id="f2-mating-success-grandpaternal-effects-table-s24"
+class="section level3">
+<h3>F2 Mating success, grandpaternal effects (Table S24)</h3>
+<pre class="r"><code># GLM
+matsucF2pat.glm1 &lt;- glm(factor(mated) ~ parental_diet_fac*parental_temp + parental_diet_fac*I(parental_temp^2), family= quasibinomial, data= subset(mb.f2a, parental_effects== &quot;pat&quot;))
+
+# Table S24
+summary(matsucF2pat.glm1)</code></pre>
+<pre><code>
+Call:
+glm(formula = factor(mated) ~ parental_diet_fac * parental_temp + 
+    parental_diet_fac * I(parental_temp^2), family = quasibinomial, 
+    data = subset(mb.f2a, parental_effects == &quot;pat&quot;))
+
+Coefficients:
+                                        Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)                             20.52193   32.09698   0.639    0.524
+parental_diet_fac1.5                    30.21745   50.98626   0.593    0.555
+parental_temp                           -1.81560    2.65170  -0.685    0.496
+I(parental_temp^2)                       0.04125    0.05415   0.762    0.448
+parental_diet_fac1.5:parental_temp      -2.13961    4.14637  -0.516    0.607
+parental_diet_fac1.5:I(parental_temp^2)  0.03785    0.08356   0.453    0.652
+
+(Dispersion parameter for quasibinomial family taken to be 1.076925)
+
+    Null deviance: 78.829  on 83  degrees of freedom
+Residual deviance: 71.164  on 78  degrees of freedom
+AIC: NA
+
+Number of Fisher Scoring iterations: 5</code></pre>
+<pre class="r"><code>matsucF2pat.glm2 &lt;- glm(factor(mated) ~ parental_diet_fac*parental_temp, family= quasibinomial, data= subset(mb.f2a, parental_effects== &quot;pat&quot;))
+summary(matsucF2pat.glm2)</code></pre>
+<pre><code>
+Call:
+glm(formula = factor(mated) ~ parental_diet_fac * parental_temp, 
+    family = quasibinomial, data = subset(mb.f2a, parental_effects == 
+        &quot;pat&quot;))
+
+Coefficients:
+                                   Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)                         -4.0015     3.0246  -1.323   0.1896  
+parental_diet_fac1.5                 6.0030     4.8110   1.248   0.2158  
+parental_temp                        0.2115     0.1257   1.682   0.0965 .
+parental_diet_fac1.5:parental_temp  -0.2115     0.1945  -1.087   0.2801  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for quasibinomial family taken to be 1.034646)
+
+    Null deviance: 78.829  on 83  degrees of freedom
+Residual deviance: 73.505  on 80  degrees of freedom
+AIC: NA
+
+Number of Fisher Scoring iterations: 4</code></pre>
+<pre class="r"><code>matsucF2pat.glm3 &lt;- glm(factor(mated) ~ parental_temp + I(parental_temp^2), family= quasibinomial, data= subset(mb.f2a, parental_effects== &quot;pat&quot;))
+
+anova(matsucF2pat.glm1, matsucF2pat.glm2, test= &quot;Chisq&quot;)</code></pre>
+<pre><code>Analysis of Deviance Table
+
+Model 1: factor(mated) ~ parental_diet_fac * parental_temp + parental_diet_fac * 
+    I(parental_temp^2)
+Model 2: factor(mated) ~ parental_diet_fac * parental_temp
+  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)
+1        78     71.164                     
+2        80     73.505 -2  -2.3414   0.3372</code></pre>
+<pre class="r"><code>anova(matsucF2pat.glm1, matsucF2pat.glm3, test= &quot;Chisq&quot;)</code></pre>
+<pre><code>Analysis of Deviance Table
+
+Model 1: factor(mated) ~ parental_diet_fac * parental_temp + parental_diet_fac * 
+    I(parental_temp^2)
+Model 2: factor(mated) ~ parental_temp + I(parental_temp^2)
+  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)
+1        78     71.164                     
+2        81     74.997 -3  -3.8333   0.3131</code></pre>
+<pre class="r"><code>anova(matsucF2pat.glm2, matsucF2pat.glm3, test= &quot;Chisq&quot;)</code></pre>
+<pre><code>Analysis of Deviance Table
+
+Model 1: factor(mated) ~ parental_diet_fac * parental_temp
+Model 2: factor(mated) ~ parental_temp + I(parental_temp^2)
+  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)
+1        80     73.505                     
+2        81     74.997 -1   -1.492   0.2298</code></pre>
+<pre class="r"><code>matsucF2pat.glm4 &lt;- glm(factor(mated) ~ parental_diet_fac+parental_temp, family= quasibinomial, data= subset(mb.f2a, parental_effects== &quot;pat&quot;))
+
+anova(matsucF2pat.glm2, matsucF2pat.glm4, test= &quot;Chisq&quot;)</code></pre>
+<pre><code>Analysis of Deviance Table
+
+Model 1: factor(mated) ~ parental_diet_fac * parental_temp
+Model 2: factor(mated) ~ parental_diet_fac + parental_temp
+  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)
+1        80     73.505                     
+2        81     74.742 -1  -1.2366   0.2743</code></pre>
+<pre class="r"><code>matsucF2pat.glm5 &lt;- glm(factor(mated) ~ parental_temp, family= quasibinomial, data= subset(mb.f2a, parental_effects== &quot;pat&quot;))
+
+anova(matsucF2pat.glm4, matsucF2pat.glm5, test= &quot;Chisq&quot;)</code></pre>
+<pre><code>Analysis of Deviance Table
+
+Model 1: factor(mated) ~ parental_diet_fac + parental_temp
+Model 2: factor(mated) ~ parental_temp
+  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)
+1        81     74.742                     
+2        82     76.853 -1  -2.1114   0.1576</code></pre>
+<pre class="r"><code>matsucF2pat.glm6 &lt;- glm(factor(mated) ~ parental_diet_fac, family= quasibinomial, data= subset(mb.f2a, parental_effects== &quot;pat&quot;))
+
+anova(matsucF2pat.glm4, matsucF2pat.glm6, test= &quot;Chisq&quot;)</code></pre>
+<pre><code>Analysis of Deviance Table
+
+Model 1: factor(mated) ~ parental_diet_fac + parental_temp
+Model 2: factor(mated) ~ parental_diet_fac
+  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)
+1        81     74.742                     
+2        82     76.767 -1  -2.0257   0.1663</code></pre>
+<pre class="r"><code>matsucF2pat.glm.null &lt;- glm(factor(mated) ~ 1, family= quasibinomial, data= subset(mb.f2a, parental_effects== &quot;pat&quot;))
+anova(matsucF2pat.glm5, matsucF2pat.glm.null, test= &quot;Chisq&quot;)</code></pre>
+<pre><code>Analysis of Deviance Table
+
+Model 1: factor(mated) ~ parental_temp
+Model 2: factor(mated) ~ 1
+  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)
+1        82     76.853                     
+2        83     78.829 -1  -1.9759   0.1615</code></pre>
+<pre class="r"><code>anova(matsucF2pat.glm6, matsucF2pat.glm.null, test= &quot;Chisq&quot;)</code></pre>
+<pre><code>Analysis of Deviance Table
+
+Model 1: factor(mated) ~ parental_diet_fac
+Model 2: factor(mated) ~ 1
+  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)
+1        82     76.767                     
+2        83     78.829 -1  -2.0616    0.156</code></pre>
+</div>
+</div>
+<div id="f3-male-mating-behaviour" class="section level2">
+<h2>F3 MALE MATING BEHAVIOUR</h2>
+<div id="f3-latency-to-mate" class="section level3">
+<h3>F3 Latency to mate</h3>
+<pre class="r"><code>mb.f3.analysis &lt;- mb.f3a %&gt;%
+  filter(!is.na(latency_to_mate))
+str(mb.f3.analysis)</code></pre>
+<pre><code>&#39;data.frame&#39;:   148 obs. of  19 variables:
+ $ generation        : chr  &quot;F3&quot; &quot;F3&quot; &quot;F3&quot; &quot;F3&quot; ...
+ $ parental_effects  : chr  &quot;mat&quot; &quot;mat&quot; &quot;mat&quot; &quot;mat&quot; ...
+ $ parental_temp     : int  21 21 21 21 21 21 21 21 21 21 ...
+ $ parental_diet     : num  0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 ...
+ $ replicate_vial    : chr  &quot;a&quot; &quot;b&quot; &quot;b&quot; &quot;a&quot; ...
+ $ male_id           : Factor w/ 14 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 2 4 5 7 8 9 10 12 14 ...
+ $ date              : chr  &quot;6/08/2019&quot; &quot;6/08/2019&quot; &quot;6/08/2019&quot; &quot;6/08/2019&quot; ...
+ $ time_in           : chr  &quot;9:04&quot; &quot;9:04&quot; &quot;9:04&quot; &quot;9:04&quot; ...
+ $ start_mating      : chr  &quot;9:59&quot; &quot;9:13&quot; &quot;9:30&quot; &quot;11:50&quot; ...
+ $ end_mating        : chr  &quot;10:27&quot; &quot;9:34&quot; &quot;9:46&quot; &quot;12:10&quot; ...
+ $ mated             : chr  &quot;yes&quot; &quot;yes&quot; &quot;yes&quot; &quot;yes&quot; ...
+ $ latency_to_mate   : int  55 9 26 166 8 22 12 72 47 82 ...
+ $ mating_duration   : int  28 21 16 20 16 13 14 17 27 24 ...
+ $ treat             : Factor w/ 12 levels &quot;mat.0.4.21&quot;,&quot;pat.0.4.21&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ tray              : Factor w/ 24 levels &quot;mat.0.4.21.a&quot;,..: 1 1 1 1 1 13 13 13 13 13 ...
+ $ parental_diet_fac : Factor w/ 2 levels &quot;0.4&quot;,&quot;1.5&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ parental_temp_fac : Factor w/ 3 levels &quot;21&quot;,&quot;25&quot;,&quot;29&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ replicate_vial_sep: Factor w/ 24 levels &quot;mat.0.4.21.a&quot;,..: 1 13 13 1 1 13 1 13 13 13 ...
+ $ indobs            : Factor w/ 168 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 2 4 5 7 8 9 10 12 14 ...</code></pre>
+</div>
+<div
+id="f3-latency-to-mate-great-grandmaternal-and-great-grandpaternal-effects-tables-s25-s26"
+class="section level3">
+<h3>F3 Latency to mate, great-grandmaternal and great-grandpaternal
+effects (Tables S25, S26)</h3>
+<pre class="r"><code># F3 Latency to mate, maternal effects
+
+latencyF3mat.lmer1 &lt;- lmer(latency_to_mate ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f3.analysis, parental_effects== &quot;mat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+
+# Table S25
+summary(latencyF3mat.lmer1, correlation = FALSE)</code></pre>
+<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+lmerModLmerTest]
+Formula: 
+latency_to_mate ~ parental_temp * parental_diet_fac + I(parental_temp^2) *  
+    parental_diet_fac + (1 | replicate_vial_sep)
+   Data: subset(mb.f3.analysis, parental_effects == &quot;mat&quot;)
+Control: lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  
+    tol = 1e-04))
+
+REML criterion at convergence: 685.2
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.3355 -0.6704 -0.1911  0.3718  3.4412 
+
+Random effects:
+ Groups             Name        Variance Std.Dev.
+ replicate_vial_sep (Intercept)   64.19   8.012  
+ Residual                       1094.08  33.077  
+Number of obs: 72, groups:  replicate_vial_sep, 12
+
+Fixed effects:
+                                         Estimate Std. Error        df t value
+(Intercept)                             -126.9862   533.9405    6.3898  -0.238
+parental_temp                             16.5354    43.1937    6.3294   0.383
+parental_diet_fac1.5                    -196.6336   760.1377    6.5071  -0.259
+I(parental_temp^2)                        -0.3854     0.8612    6.2824  -0.448
+parental_temp:parental_diet_fac1.5        13.6148    61.6367    6.5000   0.221
+parental_diet_fac1.5:I(parental_temp^2)   -0.2272     1.2303    6.4784  -0.185
+                                        Pr(&gt;|t|)
+(Intercept)                                0.819
+parental_temp                              0.714
+parental_diet_fac1.5                       0.804
+I(parental_temp^2)                         0.670
+parental_temp:parental_diet_fac1.5         0.832
+parental_diet_fac1.5:I(parental_temp^2)    0.859</code></pre>
+<pre class="r"><code># F3 Latency to mate, paternal effects
+
+latencyF3pat.lmer1 &lt;- lmer(latency_to_mate ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f3.analysis, parental_effects== &quot;pat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+
+# Table S26
+summary(latencyF3pat.lmer1, correlation = FALSE)</code></pre>
+<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+lmerModLmerTest]
+Formula: 
+latency_to_mate ~ parental_temp * parental_diet_fac + I(parental_temp^2) *  
+    parental_diet_fac + (1 | replicate_vial_sep)
+   Data: subset(mb.f3.analysis, parental_effects == &quot;pat&quot;)
+Control: lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  
+    tol = 1e-04))
+
+REML criterion at convergence: 724.9
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.0722 -0.5496 -0.3538  0.1890  4.1977 
+
+Random effects:
+ Groups             Name        Variance Std.Dev.
+ replicate_vial_sep (Intercept)    0      0.00   
+ Residual                       1123     33.51   
+Number of obs: 76, groups:  replicate_vial_sep, 12
+
+Fixed effects:
+                                        Estimate Std. Error       df t value
+(Intercept)                             267.7292   431.0787  70.0000   0.621
+parental_temp                           -21.7857    34.8644  70.0000  -0.625
+parental_diet_fac1.5                     32.9115   620.3732  70.0000   0.053
+I(parental_temp^2)                        0.4851     0.6950  70.0000   0.698
+parental_temp:parental_diet_fac1.5       -1.0211    50.1196  70.0000  -0.020
+parental_diet_fac1.5:I(parental_temp^2)  -0.0189     0.9987  70.0000  -0.019
+                                        Pr(&gt;|t|)
+(Intercept)                                0.537
+parental_temp                              0.534
+parental_diet_fac1.5                       0.958
+I(parental_temp^2)                         0.487
+parental_temp:parental_diet_fac1.5         0.984
+parental_diet_fac1.5:I(parental_temp^2)    0.985</code></pre>
+</div>
+<div id="f3-mating-duration-great-grandmaternal-effects-tables-s27-s28"
+class="section level3">
+<h3>F3 Mating duration, great-grandmaternal effects (Tables S27,
+S28)</h3>
+<pre class="r"><code>matdurF3mat.lmer1 &lt;- lmer(mating_duration ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f3.analysis, parental_effects== &quot;mat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+
+# Table S27
+summary(matdurF3mat.lmer1, correlation = FALSE)</code></pre>
+<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+lmerModLmerTest]
+Formula: 
+mating_duration ~ parental_temp * parental_diet_fac + I(parental_temp^2) *  
+    parental_diet_fac + (1 | replicate_vial_sep)
+   Data: subset(mb.f3.analysis, parental_effects == &quot;mat&quot;)
+Control: lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  
+    tol = 1e-04))
+
+REML criterion at convergence: 500.4
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.7442 -0.2870 -0.0504  0.1988  6.8459 
+
+Random effects:
+ Groups             Name        Variance  Std.Dev. 
+ replicate_vial_sep (Intercept) 1.531e-13 3.913e-07
+ Residual                       6.831e+01 8.265e+00
+Number of obs: 72, groups:  replicate_vial_sep, 12
+
+Fixed effects:
+                                          Estimate Std. Error         df
+(Intercept)                               67.53906  115.26741   66.00000
+parental_temp                             -4.37188    9.31731   66.00000
+parental_diet_fac1.5                    -101.51942  164.32247   66.00000
+I(parental_temp^2)                         0.09948    0.18566   66.00000
+parental_temp:parental_diet_fac1.5         8.87188   13.32309   66.00000
+parental_diet_fac1.5:I(parental_temp^2)   -0.19055    0.26587   66.00000
+                                        t value Pr(&gt;|t|)
+(Intercept)                               0.586    0.560
+parental_temp                            -0.469    0.640
+parental_diet_fac1.5                     -0.618    0.539
+I(parental_temp^2)                        0.536    0.594
+parental_temp:parental_diet_fac1.5        0.666    0.508
+parental_diet_fac1.5:I(parental_temp^2)  -0.717    0.476</code></pre>
+<pre class="r"><code># F3 Mating duration, paternal effects
+
+matdurF3pat.lmer1 &lt;- lmer(mating_duration ~ parental_temp*parental_diet_fac + I(parental_temp^2)*parental_diet_fac + (1|replicate_vial_sep), data= subset(mb.f3.analysis, parental_effects== &quot;pat&quot;), REML = T, control= lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  tol = 1e-4)))
+
+# Table S28
+summary(matdurF3pat.lmer1, correlation = FALSE)</code></pre>
+<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+lmerModLmerTest]
+Formula: 
+mating_duration ~ parental_temp * parental_diet_fac + I(parental_temp^2) *  
+    parental_diet_fac + (1 | replicate_vial_sep)
+   Data: subset(mb.f3.analysis, parental_effects == &quot;pat&quot;)
+Control: lmerControl(check.conv.singular = .makeCC(action = &quot;ignore&quot;,  
+    tol = 1e-04))
+
+REML criterion at convergence: 396.9
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.0918 -0.5315 -0.1087  0.7779  2.5783 
+
+Random effects:
+ Groups             Name        Variance Std.Dev.
+ replicate_vial_sep (Intercept)  0.08592 0.2931  
+ Residual                       10.31639 3.2119  
+Number of obs: 76, groups:  replicate_vial_sep, 12
+
+Fixed effects:
+                                         Estimate Std. Error        df t value
+(Intercept)                              76.10623   42.46922   6.00606   1.792
+parental_temp                            -4.33594    3.43524   5.95094  -1.262
+parental_diet_fac1.5                    -77.54599   61.06429   6.39716  -1.270
+I(parental_temp^2)                        0.08492    0.06849   5.90928   1.240
+parental_temp:parental_diet_fac1.5        6.50876    4.93422   6.31525   1.319
+parental_diet_fac1.5:I(parental_temp^2)  -0.13525    0.09833   6.26323  -1.375
+                                        Pr(&gt;|t|)
+(Intercept)                                0.123
+parental_temp                              0.254
+parental_diet_fac1.5                       0.248
+I(parental_temp^2)                         0.262
+parental_temp:parental_diet_fac1.5         0.233
+parental_diet_fac1.5:I(parental_temp^2)    0.216</code></pre>
+</div>
+</div>
+<div id="f3-mating-success" class="section level2">
+<h2>F3 Mating success</h2>
+<pre class="r"><code>mb.f3.analysis2 &lt;- mb.f3a
+str(mb.f3.analysis2)</code></pre>
+<pre><code>&#39;data.frame&#39;:   168 obs. of  19 variables:
+ $ generation        : chr  &quot;F3&quot; &quot;F3&quot; &quot;F3&quot; &quot;F3&quot; ...
+ $ parental_effects  : chr  &quot;mat&quot; &quot;mat&quot; &quot;mat&quot; &quot;mat&quot; ...
+ $ parental_temp     : int  21 21 21 21 21 21 21 21 21 21 ...
+ $ parental_diet     : num  0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 ...
+ $ replicate_vial    : chr  &quot;a&quot; &quot;b&quot; &quot;a&quot; &quot;b&quot; ...
+ $ male_id           : Factor w/ 14 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 2 3 4 5 6 7 8 9 10 ...
+ $ date              : chr  &quot;6/08/2019&quot; &quot;6/08/2019&quot; &quot;6/08/2019&quot; &quot;6/08/2019&quot; ...
+ $ time_in           : chr  &quot;9:04&quot; &quot;9:04&quot; &quot;9:04&quot; &quot;9:04&quot; ...
+ $ start_mating      : chr  &quot;9:59&quot; &quot;9:13&quot; &quot;&quot; &quot;9:30&quot; ...
+ $ end_mating        : chr  &quot;10:27&quot; &quot;9:34&quot; &quot;&quot; &quot;9:46&quot; ...
+ $ mated             : chr  &quot;yes&quot; &quot;yes&quot; &quot;no&quot; &quot;yes&quot; ...
+ $ latency_to_mate   : int  55 9 NA 26 166 NA 8 22 12 72 ...
+ $ mating_duration   : int  28 21 NA 16 20 NA 16 13 14 17 ...
+ $ treat             : Factor w/ 12 levels &quot;mat.0.4.21&quot;,&quot;pat.0.4.21&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ tray              : Factor w/ 24 levels &quot;mat.0.4.21.a&quot;,..: 1 1 1 1 1 1 1 13 13 13 ...
+ $ parental_diet_fac : Factor w/ 2 levels &quot;0.4&quot;,&quot;1.5&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ parental_temp_fac : Factor w/ 3 levels &quot;21&quot;,&quot;25&quot;,&quot;29&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ replicate_vial_sep: Factor w/ 24 levels &quot;mat.0.4.21.a&quot;,..: 1 13 1 13 1 13 1 13 1 13 ...
+ $ indobs            : Factor w/ 168 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 2 3 4 5 6 7 8 9 10 ...</code></pre>
+<div
+id="f3-mating-success-great-grandmaternal-and-great-grandpaternal-effects-tables-s29-s30"
+class="section level3">
+<h3>F3 Mating success, great-grandmaternal and great-grandpaternal
+effects (Tables S29, S30)</h3>
+<pre class="r"><code># GLMER not converging
+matsucF3mat.lmer1 &lt;- glmer(factor(mated) ~ parental_temp + I(parental_temp^2) + (1|indobs), family= binomial, data= subset(mb.f3.analysis2, parental_effects== &quot;mat&quot; &amp; parental_diet_fac== &quot;1.5&quot; ))</code></pre>
+<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
+Model failed to converge with max|grad| = 0.0451237 (tol = 0.002, component 1)</code></pre>
+<pre><code>Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
+ - Rescale variables?;Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?</code></pre>
+<pre class="r"><code># GLM
+matsucF3mat.glm1 &lt;- glm(factor(mated) ~ parental_diet_fac*parental_temp + parental_diet_fac*I(parental_temp^2), family= quasibinomial, data= subset(mb.f3.analysis2, parental_effects== &quot;mat&quot;))
+
+# Table S29
+summary(matsucF3mat.glm1) </code></pre>
+<pre><code>
+Call:
+glm(formula = factor(mated) ~ parental_diet_fac * parental_temp + 
+    parental_diet_fac * I(parental_temp^2), family = quasibinomial, 
+    data = subset(mb.f3.analysis2, parental_effects == &quot;mat&quot;))
+
+Coefficients:
+                                          Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)                             -1.804e+01  2.913e+01  -0.619    0.537
+parental_diet_fac1.5                     7.475e+02  6.812e+04   0.011    0.991
+parental_temp                            1.477e+00  2.381e+00   0.620    0.537
+I(parental_temp^2)                      -2.736e-02  4.786e-02  -0.572    0.569
+parental_diet_fac1.5:parental_temp      -5.976e+01  5.399e+03  -0.011    0.991
+parental_diet_fac1.5:I(parental_temp^2)  1.193e+00  1.076e+02   0.011    0.991
+
+(Dispersion parameter for quasibinomial family taken to be 0.7179487)
+
+    Null deviance: 68.90  on 83  degrees of freedom
+Residual deviance: 56.47  on 78  degrees of freedom
+AIC: NA
+
+Number of Fisher Scoring iterations: 18</code></pre>
+<pre class="r"><code>## F3 Mating success, paternal effects
+
+# GLM
+matsucF3pat.glm1 &lt;- glm(factor(mated) ~ parental_diet_fac*parental_temp + parental_diet_fac*I(parental_temp^2), family= quasibinomial, data= subset(mb.f3.analysis2, parental_effects== &quot;pat&quot;))
+
+# Table S30
+summary(matsucF3pat.glm1)</code></pre>
+<pre><code>
+Call:
+glm(formula = factor(mated) ~ parental_diet_fac * parental_temp + 
+    parental_diet_fac * I(parental_temp^2), family = quasibinomial, 
+    data = subset(mb.f3.analysis2, parental_effects == &quot;pat&quot;))
+
+Coefficients:
+                                          Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)                             -4.048e+02  1.441e+05  -0.003    0.998
+parental_diet_fac1.5                    -3.279e+02  1.957e+05  -0.002    0.999
+parental_temp                            3.168e+01  1.196e+04   0.003    0.998
+I(parental_temp^2)                      -5.867e-01  2.430e+02  -0.002    0.998
+parental_diet_fac1.5:parental_temp       2.847e+01  1.616e+04   0.002    0.999
+parental_diet_fac1.5:I(parental_temp^2) -6.141e-01  3.260e+02  -0.002    0.999
+
+(Dispersion parameter for quasibinomial family taken to be 0.5384615)
+
+    Null deviance: 52.835  on 83  degrees of freedom
+Residual deviance: 39.718  on 78  degrees of freedom
+AIC: NA
+
+Number of Fisher Scoring iterations: 19</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.1 (2023-06-16 ucrt)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19043)
+
+Matrix products: default
+
+
+locale:
+[1] LC_COLLATE=English_United Kingdom.utf8 
+[2] LC_CTYPE=English_United Kingdom.utf8   
+[3] LC_MONETARY=English_United Kingdom.utf8
+[4] LC_NUMERIC=C                           
+[5] LC_TIME=English_United Kingdom.utf8    
+
+time zone: Europe/London
+tzcode source: internal
+
+attached base packages:
+[1] splines   grid      stats     graphics  grDevices utils     datasets 
+[8] methods   base     
+
+other attached packages:
+ [1] DHARMa_0.4.6       gratia_0.8.1       MuMIn_1.47.5       effects_4.2-2     
+ [5] carData_3.0-5      robustbase_0.99-0  gamm4_0.2-6        mgcv_1.8-42       
+ [9] predictmeans_1.0.8 nlme_3.1-162       pbkrtest_0.5.2     lsmeans_2.30-0    
+[13] emmeans_1.8.6      multcomp_1.4-25    TH.data_1.1-2      MASS_7.3-60       
+[17] survival_3.5-5     mvtnorm_1.2-2      lmerTest_3.1-3     lme4_1.1-33       
+[21] Matrix_1.5-4.1     gridExtra_2.3      gtable_0.3.3       sjPlot_2.8.14     
+[25] ggplot2_3.4.2      rcompanion_2.4.30  reshape2_1.4.4     dplyr_1.1.2       
+[29] readr_2.1.4        workflowr_1.7.0   
+
+loaded via a namespace (and not attached):
+  [1] later_1.3.1         tibble_3.2.1        cellranger_1.1.0   
+  [4] lifecycle_1.0.3     doParallel_1.0.17   rprojroot_2.0.3    
+  [7] processx_3.8.1      lattice_0.21-8      vroom_1.6.3        
+ [10] insight_0.19.2      backports_1.4.1     survey_4.2-1       
+ [13] magrittr_2.0.3      plotly_4.10.2       sass_0.4.6         
+ [16] rmarkdown_2.22      jquerylib_0.1.4     yaml_2.3.7         
+ [19] httpuv_1.6.11       gap_1.5-1           lmeSplines_1.1-12  
+ [22] gld_2.6.6           DBI_1.1.3           minqa_1.2.5        
+ [25] RColorBrewer_1.1-3  expm_0.999-7        purrr_1.0.1        
+ [28] HRW_1.0-5           nnet_7.3-19         sandwich_3.0-2     
+ [31] git2r_0.32.0        nortest_1.0-4       performance_0.10.4 
+ [34] codetools_0.2-19    coin_1.4-2          tidyselect_1.2.0   
+ [37] ggeffects_1.2.3     farver_2.1.1        matrixStats_1.0.0  
+ [40] stats4_4.3.1        splines2_0.5.0      jsonlite_1.8.5     
+ [43] e1071_1.7-13        ellipsis_0.3.2      iterators_1.0.14   
+ [46] foreach_1.5.2       tools_4.3.1         DescTools_0.99.49  
+ [49] Rcpp_1.0.10         glue_1.6.2          xfun_0.39          
+ [52] mvnfast_0.2.8       withr_2.5.0         numDeriv_2016.8-1.1
+ [55] fastmap_1.1.1       mitools_2.4         boot_1.3-28.1      
+ [58] fansi_1.0.4         callr_3.7.3         digest_0.6.31      
+ [61] mime_0.12           R6_2.5.1            estimability_1.4.1 
+ [64] colorspace_2.1-0    utf8_1.2.3          tidyr_1.3.0        
+ [67] generics_0.1.3      data.table_1.14.8   class_7.3-22       
+ [70] httr_1.4.6          htmlwidgets_1.6.2   whisker_0.4.1      
+ [73] pkgconfig_2.0.3     Exact_3.2           modeltools_0.2-23  
+ [76] lmtest_0.9-40       htmltools_0.5.5     multcompView_0.1-9 
+ [79] scales_1.2.1        lmom_2.9            knitr_1.43         
+ [82] rstudioapi_0.14     tzdb_0.4.0          nloptr_2.0.3       
+ [85] proxy_0.4-27        cachem_1.0.8        zoo_1.8-12         
+ [88] stringr_1.5.0       sjlabelled_1.2.0    lmeInfo_0.3.2      
+ [91] rootSolve_1.8.2.3   KernSmooth_2.23-21  parallel_4.3.1     
+ [94] libcoin_1.0-9       pillar_1.9.0        vctrs_0.6.3        
+ [97] promises_1.2.0.1    xtable_1.8-4        evaluate_0.21      
+[100] cli_3.6.1           compiler_4.3.1      rlang_1.1.1        
+[103] crayon_1.5.2        modelr_0.1.11       labeling_0.4.2     
+[106] ps_1.7.5            getPass_0.2-2       plyr_1.8.8         
+[109] sjmisc_2.8.9        fs_1.6.2            gap.datasets_0.0.5 
+[112] stringi_1.7.12      viridisLite_0.4.2   munsell_0.5.0      
+[115] lazyeval_0.2.2      bayestestR_0.13.1   sjstats_0.18.2     
+[118] hms_1.1.3           patchwork_1.1.2     bit64_4.0.5        
+[121] qgam_1.3.4          shiny_1.7.4         highr_0.10         
+[124] broom_1.0.5         bslib_0.5.0         DEoptimR_1.0-14    
+[127] bit_4.0.5           readxl_1.4.2       </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

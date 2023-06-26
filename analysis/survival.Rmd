@@ -1,0 +1,670 @@
+---
+title: "Survival analyses"
+author: "Zajitschek et al."
+date: "2023-06-01"
+output: 
+  workflowr::wflow_html:
+   code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+## Load libraries and helper function
+```{r load-libraries, message=FALSE, warning=FALSE, results="hide"}
+library(readr)      # read data
+library(dplyr)      # data structure
+library(reshape2)   # data structure
+library(tidyverse)  # data structure
+library(rcompanion) # mean and median (+- bootstrapped CI)
+library(survival)   # survival analysis
+library(coxme)      # mixed-effects Cox proportional hazard model
+library(lme4)       # generalized linear mixed-effects model
+library(mgcv)       # generalized additive models for Cox regression
+library(MuMIn)      # AIC results table
+library(ggplot2)    # plot
+library(survminer)  # plot
+library(sjPlot)     # plot
+library(kableExtra) # table formatting
+library(splines)    # spline functions
+
+kable.table <- function(df) {
+  kable(df, "html") %>%
+  kable_styling() %>%
+  scroll_box(width = "100%", height = "300px", box_css = "border: 0px;")
+}
+```
+
+## Load survival data (F0 and F1)
+```{r import-survival, message=FALSE}
+
+#F0 survival data
+survival <- read_csv("./data/survival.csv")
+survival$diet <- as.factor(survival$diet)
+survival$vial_id <- as.factor(survival$vial_id)
+survival$rep <- as.factor(survival$rep)
+
+#F1 survival data
+survivalF1 <- read_csv("./data/survivalF1.csv")
+survivalF1$par_diet <- as.factor(survivalF1$par_diet)
+survivalF1$vial_id <- as.factor(survivalF1$vial_id)
+survivalF1$rep <- as.factor(survivalF1$rep)
+
+```
+
+## F0 SURVIVAL
+
+### Calculate F0 mean lifespan with bootstrapped CI
+```{r F0-mean-lifespan-summary, message=FALSE}
+
+# plot(survival$lifespan) # ok: no off-values/outliers
+# max(survival$lifespan)  # max. lifespan = 152 days
+
+# Bootstrap replicates for CI
+boot.ls <- groupwiseMean(lifespan ~ sex*temperature*diet, data = survival, boot = T, bca = T) 
+medians.F1 <- survival %>% group_by(temperature, diet, sex) %>%
+  summarise(., mean = mean(lifespan), se = sd(lifespan)/sqrt(length(lifespan)), sd = sd(lifespan), 
+   median = median(lifespan), n_vials = n_distinct(vial_id), n_inds = n()) %>%
+  dplyr::select(sex, median, n_vials, n_inds)
+
+boot.ls2 <- left_join(boot.ls, medians.F1) %>%
+  dplyr::select(- c(n, Mean, Conf.level:Trad.upper))
+
+kable.table(boot.ls2)
+
+```
+
+### Plot F0 mean lifespan for males and females (mean +- 95% CI) with diet (a, b) or temperature (c, d) on x-axis (not in manuscript)
+
+```{r plot-F0-mean-lifespan}
+
+mycols <- colors()[c(30, 62, 119, 504, 554)]
+
+# 1) Diet on x-, lifespan on y-axis
+
+plot.meanlifespan.m <- ggplot(data= subset(boot.ls, sex== "male"), aes(x= as.factor(diet), y= Boot.mean, fill= as.factor(temperature))) +  
+	scale_fill_manual(values= mycols, name = "Temperature") +
+     	geom_bar(position=position_dodge(), stat = "identity", colour="black") + 
+	geom_errorbar(aes(ymin= Bca.lower, ymax= Bca.upper), width=.4, colour="black",
+	position=position_dodge(0.9)) +
+  expand_limits(y = 120) +
+	ylab("Lifespan (days)")  + 
+	xlab("Diet")  + 
+	ggtitle("Male lifespan") + 
+	theme_bw(base_size = 18)+
+	theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
+	panel.border = element_blank(),  legend.position = "none",
+	axis.line.x = element_line(), axis.line.y = element_line()) 
+
+plot.meanlifespan.f <- ggplot(data= subset(boot.ls, sex== "female"), aes(x= as.factor(diet), y= Boot.mean, fill= as.factor(temperature))) +  
+	scale_fill_manual(values= mycols, name = "Temp") +
+     	geom_bar(position=position_dodge(), stat = "identity", colour="black") + 
+	#geom_point(size = 3.5, position=position_dodge(0.1)) + 	
+	geom_errorbar(aes(ymin= Bca.lower, ymax= Bca.upper), width=.4, colour="black",
+	position=position_dodge(0.9)) +
+  expand_limits(y = 120) +
+	ylab("Lifespan (days)")  + 
+	xlab("Diet")  + 
+	ggtitle("Female lifespan") + 
+	theme_bw(base_size = 18)+
+	theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
+	panel.border = element_blank(), legend.position = c(.89, .9), legend.text = element_text(size = 10), legend.title = element_text(size = 10), legend.key.size = unit(0.6, "lines"), 
+	axis.line.x = element_line(), axis.line.y = element_line()) 
+
+ggarrange(plot.meanlifespan.m, plot.meanlifespan.f,
+  labels = c("a", "b"),
+  ncol = 2, nrow = 1)
+
+# 2) Temperature on x-, lifespan on y-axis
+
+plot.meanlifespan2.m <- ggplot(data= subset(boot.ls, sex== "male"), aes(x= as.factor(temperature), y= Boot.mean, fill= as.factor(diet))) +  
+	scale_fill_manual(values= mycols, name = "Diet") +
+     	geom_bar(position=position_dodge(), stat = "identity", colour="black") + 
+	geom_errorbar(aes(ymin= Bca.lower, ymax= Bca.upper), width=.4, colour="black",
+	position=position_dodge(0.9)) +
+  expand_limits(y = 120) +
+	ylab("Lifespan (days)")  + 
+	xlab("Temperature")  + 
+	ggtitle("Male lifespan") + 
+	theme_bw(base_size = 18)+
+	theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
+	panel.border = element_blank(),  legend.position = "none",
+	axis.line.x = element_line(), axis.line.y = element_line()) 
+
+plot.meanlifespan2.f <- ggplot(data= subset(boot.ls, sex== "female"), aes(x= as.factor(temperature), y= Boot.mean, fill= as.factor(diet))) +  
+	scale_fill_manual(values= mycols, name = "Diet") +
+     	geom_bar(position=position_dodge(), stat = "identity", colour="black") + 
+	geom_errorbar(aes(ymin= Bca.lower, ymax= Bca.upper), width=.4, colour="black",
+	position=position_dodge(0.9)) +
+  expand_limits(y = 120) +
+	ylab("Lifespan (days)")  + 
+	xlab("Temperature")  + 
+	ggtitle("Female lifespan") + 
+	theme_bw(base_size = 18)+
+	theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
+	panel.border = element_blank(), legend.position = c(.8, .8), legend.text = element_text(size = 10), legend.title = element_text(size = 10), legend.key.size = unit(0.6, "lines"),
+	axis.line.x = element_line(), axis.line.y = element_line()) 
+
+ggarrange(plot.meanlifespan2.m, plot.meanlifespan2.f,
+  labels = c("c", "d"),
+  ncol = 2, nrow = 1)
+```
+
+### Plot Figure 1: Survival curves (separate plots per temperature and sex)
+
+```{r F0-survival-curves-fig, fig.show = "hold", out.width = "70%"}
+
+survival$groups <- interaction(survival$sex, survival$temperature, survival$diet)
+
+surv.m21 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "male" & temperature == "21"))
+surv.m23 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "male" & temperature == "23"))
+surv.m25 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "male" & temperature == "25"))
+surv.m27 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "male" & temperature == "27"))
+surv.m29 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "male" & temperature == "29"))
+surv.f21 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "female" & temperature == "21"))
+surv.f23 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "female" & temperature == "23"))
+surv.f25 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "female" & temperature == "25"))
+surv.f27 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "female" & temperature == "27"))
+surv.f29 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "female" & temperature == "29"))
+
+# Set upper lifespan limit for all survival plots
+xmax <- 154 # max(survival$lifespan) + 2  
+
+ggsurvplot(surv.m21, title = "(a) Males at 21 degree Celsius", 
+  xlim = c(0, xmax), xlab = "Age (days)", break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = "right", 
+  legend.title = "", data = subset(survival, sex=="male" & temperature == "21"),
+  legend.labs = c("restricted", "standard", "rich"))
+
+ggsurvplot(surv.m23, title = "(c) males at 23 degree Celsius", 
+  xlim = c(0, xmax), xlab = "Age (days)", break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = "right", 
+  legend.title = "", data = subset(survival, sex=="male" & temperature == "23"),
+  legend.labs = c("restricted", "standard", "rich"))
+
+ggsurvplot(surv.m25, title = "(e) males at 25 degree Celsius", 
+  xlim = c(0, xmax), xlab = "Age (days)", break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = "right", 
+  legend.title = "", data = subset(survival, sex=="male" & temperature == "25"),
+  legend.labs = c("restricted", "standard", "rich"))
+
+ggsurvplot(surv.m27, title = "(g) males at 27 degree Celsius",
+  xlim = c(0, xmax), xlab = "Age (days)", break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = "right", 
+  legend.title = "", data = subset(survival, sex=="male" & temperature == "27"),
+  legend.labs = c("restricted", "standard", "rich"))
+
+ggsurvplot(surv.m29, title = "(i) males at 29 degree Celsius",
+  xlim = c(0, xmax), xlab = "Age (days)", break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = "right", 
+  legend.title = "", data = subset(survival, sex=="male" & temperature == "29"),
+  legend.labs = c("restricted", "standard", "rich"))
+
+ggsurvplot(surv.f21, title = "(b) females at 21 degree Celsius",
+  xlim = c(0, xmax), xlab = "Age (days)", break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = "right", 
+  legend.title = "", legend.labs = c("restricted", "standard", "rich"),
+  data = subset(survival, sex=="female" & temperature == "21"))
+
+ggsurvplot(surv.f23, title = "(d) females at 23 degree Celsius",
+  xlim = c(0, xmax), xlab = "Age (days)", break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = "right", 
+  legend.title = "", legend.labs = c("restricted", "standard", "rich"),
+  data = subset(survival, sex=="female" & temperature == "23"))
+
+ggsurvplot(surv.f25, title = "(f) females at 25 degree Celsius", 
+  xlim = c(0, xmax), xlab = "Age (days)", break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = "right", 
+  legend.title = "", legend.labs = c("restricted", "standard", "rich"),
+  data = subset(survival, sex=="female" & temperature == "25"))
+
+ggsurvplot(surv.f27, title = "(h) females at 27 degree Celsius", 
+  xlim = c(0, xmax), xlab = "Age (days)", break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = "right", 
+  legend.title = "", legend.labs = c("restricted", "standard", "rich"),
+  data = subset(survival, sex=="female" & temperature == "27"))
+
+ggsurvplot(surv.f29, title = "(j) females at 29 degree Celsius", 
+  xlim = c(0, xmax), xlab = "Age (days)", break.time.by = 20, 
+  risk.table = F, conf.int = T, pval = F, legend = "right", 
+  legend.title = "", legend.labs = c("restricted", "standard", "rich"),
+  data = subset(survival, sex=="female" & temperature == "29"))
+
+```
+
+```{r survival-curves-fig1, eval=FALSE, include=FALSE}
+
+survival$groups <- interaction(survival$sex, survival$temperature, survival$diet)
+
+surv.m21 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "male" & temperature == "21"))
+surv.m23 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "male" & temperature == "23"))
+surv.m25 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "male" & temperature == "25"))
+surv.m27 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "male" & temperature == "27"))
+surv.m29 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "male" & temperature == "29"))
+surv.f21 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "female" & temperature == "21"))
+surv.f23 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "female" & temperature == "23"))
+surv.f25 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "female" & temperature == "25"))
+surv.f27 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "female" & temperature == "27"))
+surv.f29 <- survfit(Surv(lifespan, status) ~ groups, conf.type = "plain", data = subset(survival, sex == "female" & temperature == "29"))
+
+#set colours
+survcol <- c("#F8766D", "#619CFF", "#00BA38")
+survline <- c( "dotted", "dashed", "solid")
+
+xmax <- 154 # max(survival$lifespan) + 2  # set upper lifespan limit for all survival plots
+splots <- list()
+splots[[1]] <- ggsurvplot(surv.m21, title = "(a) males at 21 deg C", xlim = c(0, xmax), xlab = "", break.time.by = 20, legend.title = "", risk.table = F, conf.int = T,  palette = survcol, linetype = survline,
+		pval = F, font.title=24, size=1.8, font.x=22, font.legend=22, font.y=22, legend = 0, font.tickslab=22, data = subset(survival, sex=="male" & temperature == "21"))
+splots[[2]] <- ggsurvplot(surv.m23, title = "(c) males at 23 deg C", xlim = c(0, xmax), ylab = "", xlab = "", break.time.by = 20, legend.title = "", risk.table = F, conf.int = T,  palette = survcol,linetype = survline,
+		pval = F, font.title=24,  size=1.8, font.x=22, font.legend=22, font.y=22, legend = 0, font.tickslab=22, data = subset(survival, sex=="male" & temperature == "23"))
+splots[[3]] <- ggsurvplot(surv.m25, title = "(e) males at 25 deg C", xlim = c(0, xmax), ylab = "", xlab = "", break.time.by = 20, legend.title = "", risk.table = F, conf.int = T,  palette = survcol, linetype = survline,
+		pval = F, font.title=24,  size=1.8, font.x=22, font.legend=22, font.y=22, legend = 0, font.tickslab=22, data = subset(survival, sex=="male" & temperature == "25"))
+splots[[4]] <- ggsurvplot(surv.m27, title = "(g) males at 27 deg C", xlim = c(0, xmax), ylab = "", xlab = "", break.time.by = 20, legend.title = "", risk.table = F, conf.int = T,  palette = survcol, linetype = survline,
+		pval = F, font.title=24,  size=1.8, font.x=22, font.legend=22, font.y=22, legend = 0, font.tickslab=22, data = subset(survival, sex=="male" & temperature == "27"))
+splots[[5]] <- ggsurvplot(surv.m29, title = "(i) males at 29 deg C", xlim = c(0, xmax), ylab = "", xlab = "Age (days)", break.time.by = 20, legend.title = "", risk.table = F, conf.int = T,  palette = survcol, linetype = survline,
+		pval = F, font.title=24,  size=1.8, font.x=22, font.legend=22, font.y=22, legend = 0, font.tickslab=22, data = subset(survival, sex=="male" & temperature == "29"))
+splots[[6]] <- ggsurvplot(surv.f21, title = "(b) females at 21 deg C", xlim = c(0, xmax), xlab = "", ylab = "", break.time.by = 20, legend.title = "", risk.table = F, conf.int = T,  palette = survcol, linetype = survline,
+		pval = F, font.title=24, size=1.8, font.x=22, font.legend=22, font.y=22, legend = 0, font.tickslab=22, data = subset(survival, sex=="female" & temperature == "21"))
+splots[[7]] <- ggsurvplot(surv.f23, title = "(d) females at 23 deg C", xlim = c(0, xmax), ylab = "", xlab = "", break.time.by = 20, legend.title = "", risk.table = F, conf.int = T,  palette = survcol, linetype = survline,
+		pval = F, font.title=24,  size=1.8, font.x=22, font.legend=22, font.y=22, legend = 0, font.tickslab=22, data = subset(survival, sex=="female" & temperature == "23"))
+splots[[8]] <- ggsurvplot(surv.f25, title = "(f) females at 25 deg C", xlim = c(0, xmax), ylab = "", xlab = "", break.time.by = 20, legend.title = "", risk.table = F, conf.int = T,  palette = survcol, linetype = survline,
+		pval = F, font.title=24,  size=1.8, font.x=22, font.legend=22, font.y=22, legend = 0, font.tickslab=22, data = subset(survival, sex=="female" & temperature == "25"))
+splots[[9]] <- ggsurvplot(surv.f27, title = "(h) females at 27 deg C", xlim = c(0, xmax), ylab = "", xlab = "", break.time.by = 20, legend.title = "", risk.table = F, conf.int = T,  palette = survcol, linetype = survline,
+		pval = F, font.title=24,  size=1.8, font.x=22, font.legend=22, font.y=22, legend = 0, font.tickslab=22, data = subset(survival, sex=="female" & temperature == "27"))
+splots[[10]] <- ggsurvplot(surv.f29, title = "(j) females at 29 deg C", xlim = c(0, xmax), ylab = "", xlab = "Age (days)", break.time.by = 20, legend.title = "", risk.table = F, conf.int = T,
+		pval = F, font.title=24,  size=1.8, font.x=22, font.legend=22, font.y=22, legend = c(0.8, 0.55), font.tickslab=22, data = subset(survival, sex=="female" & temperature == "29"),  palette = survcol, linetype = survline,
+		legend.labs = c("restricted", "standard", "rich"))
+
+# Arrange multiple ggsurvplots and print the output (Figure 1 in the manuscript)
+plot.survivalcurves <- arrange_ggsurvplots(splots, print = T, ncol = 2, nrow = 5)
+ggsave("survivalcurves_rev20-3-2023.pdf", plot.survivalcurves, width= 12, height= 15)
+
+```
+
+## F0 Survival analyses
+
+### Data preparation F0 survival
+
+```{r survival-model-data-prep-F0}
+
+# Create grouping variables
+survival$combined <- interaction(survival$sex, survival$diet, survival$temperature)
+survival$specificvial <- interaction(survival$combined, survival$rep)
+
+# Create subsets for each temperature
+survival.21 <- subset(survival, temperature == "21")
+survival.23 <- subset(survival, temperature == "23")
+survival.25 <- subset(survival, temperature == "25")
+survival.27 <- subset(survival, temperature == "27")
+survival.29 <- subset(survival, temperature == "29")
+```
+
+## Sex-specific mixed Cox Proportional Hazards model F0
+
+### 1) F0 females, Cox PH: proportionality assumption test
+```{r coxme-female-F0}
+
+# Model specification
+cox.female <- coxme(Surv(lifespan, status) ~ diet*temperature + (1|specificvial), 
+  data= subset(survival, sex == "female"))
+
+#Cox proportionality assumption test: all effects p < 0.001 => violated
+cox.zph(coxph(Surv(lifespan, status) ~ diet*temperature, data= subset(survival, sex == "female")))
+```
+
+## Discrete time survival models, since proportionality assumption is violated
+
+### Data preparation and model specifications for males and females (inspect code for model specifications used in model selection tables below)
+
+```{r survival-glmer, message=FALSE, warning=FALSE}
+
+# Convert into long data format
+survival$indspec <- with(survival, interaction(vial_id, ind))
+
+survival_long <- survival %>% group_by(indspec) %>% 
+  complete(lifespan = seq(1, max(lifespan)-1), nesting(vial_id, temperature, diet, sex, rep, ind, combined, specificvial), fill = list(status = 0)) 
+
+survival_long$temp_fac <- as.factor(survival_long$temperature)
+
+# Females
+glmer_surv_fem_F0_1 <- glmer(status ~ diet * ns(temperature)  + (1|specificvial),family = binomial, data = subset(survival_long, sex == "female"), nAGQ = 0)
+
+glmer_surv_fem_F0_2 <- glmer(status ~ diet + ns(temperature)  + (1|specificvial),family = "binomial", data = subset(survival_long, sex == "female"), nAGQ = 0)
+
+glmer_surv_fem_F0_3 <- glmer(status ~ ns(temperature)  + (1|specificvial),family = "binomial", data = subset(survival_long, sex == "female"), nAGQ = 0)
+
+glmer_surv_fem_F0_4 <- glmer(status ~ diet  + (1|specificvial),family = "binomial", data = subset(survival_long, sex == "female"), nAGQ = 0)
+
+glmer_surv_fem_F0_5 <- glmer(status ~ 1  + (1|specificvial),family = "binomial", data = subset(survival_long, sex == "female"), nAGQ = 0)
+
+
+# Males 
+glmer_surv_mal_F0_1 <- glmer(status ~ diet * ns(temperature)  + (1|specificvial),family = "binomial", data = subset(survival_long, sex == "male"), nAGQ = 0)
+
+glmer_surv_mal_F0_2 <- glmer(status ~ diet + ns(temperature)  + (1|specificvial),family = "binomial", data = subset(survival_long, sex == "male"), nAGQ = 0)
+
+glmer_surv_mal_F0_3 <- glmer(status ~ ns(temperature)  + (1|specificvial),family = "binomial", data = subset(survival_long, sex == "male"), nAGQ = 0)
+
+glmer_surv_mal_F0_4 <- glmer(status ~ diet  + (1|specificvial),family = "binomial", data = subset(survival_long, sex == "male"), nAGQ = 0)
+
+glmer_surv_mal_F0_5 <- glmer(status ~ 1 + (1|specificvial), family = "binomial", data = subset(survival_long, sex == "male"), nAGQ = 0)
+
+```
+
+### Compare models for females, using AIC (Table S4)
+```{r survival-F0-female_models}
+model.sel(glmer_surv_fem_F0_1, glmer_surv_fem_F0_2 ,glmer_surv_fem_F0_3, glmer_surv_fem_F0_4, glmer_surv_fem_F0_5, rank = AIC)
+```
+
+### Compare models for males, using AIC (Table S4)
+```{r survival-F0-male_models}
+model.sel(glmer_surv_mal_F0_1, glmer_surv_mal_F0_2 ,glmer_surv_mal_F0_3, glmer_surv_mal_F0_4, glmer_surv_mal_F0_5, rank = AIC)
+```
+
+## Logrank tests F0 survival: Females (Table S5)
+
+### 1) F0 females: Diet effect at 21 degree Celsius
+
+```{r logrank-females-21degC}
+f21 <- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.21, sex == "female"))
+print(f21, digits = 3)
+```
+
+### 2) F0 females: Diet effect at 23 degree Celsius
+```{r logrank-females-23degC}
+f23 <- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.23, sex == "female"))
+print(f23, digits = 3)
+```
+
+### 3) F0 females: Diet effect at 25 degree Celsius
+```{r logrank-females-25degC}
+f25 <- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.25, sex == "female"))
+print(f25, digits = 3)
+```
+
+### 4) F0 females: Diet effect at 27 degree Celsius
+```{r logrank-females-27degC}
+f27 <- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.27, sex == "female"))
+print(f27, digits = 3)
+```
+
+### 5) F0 females: Diet effect at 29 degree Celsius
+```{r logrank-females-29degC}
+f29 <- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.29, sex == "female"))
+print(f29, digits = 3)
+```
+
+## Logrank tests F0 survival: Males (Table S5)
+
+### 1) F0 males: Diet effect at 21 degree Celsius
+```{r logrank-males-21degC}
+m21 <- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.21, sex == "male"))
+print(m21, digits = 3)
+```
+
+### 2) F0 males: Diet effect at 23 degree Celsius
+```{r logrank-males-23degC}
+m23 <- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.23, sex == "male"))
+print(m23, digits = 3)
+```
+
+### 3) F0 males: Diet effect at 25 degree Celsius
+```{r logrank-males-25degC}
+m25 <- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.25, sex == "male"))
+print(m25, digits = 3)
+```
+
+### 4) F0 males: Diet effect at 27 degree Celsius
+```{r logrank-males-27degC}
+m27 <- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.27, sex == "male"))
+print(m27, digits = 3)
+```
+
+### 5) F0 males: Diet effect at 29 degree Celsius
+```{r logrank-males-29degC}
+m29 <- pairwise_survdiff(Surv(lifespan, status) ~ diet, data = subset(survival.29, sex == "male"))
+print(m29, digits = 3)
+```
+
+## F1 SURVIVAL
+
+### Explore F1 survival data
+
+```{r explore-F1-survival, message=FALSE}
+
+# plot(survivalF1$lifespan) # ok: no off-values/outliers
+# max(survivalF1$lifespan)  # max. lifespan = 100 days
+
+survivalF1 %>% group_by(par_temp, par_diet, sex) %>%
+  summarise(., mean = mean(lifespan), se = sd(lifespan)/sqrt(length(lifespan)), sd = sd(lifespan), 
+   median = median(lifespan), n_vials = n_distinct(vial_id), n_inds = n())
+
+```
+
+### Calculate F1 mean lifespan with bootstrapped CI
+
+```{r mean-F1-lifespan-CI}
+
+bootF1.ls <- groupwiseMean(lifespan ~ par_temp*par_diet*sex, data = survivalF1, boot = T, bca = T)  #5000 bootstrap replicates for CI
+bootF1.ls
+
+```
+
+### Plot F1 mean lifespan for males and females (not in manuscript)
+
+```{r plot-F1-mean-lifespan}
+
+mycols <- colors()[c(30, 62, 119, 504, 554)]
+
+plotF1.meanlifespan.m <- ggplot(data= subset(bootF1.ls, sex== "m"), aes(x= as.factor(par_diet), y= Boot.mean, fill= as.factor(par_temp))) +  
+	#scale_fill_grey(start=0.8, end=0.3, name = "Temperature") +
+	scale_fill_manual(values= mycols, name = "Parental\ntemperature") +
+     	geom_bar(position=position_dodge(), stat = "identity", colour="black") + 
+	#geom_point(size = 3.5, position=position_dodge(0.1)) + 	
+	geom_errorbar(aes(ymin= Bca.lower, ymax= Bca.upper), width=.4, colour="black",
+	position=position_dodge(0.9)) +
+  expand_limits(y = 82) +
+	ylab("Lifespan (days)")  + 
+	xlab("Parental diet")  + 
+	ggtitle("Male lifespan (mean \U00B1 95% CI)") + 
+	theme_bw(base_size = 18)+
+	theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
+	panel.border = element_blank(), 
+	axis.line.x = element_line(), axis.line.y = element_line()) 
+
+plotF1.meanlifespan.f <- ggplot(data= subset(bootF1.ls, sex== "f"), aes(x= as.factor(par_diet), y= Boot.mean, fill= as.factor(par_temp))) +  
+	#scale_fill_grey(start=0.8, end=0.3, name = "Temperature") +
+	scale_fill_manual(values= mycols, name = "Parental\ntemperature") +
+     	geom_bar(position=position_dodge(), stat = "identity", colour="black") + 
+	#geom_point(size = 3.5, position=position_dodge(0.1)) + 	
+	geom_errorbar(aes(ymin= Bca.lower, ymax= Bca.upper), width=.4, colour="black",
+	position=position_dodge(0.9)) +
+  expand_limits(y = 82) +
+	ylab("Lifespan (days)")  + 
+	xlab("Parental diet")  + 
+	ggtitle("Female lifespan (mean \U00B1 95% CI)") + 
+	theme_bw(base_size = 18)+
+	theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
+	panel.border = element_blank(), 
+	axis.line.x = element_line(), axis.line.y = element_line()) 
+
+plotF1.meanlifespan.m
+plotF1.meanlifespan.f
+
+```
+
+## F1 Survival analyses
+
+### Data preparation F1 survival
+
+```{r F1-survival-model-data-prep}
+
+# Create grouping variables
+survivalF1$combined <- interaction(survivalF1$sex, survivalF1$par_diet, survivalF1$par_temp)
+survivalF1$specificvial <- interaction(survivalF1$combined, survivalF1$rep)
+
+```
+
+## Sex-specific mixed Cox Proportional Hazards models F1
+
+### 1) F1 females, Cox PH: Model summary (Table S6) and proportionality assumption test
+
+```{r coxme-F1-females}
+
+# Model specification: par_eff represents either maternal or paternal effects
+coxF1.f1 <- coxme(Surv(lifespan, status) ~ par_eff*par_temp*par_diet + (1|specificvial), data = subset(survivalF1, sex == "f"))
+
+# Model summary (custom function extracts 3 digit z- and p-value)
+extract_coxme_table <- function (mod){
+        beta <- mod$coefficients #$fixed is not needed
+        nvar <- length(beta)
+        nfrail <- nrow(mod$var) - nvar
+        se <- sqrt(diag(mod$var)[nfrail + 1:nvar])
+        z<- round(beta/se, 3)
+        p<- signif(1 - pchisq((beta/se)^2, 1), 3)
+        table=data.frame(cbind(z,p))
+        return(table)
+    }
+#extract_coxme_table(coxF1.f1)
+summary(coxF1.f1, digits = 3)
+
+f1.zph <- coxph(Surv(lifespan, status) ~ par_eff*par_temp*par_diet, data = survivalF1)
+cox.zph(coxph(Surv(lifespan, status) ~ par_eff*par_temp*par_diet, data = survivalF1))
+```
+
+### Female F1 survival with model simplification: model selection table (for model specifications, see code)
+
+```{r coxme-F1-females-B}
+
+# coxF1.f1 without 3-way interaction par_eff:par_temp:par_diet
+coxF1.f2 <- coxme(Surv(lifespan, status) ~ par_eff*par_temp*par_diet - par_eff:par_temp:par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == "f"))
+
+# Model summary (custom function extracts 3 digit z- and p-value)
+extract_coxme_table <- function (mod){
+        beta <- mod$coefficients #$fixed is not needed
+        nvar <- length(beta)
+        nfrail <- nrow(mod$var) - nvar
+        se <- sqrt(diag(mod$var)[nfrail + 1:nvar])
+        z<- round(beta/se, 3)
+        p<- signif(1 - pchisq((beta/se)^2, 1), 3)
+        table=data.frame(cbind(z,p))
+        return(table)
+    }
+#extract_coxme_table(coxF1.f2)
+#summary(coxF1.f2, digits = 3)
+
+#- par_temp:par_diet
+coxF1.f3 <- coxme(Surv(lifespan, status) ~ par_eff*par_temp*par_diet - par_eff:par_temp:par_diet - par_temp:par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == "f"))
+#summary(coxF1.f3, digits = 3)
+
+#- par_temp:par_diet 
+coxF1.f4 <- coxme(Surv(lifespan, status) ~ par_eff*par_temp*par_diet - par_eff:par_temp:par_diet - par_temp:par_diet - par_eff:par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == "f"))
+#summary(coxF1.f4, digits = 3)
+
+#- par_eff:par_temp (no interactions left)
+coxF1.f5 <- coxme(Surv(lifespan, status) ~ par_eff+par_temp+par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == "f"))
+#summary(coxF1.f5, digits = 3)
+
+#- par_diet 
+coxF1.f6 <- coxme(Surv(lifespan, status) ~ par_eff+par_temp + (1|specificvial), 
+  data = subset(survivalF1, sex == "f"))
+#summary(coxF1.f6, digits = 3)
+
+#- par_temp
+coxF1.f7 <- coxme(Surv(lifespan, status) ~ par_eff + (1|specificvial), 
+  data = subset(survivalF1, sex == "f"))
+#summary(coxF1.f7, digits = 3)
+
+# only with par_diet
+coxF1.f7b <- coxme(Surv(lifespan, status) ~ par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == "f"))
+#summary(coxF1.f7b, digits = 3)
+
+# NULL
+coxF1.f8 <- coxme(Surv(lifespan, status) ~ 1 + (1|specificvial), 
+  data = subset(survivalF1, sex == "f"))
+#summary(coxF1.f8, digits = 3)
+
+# Model comparison
+AIC_addCOX_femaleF1 <- model.sel(coxF1.f1, coxF1.f2, coxF1.f3, coxF1.f4, coxF1.f5, coxF1.f6, coxF1.f7, coxF1.f8, rank = "AIC")
+AIC_addCOX_female_resF1 <- as.data.frame(AIC_addCOX_femaleF1)[9:12]
+AIC_addCOX_female_resF1
+```
+
+
+### 2) F1 males, Cox PH: Model summary (Table S7) and proportionality assumption test
+
+```{r coxme-F1-males}
+
+# Model specification
+coxF1.m <- coxme(Surv(lifespan, status) ~ par_eff*par_temp*par_diet + (1|specificvial), 
+  data= subset(survivalF1, sex== "m")) 
+
+# Model summary
+#extract_coxme_table(coxF1.m)
+summary(coxF1.m, digits = 3)
+
+cox.zph(coxph(Surv(lifespan, status) ~ par_eff*par_temp*par_diet, data = subset(survivalF1, sex== "m")))
+```
+
+### Male F1 survival with model simplification: model selection table (for model specifications, see code)
+
+```{r coxme-F1-males-B}
+
+# coxF1.m without 3-way interaction par_eff:par_temp:par_diet
+coxF1.m2 <- coxme(Surv(lifespan, status) ~ par_eff*par_temp*par_diet - par_eff:par_temp:par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == "m"))
+
+# Model summary (custom function extracts 3 digit z- and p-value)
+extract_coxme_table <- function (mod){
+        beta <- mod$coefficients #$fixed is not needed
+        nvar <- length(beta)
+        nfrail <- nrow(mod$var) - nvar
+        se <- sqrt(diag(mod$var)[nfrail + 1:nvar])
+        z<- round(beta/se, 3)
+        p<- signif(1 - pchisq((beta/se)^2, 1), 3)
+        table=data.frame(cbind(z,p))
+        return(table)
+    }
+#extract_coxme_table(coxF1.m2)
+#summary(coxF1.m2, digits = 3)
+
+#- par_temp:par_diet
+coxF1.m3 <- coxme(Surv(lifespan, status) ~ par_eff*par_temp*par_diet - par_eff:par_temp:par_diet - par_temp:par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == "m"))
+#summary(coxF1.m3, digits = 3)
+
+#- par_temp:par_diet 
+coxF1.m4 <- coxme(Surv(lifespan, status) ~ par_eff*par_temp*par_diet - par_eff:par_temp:par_diet - par_temp:par_diet - par_eff:par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == "m"))
+#summary(coxF1.m4, digits = 3)
+
+#- par_eff:par_temp (no interactions left)
+coxF1.m5 <- coxme(Surv(lifespan, status) ~ par_eff+par_temp+par_diet + (1|specificvial), 
+  data = subset(survivalF1, sex == "m"))
+#summary(coxF1.m5, digits = 3)
+
+#- par_diet 
+coxF1.m6 <- coxme(Surv(lifespan, status) ~ par_eff+par_temp + (1|specificvial), 
+  data = subset(survivalF1, sex == "m"))
+#summary(coxF1.m6, digits = 3)
+
+#- par_temp
+coxF1.m7 <- coxme(Surv(lifespan, status) ~ par_eff + (1|specificvial), 
+  data = subset(survivalF1, sex == "m"))
+#summary(coxF1.m7, digits = 3)
+
+# NULL
+coxF1.m8 <- coxme(Surv(lifespan, status) ~ 1 + (1|specificvial), 
+  data = subset(survivalF1, sex == "m"))
+#summary(coxF1.m8, digits = 3)
+
+# Model comparison
+AIC_addCOX_maleF1 <- model.sel(coxF1.m, coxF1.m2, coxF1.m3, coxF1.m4, coxF1.m5, coxF1.m6, coxF1.m7, coxF1.m8, rank = "AIC")
+AIC_addCOX_male_resF1 <- as.data.frame(AIC_addCOX_maleF1)[9:12]
+AIC_addCOX_male_resF1
+
+```
